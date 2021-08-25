@@ -1,0 +1,2 @@
+
+{"id":1,"timestamp":"12315","carrito":[{"id":1,"timestamp":"2021-08-25T20:20:31.132Z","nombre":"que se yo","descripcion":"todo","codigo":"166616sd","foto":"http://foto","precio":150,"stock":1,"idCarrito":0}]}
