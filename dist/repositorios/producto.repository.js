@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductoRepository = void 0;
+exports.productoRepository = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 let productos_ds = path_1.default.join(__dirname, "../datasource/productos.datasource.txt");
@@ -149,4 +149,4 @@ class ProductoRepository {
         });
     }
 }
-exports.ProductoRepository = ProductoRepository;
+exports.productoRepository = new ProductoRepository();

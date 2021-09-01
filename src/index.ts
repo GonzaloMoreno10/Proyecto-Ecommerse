@@ -1,6 +1,5 @@
 import express from "express";
-import productoRouter from "./controllers/producto.controller";
-import carritoRouter from "./controllers/carrito.controller";
+import mainRouter from './routes/main.route'
 
 //Inicializacion
 const app = express();
@@ -14,9 +13,8 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/productos',productoRouter);
+app.use('/api',mainRouter);
 
-app.use('/carrito',carritoRouter);
 
 //Listen
 

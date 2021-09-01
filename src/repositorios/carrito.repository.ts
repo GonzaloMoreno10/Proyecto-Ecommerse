@@ -2,13 +2,12 @@ import fs from "fs/promises";
 import path from 'path';
 import { Carrito } from "../models/carrito.model";
 import { Producto } from "../models/producto.model";
-import { ProductoRepository } from "./producto.repository";
+import {productoRepository} from "./producto.repository";
 
 let carritos_ds = path.join(__dirname, '../datasource/carritos.datasource.txt');
-let prodRepository = new ProductoRepository()
 
 
-export class CarritoRepository {
+ class CarritoRepository {
 
     //Metodo para leer la info del archivo productos.txt
     async getProductos() {
@@ -111,7 +110,7 @@ export class CarritoRepository {
     async guardarProducto(producto:Producto) {
         let actualizada = false;
         try {
-            let productos = await prodRepository.getProductosById(producto.id);
+            let productos = await productoRepository.getProductosById(producto.id);
             if (productos) {
                 let carrito = await this.getProductos();
                 if (carrito !== -1) {
@@ -141,3 +140,5 @@ export class CarritoRepository {
         }
     };
 }
+
+export const carritoRepositorio = new CarritoRepository();

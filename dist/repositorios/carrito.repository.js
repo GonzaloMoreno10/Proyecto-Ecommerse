@@ -12,12 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CarritoRepository = void 0;
+exports.carritoRepositorio = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const producto_repository_1 = require("./producto.repository");
 let carritos_ds = path_1.default.join(__dirname, '../datasource/carritos.datasource.txt');
-let prodRepository = new producto_repository_1.ProductoRepository();
 class CarritoRepository {
     //Metodo para leer la info del archivo productos.txt
     getProductos() {
@@ -122,7 +121,7 @@ class CarritoRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let actualizada = false;
             try {
-                let productos = yield prodRepository.getProductosById(producto.id);
+                let productos = yield producto_repository_1.productoRepository.getProductosById(producto.id);
                 if (productos) {
                     let carrito = yield this.getProductos();
                     if (carrito !== -1) {
@@ -151,4 +150,4 @@ class CarritoRepository {
     }
     ;
 }
-exports.CarritoRepository = CarritoRepository;
+exports.carritoRepositorio = new CarritoRepository();

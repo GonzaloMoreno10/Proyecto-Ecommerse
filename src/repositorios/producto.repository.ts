@@ -7,7 +7,7 @@ let productos_ds = path.join(
   "../datasource/productos.datasource.txt"
 );
 
-export class ProductoRepository {
+class ProductoRepository {
   //Metodo para leer la info del archivo productos.txt
   async getProductos(): Promise<Producto[]> {
     let array = [];
@@ -126,3 +126,5 @@ export class ProductoRepository {
     }
   }
 }
+
+export const productoRepository = new ProductoRepository();
