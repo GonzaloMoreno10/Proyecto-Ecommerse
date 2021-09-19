@@ -1,6 +1,6 @@
-import express from "express";
+/*import express from "express";
 import { Producto } from "../models/producto.model";
-import {carritoRepositorio,productoRepository} from "../repositorios";
+import {FScarritoRepositorio,FSproductoRepository} from "../repositorios";
 import { NextFunction,Request,Response } from "express";
 import{check} from '../middlewares/check';
 const Router = express.Router();
@@ -10,16 +10,16 @@ class CarritoController{
     try {
       if (req.params.idProducto) {
         let idProducto: number = parseInt(req.params.idProducto);
-        let data = await carritoRepositorio.getProductosById(idProducto);
-        if (data !== -1) {
+        let data = await FScarritoRepositorio.findById(idProducto);
+        if (data) {
           res.status(200).json({ data: data });
         } else {
           res.status(400).json({ data: "No se encontro el producto" });
         }
       } else {
-        let productos = await carritoRepositorio.getProductos();
-        if (productos !== -1) {
-          res.status(200).json({ producto: productos.carrito });
+        let productos = await FScarritoRepositorio.findAll();
+        if (productos) {
+          res.status(200).json({ producto: productos});
         } else {
           res.status(400).json({ Producto: "No se encontro el producto" });
         }
@@ -32,10 +32,10 @@ class CarritoController{
   async agregar(req:Request,res:Response){
     try {
       let idProd: number = parseInt(req.params.idProd);
-      let prod: Producto | undefined = await productoRepository.getProductosById(idProd);
+      let prod: Producto | undefined = await FSproductoRepository.findById(idProd);
       if (prod) {
-        let data = await carritoRepositorio.guardarProducto(prod);
-        if (data !== -1) {
+        let data = await FScarritoRepositorio.create(prod);
+        if (data) {
           res.status(200).json({ data: data });
         } else {
           res.status(400).json({ data: "Ocurrio un error" });
@@ -51,8 +51,8 @@ class CarritoController{
   async delete(req:Request,res:Response){
     let idProducto: number = parseInt(req.params.idProducto);
   try {
-    let data = await carritoRepositorio.borrar(idProducto);
-    if (data !== -1) {
+    let data = await FScarritoRepositorio.delete(idProducto);
+    if (data) {
       res.status(200).json({ data: data });
     } else {
       res.status(400).json({ data: "No se encontro el producto" });
@@ -65,3 +65,4 @@ class CarritoController{
 
 
 export const carritoController = new CarritoController();
+*/

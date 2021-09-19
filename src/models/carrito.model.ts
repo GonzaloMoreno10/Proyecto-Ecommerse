@@ -11,7 +11,4 @@ export class Carrito{
         this.productos = productos;
     }
 
-    agregarProducto(prod:Producto){
-        this.productos.push(prod)
-    }
 }

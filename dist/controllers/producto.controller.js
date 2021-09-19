@@ -9,15 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productoController = void 0;
+exports.productoController = exports.ProductoController = void 0;
 const models_1 = require("../models");
-const repositorios_1 = require("../repositorios");
+const productosApi_1 = require("../apis/productosApi");
 class ProductoController {
     getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = parseInt(req.params.id);
-                let data = yield repositorios_1.productoRepository.getProductosById(id);
+                let data = yield productosApi_1.productsAPI.getProducts(id);
                 if (data) {
                     res.status(200).json({ producto: data });
                 }
@@ -30,11 +30,10 @@ class ProductoController {
             }
         });
     }
-    ;
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let data = yield repositorios_1.productoRepository.getProductos();
+                let data = yield productosApi_1.productsAPI.getProducts();
                 if (data) {
                     if (data.length > 0) {
                         res.status(200).json({ producto: data });
@@ -53,9 +52,9 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-                let producto = new models_1.Producto(0, new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
-                let result = yield repositorios_1.productoRepository.guardar(producto);
-                if (result == 1) {
+                let producto = new models_1.Producto(new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
+                let result = yield productosApi_1.productsAPI.addProduct(producto);
+                if (result) {
                     res.status(200).json({ data: "Producto guardado" });
                 }
                 else {
@@ -72,9 +71,9 @@ class ProductoController {
             try {
                 let id = parseInt(req.params.id);
                 let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-                let producto = new models_1.Producto(id, new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
+                let producto = new models_1.Producto(new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
                 if (producto) {
-                    let data = yield repositorios_1.productoRepository.actualizar(id, producto);
+                    let data = yield productosApi_1.productsAPI.updateProduct(id, producto);
                     if (data) {
                         res.status(200).json({ producto: "Producto Actualizado", data });
                     }
@@ -91,19 +90,14 @@ class ProductoController {
             }
         });
     }
-    ;
     borrar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = parseInt(req.params.id);
-                let producto = yield repositorios_1.productoRepository.getProductosById(id);
-                let data = yield repositorios_1.productoRepository.borrar(id);
-                if (data) {
-                    res.status(200).json({ data: "Producto Eliminado", producto });
-                }
-                else {
-                    res.status(500).json({ data: "No se encontro el producto" });
-                }
+                yield productosApi_1.productsAPI.deleteProduct(id);
+                res.json({
+                    msg: 'producto borrado',
+                });
             }
             catch (err) {
                 console.log(err);
@@ -111,4 +105,5 @@ class ProductoController {
         });
     }
 }
+exports.ProductoController = ProductoController;
 exports.productoController = new ProductoController();

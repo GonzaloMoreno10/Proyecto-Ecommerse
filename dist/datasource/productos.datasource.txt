@@ -1,5 +1,2 @@
 
-{"id":1,"timestamp":"2021-09-01T01:09:02.321Z","nombre":"Coca Cola","descripcion":"Coca Cola Light","codigo":"zZ456","foto":"https://cdn2.iconfinder.com/data/icons/beverage-packaging-free-pack-1/512/can-packaging-free-01-512.png","precio":100,"stock":9}
-{"id":2,"timestamp":"2021-08-25T20:19:36.881Z","nombre":"Coca Cola","descripcion":"Coca Cola Light","codigo":"zZ456","foto":"https://cdn2.iconfinder.com/data/icons/beverage-packaging-free-pack-1/512/can-packaging-free-01-512.png","precio":200,"stock":9}
-{"id":3,"timestamp":"2021-08-25T22:52:27.086Z","nombre":"Coca Cola","descripcion":"Coca Cola Light","codigo":"zZ456","foto":"https://cdn2.iconfinder.com/data/icons/beverage-packaging-free-pack-1/512/can-packaging-free-01-512.png","precio":200,"stock":9}
-{"id":4,"timestamp":"2021-09-01T01:08:42.422Z","nombre":"Coca Cola","descripcion":"Coca Cola Light","codigo":"zZ456","foto":"https://cdn2.iconfinder.com/data/icons/beverage-packaging-free-pack-1/512/can-packaging-free-01-512.png","precio":200,"stock":9}
+{"id":1,"timestamp":"2021-09-15T20:00:09.898Z","nombre":"Television","descripcion":"Nada eso","codigo":321,"foto":"foto","precio":150,"stock":10}

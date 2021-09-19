@@ -7,8 +7,5 @@ class Carrito {
         this.timestamp = timestamp;
         this.productos = productos;
     }
-    agregarProducto(prod) {
-        this.productos.push(prod);
-    }
 }
 exports.Carrito = Carrito;
