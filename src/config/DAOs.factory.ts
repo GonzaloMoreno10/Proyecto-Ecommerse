@@ -1,5 +1,6 @@
 import { tipoPersistencias } from '../constantes/persistencias';
 import { FileSystemRepository, MySqlProductoRepository } from '../DAOs';
+import { FirebaseRepository } from '../DAOs/firebase.respository';
 import { ProdMemoriaRepository } from '../DAOs/memory.repository';
 import { MongoProductsRepository } from '../DAOs/mongo.repository';
 import { SqliteRepository } from '../DAOs/sqlite.repository';
@@ -24,6 +25,9 @@ export class ProductFactoryDAO {
       case tipoPersistencias.SQLITE:
         console.log('RETORNANDO INSTANCIA CLASE SQLITE');
         return new SqliteRepository();
+      case tipoPersistencias.FIREBASE:
+        console.log('RETORNANDO FIREBASE INSTANCE')
+        return new FirebaseRepository()
       default:
         console.log('RETORNANDO INSTANCIA CLASE MEMORIA');
         return new ProdMemoriaRepository();
