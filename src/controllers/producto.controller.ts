@@ -1,12 +1,13 @@
 import { Producto } from "../models";
 import { FSRepositorio } from "../DAOs/fs.repository";
 import { Request, Response } from "express";
-import { productsAPI } from '../apis/productosApi';
+import { productsAPI } from "../apis/productosApi";
+import { newProductInterface } from "../interface/producto.inteface";
 
 export class ProductoController {
   async getById(req: Request, res: Response) {
     try {
-      let id: number = parseInt(req.params.id);
+      let id = req.params.id;
       let data = await productsAPI.getProducts(id);
       if (data) {
         res.status(200).json({ producto: data });
@@ -36,16 +37,14 @@ export class ProductoController {
   async agregar(req: Request, res: Response) {
     try {
       let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-      let producto = new Producto(
-        new Date(),
+      let producto: newProductInterface = {
         nombre,
         descripcion,
         codigo,
         foto,
         precio,
         stock,
-        undefined
-      );
+      };
       let result = await productsAPI.addProduct(producto);
       if (result) {
         res.status(200).json({ data: "Producto guardado" });
@@ -59,18 +58,17 @@ export class ProductoController {
 
   async actualizar(req: Request, res: Response) {
     try {
-      let id = parseInt(req.params.id);
+      let id = req.params.id;
       let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-      let producto = new Producto(
-        new Date(),
+      let producto: newProductInterface = {
         nombre,
         descripcion,
         codigo,
         foto,
         precio,
         stock,
-        undefined
-      );
+      };
+
       if (producto) {
         let data = await productsAPI.updateProduct(id, producto);
         if (data) {
@@ -88,10 +86,10 @@ export class ProductoController {
 
   async borrar(req: Request, res: Response) {
     try {
-      let id: number = parseInt(req.params.id);
+      let id = req.params.id;
       await productsAPI.deleteProduct(id);
       res.json({
-        msg: 'producto borrado',
+        msg: "producto borrado",
       });
     } catch (err) {
       console.log(err);

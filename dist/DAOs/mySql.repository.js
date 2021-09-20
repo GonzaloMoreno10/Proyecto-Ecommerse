@@ -33,8 +33,9 @@ class MySqlProductoRepository {
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            let Id = parseInt(id);
             const conexion = yield this.createConnection();
-            let data = yield conexion.query(`select * from productos where id = ${id}`);
+            let data = yield conexion.query(`select * from productos where id = ${Id}`);
             conexion.end();
             return data[0];
         });
@@ -42,9 +43,10 @@ class MySqlProductoRepository {
     update(id, producto) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                let Id = parseInt(id);
                 let conexion = yield this.createConnection();
                 let data = yield conexion.query(`update productos set nombre = '${producto.nombre}' , descripcion = '${producto.descripcion}' , codigo = ${producto.codigo} , 
-    foto = '${producto.foto}' , precio = ${producto.precio} , stock = ${producto.stock} where id =${id} `);
+    foto = '${producto.foto}' , precio = ${producto.precio} , stock = ${producto.stock} where id =${Id} `);
                 let res = Object.assign(data);
                 console.log(res.insertId);
             }
@@ -63,13 +65,11 @@ class MySqlProductoRepository {
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            let Id = parseInt(id);
             let conexion = yield this.createConnection();
             let prod = yield this.findById(id);
             if (prod) {
-                let data = yield conexion.query(`delete from productos where id = ${id}`);
-                if (Object.assign(data[0]).affectedRows > 0) {
-                    return prod;
-                }
+                let data = yield conexion.query(`delete from productos where id = ${Id}`);
             }
         });
     }

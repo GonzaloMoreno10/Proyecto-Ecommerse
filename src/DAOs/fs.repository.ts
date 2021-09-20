@@ -1,16 +1,17 @@
 import fs from "fs/promises";
 import path from 'path';
-import { CarritoPersistanceInterface } from "../interface/carritoPersistance.interface";
+import { CarritoPersistanceInterface } from "../interface/carrito.interface";
+import { ProductBaseClass ,ProductInterface} from "../interface/producto.inteface";
 import { Carrito } from "../models/carrito.model";
 import { Producto } from "../models/producto.model";
 
 let carritos_ds = path.join(__dirname, '../datasource/carritos.datasource.txt');
 let productos_ds = path.join(__dirname,"../datasource/productos.datasource.txt");
 
-export class FileSystemRepository implements CarritoPersistanceInterface {
+export class FileSystemRepository implements ProductBaseClass {
 
   //Productos
-    async findAll(): Promise<Producto[]> {
+    async findAll(): Promise<ProductInterface[]> {
         let array = [];
         try {
           let data = await fs.readFile(productos_ds, "utf-8");
@@ -26,9 +27,9 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
         return [];
       }
     
-      async findById(id: number): Promise<Producto | undefined> {
+      async findById(id: any): Promise<ProductInterface | undefined> {
         try {
-          let data: Array<Producto>;
+          let data: Array<ProductInterface>;
           data = await this.findAll();
           if (data) {
             for (let i in data) {
@@ -43,7 +44,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
       };
     
       //Metodo utilizado para guardar un objeto producto
-      async create(producto: Producto):Promise<Producto | undefined> {
+      async create(producto: ProductInterface):Promise<ProductInterface | undefined> {
         let id = await this.generarIdProduct();
         let productos = await this.findAll();
         if (productos) {
@@ -51,7 +52,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
           if (producto.nombre) {
             try {
               await fs.appendFile(productos_ds, "\n" + JSON.stringify(producto));
-              let productoTeReturn:Producto | undefined = await this.findById(id);
+              let productoTeReturn:ProductInterface | undefined = await this.findById(id);
               return productoTeReturn
             } catch (err) {
               console.log("Ocurrio un error " + err);
@@ -59,7 +60,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
           }
         } else {
           await fs.writeFile(productos_ds, JSON.stringify(producto));
-          let productoTeReturn:Producto | undefined = await this.findById(id);
+          let productoTeReturn:ProductInterface | undefined = await this.findById(id);
               return productoTeReturn
         }
       }
@@ -73,7 +74,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
       }
     
       //Metodo utilizado para borrar el archivo
-      async delete(id: number): Promise<Producto|undefined> {
+      async delete(id: number): Promise<void> {
         let i: any;
         try {
           let productos = await this.findAll();
@@ -90,13 +91,12 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
           for (let i in productos) {
             await this.create(productos[i]);
           }
-          return productos[i];
         } catch (err) {
           throw err;
         }
       }
     
-      async update(id: number, producto: Producto):Promise<Producto | undefined> {
+      async update(id: number, producto: ProductInterface):Promise<ProductInterface | undefined> {
         let actualizada = 0;
         try {
           let productos = await this.findAll();
@@ -109,7 +109,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
                 productos[i].foto = producto.foto;
                 productos[i].precio = producto.precio;
                 productos[i].stock = producto.stock;
-                productos[i].timestamp = new Date();
+                //productos[i].timestamp = new Date();
                 console.log(productos[i]);
                 actualizada = 1;
                 break;
@@ -131,7 +131,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
 
 
     //Metodo para leer la info del archivo productos.txt
-    /*async findAll():Promise<Producto[]> {
+    async findAllProductsInCart():Promise<Producto[]> {
         let array = [];
         try {
             let data = await fs.readFile(carritos_ds, "utf-8")
@@ -172,13 +172,13 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
         return carrito;
     };
 
-    async findById(idProducto:number):Promise<Producto|undefined> {
+    /*async findProdCarrById(idProducto:number):Promise<Producto|undefined> {
         try {
-            let productos:Producto[] = await this.findAll();
-            if (productos) {
-                for (let i in productos) {
-                    if (productos[i].idCarrito == idProducto) {
-                        return productos[i];
+            let producto = await this.findAll();
+            if (producto) {
+                for (let i in producto) {
+                    if (producto[i].idCarrito == idProducto) {
+                        return producto[i];
                     }
                 }
             }
@@ -214,7 +214,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
 
 
     //Metodo utilizado para borrar el archivo
-    async delete(idProducto:number):Promise<Producto|undefined> {
+    async deleteProdInCarr(idProducto:number):Promise<Producto|undefined> {
         try {
             let carrito = await this.findCarrito();
             let producto = await this.findById(idProducto);
@@ -245,7 +245,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
     };
 
 
-    async create(producto:Producto):Promise<Producto|undefined> {
+    async createProdInCarrito(producto:Producto):Promise<Producto|undefined> {
         let actualizada = false;
         try {
             
@@ -268,9 +268,7 @@ export class FileSystemRepository implements CarritoPersistanceInterface {
         catch (err) {
             throw err;
         }
-    };
-
-   */ 
+    };*/
 }
 
 export  const FSRepositorio = new FileSystemRepository();

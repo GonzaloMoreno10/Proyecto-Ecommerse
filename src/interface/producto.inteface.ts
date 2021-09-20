@@ -7,8 +7,8 @@ export interface newProductInterface {
   stock:number
 }
 
-export interface ProductInteface {
-  id: string;
+export interface ProductInterface {
+  id: any;
   nombre: string;
   descripcion:string;
   codigo:number;
@@ -23,9 +23,10 @@ export interface ProductQueryInterface {
 }
 
 export interface ProductBaseClass {
-  get(id?: string | undefined): Promise<ProductInteface[]>;
-  add(data: newProductInterface): Promise<ProductInteface>;
-  update(id: string, newProductData: ProductInteface): Promise<ProductInteface>;
-  delete(id: string): Promise<void>;
-  query(options: ProductQueryInterface): Promise<ProductInteface[]>;
+  findAll(): Promise<ProductInterface[]>;
+  findById(id:any): Promise<ProductInterface>;
+  create(data: newProductInterface): Promise<ProductInterface>;
+  update(id: any, newProductData: ProductInterface): Promise<ProductInterface>;
+  delete(id: any): Promise<void>;
+  //query(options: ProductQueryInterface): Promise<ProductInteface[]>;
 }

@@ -10,13 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productoController = exports.ProductoController = void 0;
-const models_1 = require("../models");
 const productosApi_1 = require("../apis/productosApi");
 class ProductoController {
     getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let id = parseInt(req.params.id);
+                let id = req.params.id;
                 let data = yield productosApi_1.productsAPI.getProducts(id);
                 if (data) {
                     res.status(200).json({ producto: data });
@@ -52,7 +51,14 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-                let producto = new models_1.Producto(new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
+                let producto = {
+                    nombre,
+                    descripcion,
+                    codigo,
+                    foto,
+                    precio,
+                    stock,
+                };
                 let result = yield productosApi_1.productsAPI.addProduct(producto);
                 if (result) {
                     res.status(200).json({ data: "Producto guardado" });
@@ -69,9 +75,16 @@ class ProductoController {
     actualizar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let id = parseInt(req.params.id);
+                let id = req.params.id;
                 let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
-                let producto = new models_1.Producto(new Date(), nombre, descripcion, codigo, foto, precio, stock, undefined);
+                let producto = {
+                    nombre,
+                    descripcion,
+                    codigo,
+                    foto,
+                    precio,
+                    stock,
+                };
                 if (producto) {
                     let data = yield productosApi_1.productsAPI.updateProduct(id, producto);
                     if (data) {
@@ -93,10 +106,10 @@ class ProductoController {
     borrar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let id = parseInt(req.params.id);
+                let id = req.params.id;
                 yield productosApi_1.productsAPI.deleteProduct(id);
                 res.json({
-                    msg: 'producto borrado',
+                    msg: "producto borrado",
                 });
             }
             catch (err) {

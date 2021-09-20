@@ -8,43 +8,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productsAPI = void 0;
-const DAOs_factory_1 = require("../config/DAOs.factory");
-const persistencias_1 = require("../constantes/persistencias");
-/**
- * Con esta variable elegimos el tipo de persistencia
- */
-const tipo = persistencias_1.tipoPersistencias.SQLITE;
-class prodAPI {
+exports.SqliteRepository = void 0;
+const knex_1 = __importDefault(require("knex"));
+class SqliteRepository {
     constructor() {
-        this.productos = DAOs_factory_1.ProductFactoryDAO.get(tipo);
-    }
-    getProducts(id = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (id) {
-                return this.productos.findById(id);
-            }
-            return this.productos.findAll();
+        this.sqliteDB = knex_1.default({
+            client: "sqlite3",
+            connection: { filename: "./ecommerce" },
+            useNullAsDefault: false,
         });
     }
-    addProduct(productData) {
+    findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(productData);
-            const newProduct = yield this.productos.create(productData);
-            return newProduct;
+            return this.sqliteDB.from('productos').select();
         });
     }
-    updateProduct(id, productData) {
+    findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.productos.update(id, productData);
-            return productData;
+            return this.sqliteDB.from('productos').where('id', '=', id).select();
         });
     }
-    deleteProduct(id) {
+    create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.productos.delete(id);
+            return this.sqliteDB('productos').insert(data);
+        });
+    }
+    update(id, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.sqliteDB('productos').where('id', '=', id).update(data);
+        });
+    }
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.sqliteDB('productos').where('id', '=', id).del();
         });
     }
 }
-exports.productsAPI = new prodAPI();
+exports.SqliteRepository = SqliteRepository;

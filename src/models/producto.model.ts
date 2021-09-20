@@ -1,5 +1,5 @@
 export class Producto {
-  id?: number;
+  id: number;
   timestamp: Date;
   nombre: string;
   descripcion: string;
@@ -18,7 +18,7 @@ export class Producto {
     precio: number,
     stock: number,
     idCarrito:number | undefined,
-    id?:number,
+    id:number,
     
   ) {
     this.id = id;

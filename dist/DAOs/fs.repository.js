@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FSRepositorio = exports.FileSystemRepository = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
+const carrito_model_1 = require("../models/carrito.model");
 let carritos_ds = path_1.default.join(__dirname, '../datasource/carritos.datasource.txt');
 let productos_ds = path_1.default.join(__dirname, "../datasource/productos.datasource.txt");
 class FileSystemRepository {
@@ -108,7 +109,6 @@ class FileSystemRepository {
                 for (let i in productos) {
                     yield this.create(productos[i]);
                 }
-                return productos[i];
             }
             catch (err) {
                 throw err;
@@ -129,7 +129,7 @@ class FileSystemRepository {
                             productos[i].foto = producto.foto;
                             productos[i].precio = producto.precio;
                             productos[i].stock = producto.stock;
-                            productos[i].timestamp = new Date();
+                            //productos[i].timestamp = new Date();
                             console.log(productos[i]);
                             actualizada = 1;
                             break;
@@ -150,6 +150,49 @@ class FileSystemRepository {
             }
         });
     }
+    //Metodo para leer la info del archivo productos.txt
+    findAllProductsInCart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let array = [];
+            try {
+                let data = yield promises_1.default.readFile(carritos_ds, "utf-8");
+                array = data.split("\n");
+                let array2 = array.filter(data => data != "");
+                if (array2.length > 0) {
+                    for (let i in array2) {
+                        let carrito = (JSON.parse(array2[i]));
+                        return carrito.productos;
+                    }
+                }
+                else {
+                    return [];
+                }
+            }
+            catch (err) {
+                console.log("Ocurrio un error " + err);
+            }
+            return [];
+        });
+    }
+    ;
+    findCarrito() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = new carrito_model_1.Carrito(0, new Date, []);
+            try {
+                let data = yield promises_1.default.readFile(carritos_ds, "utf-8");
+                let array = data.split("\n");
+                let array2 = array.filter(data => data != "");
+                for (let i in array2) {
+                    carrito = JSON.parse(array2[i]);
+                }
+            }
+            catch (err) {
+                console.log("Ocurrio un error " + err);
+            }
+            return carrito;
+        });
+    }
+    ;
 }
 exports.FileSystemRepository = FileSystemRepository;
 exports.FSRepositorio = new FileSystemRepository();

@@ -1,11 +1,11 @@
-import { newProductInterface, ProductInteface } from '../interface/producto.inteface';
+import { newProductInterface, ProductInterface } from '../interface/producto.inteface';
 import { ProductFactoryDAO } from '../config/DAOs.factory';
 import { tipoPersistencias } from '../constantes/persistencias';
 
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = tipoPersistencias.FS;
+const tipo = tipoPersistencias.SQLITE;
 
 class prodAPI {
   private productos;
@@ -14,14 +14,15 @@ class prodAPI {
     this.productos = ProductFactoryDAO.get(tipo);
   }
 
-  async getProducts(id: any | undefined = undefined): Promise<ProductInteface[]> {
+  async getProducts(id: any | undefined = undefined): Promise<ProductInterface[]> {
     if (id){
         return this.productos.findById(id);
     }
     return this.productos.findAll();
   }
 
-  async addProduct(productData: newProductInterface): Promise<ProductInteface> {
+  async addProduct(productData: newProductInterface): Promise<ProductInterface> {
+      console.log(productData)
     const newProduct = await this.productos.create(productData)
     return newProduct;
   }
