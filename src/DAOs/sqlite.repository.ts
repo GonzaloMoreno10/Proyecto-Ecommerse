@@ -1,12 +1,12 @@
 import knex from "knex";
 import {
   newProductInterface,
-  ProductBaseClass,
+  PersistanceBaseClass,
   ProductInterface,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 
-export class SqliteRepository implements ProductBaseClass{
+export class SqliteRepository implements PersistanceBaseClass{
   private sqliteDB: any;
   constructor() {
     this.sqliteDB = knex({

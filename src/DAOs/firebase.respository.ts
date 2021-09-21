@@ -6,7 +6,7 @@ import {
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 import admin  from "firebase-admin";
-import { firebaseConfig } from "./firebase";
+import { firebaseConfig } from "../../keys/firebase";
 
 export class FirebaseRepository implements PersistanceBaseClass {
   private db: any;
