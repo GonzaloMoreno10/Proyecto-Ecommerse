@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {
   newProductInterface,
   ProductInterface,
-  ProductBaseClass,
+  PersistanceBaseClass,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 import { Venv } from "../constantes/venv";
@@ -18,22 +18,10 @@ const productsSchema = new mongoose.Schema<ProductInterface>({
   descripcion: String,
 });
 
-const carritoSchema = new mongoose.Schema<CarritoInterface>({
-  timestamp: Date,
-  productos: [{
-    nombre: String,
-    precio: Number,
-    stock: Number,
-    codigo: Number,
-    foto: String,
-    descripcion: String,
-  }],
-});
 
-export class MongoProductsRepository implements ProductBaseClass {
+export class MongoProductsRepository implements PersistanceBaseClass {
   private srv: string;
   private productos;
-  private carrito;
 
   constructor(local: boolean = false) {
     if (local) this.srv = `mongodb://localhost:27017/${Venv.MONGO_DB}`;
@@ -45,10 +33,7 @@ export class MongoProductsRepository implements ProductBaseClass {
       "producto",
       productsSchema
     );
-    this.carrito = mongoose.model<CarritoInterface>(
-      "carrito",
-      carritoSchema
-    );
+    
   }
 
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
@@ -114,21 +99,17 @@ export class MongoProductsRepository implements ProductBaseClass {
   }
 
 
-  async addProductsToCart(idProducto: any){
-    let producto = await this.findById(idProducto.toString());
-    if(producto){
-      const newCarrito = new this.carrito(producto);
-      await newCarrito.save();
-
-      return newCarrito;
-    }
+  findProductsOnCart(): Promise<ProductInterface[]> {
+    throw new Error("Method not implemented.");
+  }
+  findProductsOnCartById(id: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
+  }
+  deleteProductsOnCart(id: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
+  }
+  addProductsToCart(idProducto: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
   }
 
-  async findProductsOnCartById(){
-    return [];
-  }
-
-  async findProductsOnCart(){
-    return [];
-  }
 }

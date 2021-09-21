@@ -2,12 +2,12 @@ import { CarritoInterface } from "../interface/carrito.interface";
 import {
   newProductInterface,
   ProductInterface,
-  ProductBaseClass,
+  PersistanceBaseClass,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 import { Producto } from "../models";
 
-export class ProdMemoriaRepository implements ProductBaseClass {
+export class ProdMemoriaRepository implements PersistanceBaseClass {
   private productos: ProductInterface[] = [];
   private carrito:CarritoInterface;
   constructor() {

@@ -1,11 +1,12 @@
 import knex from "knex";
 import {
   newProductInterface,
+  ProductBaseClass,
   ProductInterface,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 
-export class SqliteRepository {
+export class SqliteRepository implements ProductBaseClass{
   private sqliteDB: any;
   constructor() {
     this.sqliteDB = knex({
@@ -50,7 +51,7 @@ export class SqliteRepository {
     return <ProductInterface[]><unknown>await eval(query);
   }
 
-  async findProductsOnCart(){
+  async findProductsOnCart():Promise<ProductInterface[]>{
     return this.sqliteDB({a:'carritos_productos',b:'productos'}).select({id:'b.id',nombre:'b.nombre',descripcion:'b.descripcion',
   precio:'b.precio',stock:'b.stock',foto:'b.foto',codigo:'b.codigo'}).whereRaw('?? = ??', ['a.id_producto', 'b.id'])
   }
@@ -62,13 +63,13 @@ export class SqliteRepository {
   }
 
 
-  async addProductsToCart(idProducto:number){
+  async addProductsToCart(idProducto:number):Promise<ProductInterface>{
     
     await this.sqliteDB('carritos_productos').insert({id_carrito:1,id_producto:idProducto});
     return await this.findById(idProducto);
   }
 
-  async deleteProductsOnCart(idProducto:number){
+  async deleteProductsOnCart(idProducto:number):Promise<ProductInterface>{
     await this.sqliteDB('carritos_productos').where('id_producto','=',idProducto).andWhere('id_carrito','=',1).del();
     return this.findById(idProducto)
   }

@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { api } from "../apis/api";
 import {
-  ProductBaseClass,
+  PersistanceBaseClass,
   ProductInterface,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
@@ -15,7 +15,7 @@ let productos_ds = path.join(
   "../datasource/productos.datasource.txt"
 );
 
-export class FileSystemRepository implements ProductBaseClass {
+export class FileSystemRepository implements PersistanceBaseClass {
   //Productos
   async findAll(): Promise<ProductInterface[]> {
     let array = [];

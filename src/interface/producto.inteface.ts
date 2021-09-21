@@ -27,11 +27,15 @@ export interface ProductQueryInterface {
   maxPrice?:number;
 }
 
-export interface ProductBaseClass {
+export interface PersistanceBaseClass {
   findAll(): Promise<ProductInterface[]>;
   findById(id:any): Promise<ProductInterface>;
   create(data: newProductInterface): Promise<ProductInterface>;
   update(id: any, newProductData: ProductInterface): Promise<ProductInterface>;
   delete(id: any): Promise<void>;
   query(options: ProductQueryInterface): Promise<ProductInterface[]>;
+  findProductsOnCart():Promise<ProductInterface[]>;
+  findProductsOnCartById(id:any):Promise<ProductInterface>
+  deleteProductsOnCart(id:any):Promise<ProductInterface>
+  addProductsToCart(idProducto:any):Promise<ProductInterface>
 }

@@ -1,8 +1,8 @@
 import { createPool } from "mysql2/promise";
-import { ProductBaseClass, ProductInterface, ProductQueryInterface } from "../interface/producto.inteface";
+import { PersistanceBaseClass, ProductInterface, ProductQueryInterface } from "../interface/producto.inteface";
 import { Carrito, Producto } from "../models";
 
-export class MySqlProductoRepository  {
+export class MySqlProductoRepository implements PersistanceBaseClass {
   async createConnection() {
     const connection = await createPool({
       host: "localhost",
@@ -81,10 +81,10 @@ export class MySqlProductoRepository  {
 
   //Carritos
 
-  async findProductsOnCart(){
+  async findProductsOnCart():Promise<ProductInterface[]>{
     let conexion = await this.createConnection();
     let data = await conexion.query(`select p.* from carrito_productos cp,productos p where p.id = cp.id_producto`);
-    return data[0];
+    return <ProductInterface[]><unknown>data[0];
   }
 
   async findProductsOnCartById(id:number):Promise<ProductInterface>{

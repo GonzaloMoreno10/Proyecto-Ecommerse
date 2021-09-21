@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import {
   newProductInterface,
   ProductInterface,
-  ProductBaseClass,
+  PersistanceBaseClass,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
 import admin  from "firebase-admin";
 import { firebaseConfig } from "./firebase";
 
-export class FirebaseRepository  {
+export class FirebaseRepository implements PersistanceBaseClass {
   private db: any;
 
   constructor() {
@@ -18,6 +18,7 @@ export class FirebaseRepository  {
     let con = admin.firestore();
     this.db = con.collection('productos');
   }
+
 
   async findAll(){
       let res = await this.db.get();
@@ -30,12 +31,12 @@ export class FirebaseRepository  {
       return productos;
   }
 
-  async findById(id:string){
+  async findById(id:string):Promise<ProductInterface>{
     let res = await this.db.doc(id).get();
     
-    return ({
-        id:res.id,
-        data:res.data()
+    return <ProductInterface><unknown>({
+      id: res.id,
+      data: res.data()
     });
 }   
 
@@ -73,5 +74,18 @@ export class FirebaseRepository  {
       }))
       console.log(productos);
       return productos;
+  }
+
+  findProductsOnCart(): Promise<ProductInterface[]> {
+    throw new Error("Method not implemented.");
+  }
+  findProductsOnCartById(id: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
+  }
+  deleteProductsOnCart(id: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
+  }
+  addProductsToCart(idProducto: any): Promise<ProductInterface> {
+    throw new Error("Method not implemented.");
   }
 }
