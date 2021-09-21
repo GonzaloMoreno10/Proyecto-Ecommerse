@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Venv = void 0;
+var Venv;
+(function (Venv) {
+    Venv.PORT = process.env.PORT;
+    Venv.MYSQL_USER = process.env.MYSQL_USER;
+    Venv.MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
+    Venv.MYSQL_DBNAME = process.env.MYSQL_DBNAME;
+    Venv.MONGO_USER = process.env.MONGO_USER;
+    Venv.MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+    Venv.MONGO_DB = process.env.MONGO_DB;
+    Venv.MONGO_ATLAS_USER = process.env.MONGO_ATLAS_USER;
+    Venv.MONGO_ATLAS_PASSWORD = process.env.MONGO_ATLAS_PASSWORD;
+    Venv.MONGO_ATLAS_DB = process.env.MONGO_ATLAS_DB;
+    Venv.MONGO_ATLAS_CLUSTER = process.env.MONGO_ATLAS_CLUSTER;
+    Venv.FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+    Venv.FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
+    Venv.FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
+})(Venv = exports.Venv || (exports.Venv = {}));

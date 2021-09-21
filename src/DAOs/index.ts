@@ -1,2 +1,6 @@
 export * from './fs.repository'
 export * from './mySql.repository'
+export * from './firebase.respository'
+export * from './memory.repository';
+export * from './mongo.repository';
+export * from './sqlite.repository';

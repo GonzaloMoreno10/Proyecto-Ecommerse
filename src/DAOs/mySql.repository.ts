@@ -1,14 +1,15 @@
 import { createPool } from "mysql2/promise";
+import { Venv } from "../constantes/venv";
 import { PersistanceBaseClass, ProductInterface, ProductQueryInterface } from "../interface/producto.inteface";
-import { Carrito, Producto } from "../models";
+import { Producto } from "../models";
 
 export class MySqlProductoRepository implements PersistanceBaseClass {
   async createConnection() {
     const connection = await createPool({
       host: "localhost",
-      user: "root",
-      password: "root",
-      database: "ecommerce",
+      user: Venv.MYSQL_USER,
+      password: Venv.MYSQL_PASSWORD,
+      database: Venv.MYSQL_DBNAME,
     });
     return connection;
   }

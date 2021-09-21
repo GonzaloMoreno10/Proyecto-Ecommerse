@@ -1,9 +1,9 @@
 import Server from './services/server';
 import mainRouter from './routes/main.route'
-
+import { Venv } from './constantes/venv';
 //Inicializacion
 
-const puerto = process.env.PORT || 8080;
+const puerto = Venv.PORT;
 
 //Listen
 

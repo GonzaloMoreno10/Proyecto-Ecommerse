@@ -19,7 +19,7 @@ const productsSchema = new mongoose.Schema<ProductInterface>({
 });
 
 
-export class MongoProductsRepository implements PersistanceBaseClass {
+export class MongoRepository implements PersistanceBaseClass {
   private srv: string;
   private productos;
 

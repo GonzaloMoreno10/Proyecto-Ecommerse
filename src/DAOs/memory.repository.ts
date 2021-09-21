@@ -7,7 +7,7 @@ import {
 } from "../interface/producto.inteface";
 import { Producto } from "../models";
 
-export class ProdMemoriaRepository implements PersistanceBaseClass {
+export class MemoriaRepository implements PersistanceBaseClass {
   private productos: ProductInterface[] = [];
   private carrito:CarritoInterface;
   constructor() {
