@@ -73,40 +73,57 @@ class MySqlProductoRepository {
             }
         });
     }
+    query(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let conexion = yield this.createConnection();
+            let query = ' select * from productos where id > 0 ';
+            if (options.nombre)
+                query += ` and  nombre = '${options.nombre}' `;
+            if (options.codigo)
+                query += ` and  codigo = ${options.codigo} `;
+            if (options.minPrice)
+                query += ` and  precio > ${options.minPrice} `;
+            if (options.maxPrice)
+                query += ` and  precio < ${options.maxPrice}`;
+            if (options.minStock)
+                query += ` and  stock > ${options.minStock}`;
+            if (options.maxStock)
+                query += ` and  stock < ${options.maxStock}`;
+            console.log(query);
+            let data = yield conexion.query(query);
+            return data[0];
+        });
+    }
     //Carritos
-    findAllCarts() {
+    findProductsOnCart() {
         return __awaiter(this, void 0, void 0, function* () {
             let conexion = yield this.createConnection();
-            let data = yield conexion.query(`select * from carritos`);
+            let data = yield conexion.query(`select p.* from carrito_productos cp,productos p where p.id = cp.id_producto`);
             return data[0];
         });
     }
-    findCartsById(id) {
+    findProductsOnCartById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let conexion = yield this.createConnection();
-            let data = yield conexion.query(`select * from carritos where id = ${id}`);
+            let data = yield conexion.query(`select p.* from carrito_productos cp,productos p where p.id = cp.id_producto and p.id = ${id}`);
             return data[0];
         });
     }
-    updateCarts(id, carrito) {
+    addProductsToCart(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
             let conexion = yield this.createConnection();
-            let data = yield conexion.query(`update carrito set timestamp = ${carrito.timestamp} where id = ${id}`);
-            return data[0];
+            yield conexion.query(`insert into carrito_productos (id_carrito,id_producto) values(1,${idProducto})`);
+            return yield this.findById(idProducto);
         });
     }
-    createCarts(carrito) {
+    deleteProductsOnCart(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
             let conexion = yield this.createConnection();
-            let data = yield conexion.query(`insert into carritos (timestamp) values( ${carrito.timestamp})`);
-            return data[0];
-        });
-    }
-    deleteCarts(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let conexion = yield this.createConnection();
-            let data = yield conexion.query(`delete from carritos where id = ${id}`);
-            return data[0];
+            let prod = yield this.findById(idProducto);
+            if (prod) {
+                yield conexion.query(`delete from carrito_productos where id_carrito = 1 and id_producto = ${idProducto}`);
+            }
+            return prod;
         });
     }
 }

@@ -16,7 +16,7 @@ exports.FSRepositorio = exports.FileSystemRepository = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const carrito_model_1 = require("../models/carrito.model");
-let carritos_ds = path_1.default.join(__dirname, '../datasource/carritos.datasource.txt');
+let carritos_ds = path_1.default.join(__dirname, "../datasource/carritos.datasource.txt");
 let productos_ds = path_1.default.join(__dirname, "../datasource/productos.datasource.txt");
 class FileSystemRepository {
     //Productos
@@ -56,7 +56,6 @@ class FileSystemRepository {
             }
         });
     }
-    ;
     //Metodo utilizado para guardar un objeto producto
     create(producto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -150,17 +149,32 @@ class FileSystemRepository {
             }
         });
     }
+    query(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = [];
+            if (options.nombre)
+                query.push((aProduct) => aProduct.nombre == options.nombre);
+            if (options.codigo)
+                query.push((aProduct) => aProduct.codigo == options.codigo);
+            if (options.minStock && options.maxStock) {
+                query.push((aProduct) => aProduct.stock > options.minStock && aProduct.stock < options.maxStock);
+            }
+            if (options.minPrice && options.maxPrice)
+                query.push((aProduct) => aProduct.precio > options.minPrice && aProduct.precio < options.maxPrice);
+            return (yield this.findAll()).filter((aProduct) => query.every((x) => x(aProduct)));
+        });
+    }
     //Metodo para leer la info del archivo productos.txt
-    findAllProductsInCart() {
+    findProductsOnCart() {
         return __awaiter(this, void 0, void 0, function* () {
             let array = [];
             try {
                 let data = yield promises_1.default.readFile(carritos_ds, "utf-8");
                 array = data.split("\n");
-                let array2 = array.filter(data => data != "");
+                let array2 = array.filter((data) => data != "");
                 if (array2.length > 0) {
                     for (let i in array2) {
-                        let carrito = (JSON.parse(array2[i]));
+                        let carrito = JSON.parse(array2[i]);
                         return carrito.productos;
                     }
                 }
@@ -174,14 +188,13 @@ class FileSystemRepository {
             return [];
         });
     }
-    ;
     findCarrito() {
         return __awaiter(this, void 0, void 0, function* () {
-            let carrito = new carrito_model_1.Carrito(0, new Date, []);
+            let carrito = new carrito_model_1.Carrito(0, new Date(), []);
             try {
                 let data = yield promises_1.default.readFile(carritos_ds, "utf-8");
                 let array = data.split("\n");
-                let array2 = array.filter(data => data != "");
+                let array2 = array.filter((data) => data != "");
                 for (let i in array2) {
                     carrito = JSON.parse(array2[i]);
                 }
@@ -190,6 +203,101 @@ class FileSystemRepository {
                 console.log("Ocurrio un error " + err);
             }
             return carrito;
+        });
+    }
+    findProductsOnCartById(idProducto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let producto = yield this.findAll();
+                if (producto) {
+                    for (let i in producto) {
+                        if (producto[i].idCarrito == idProducto) {
+                            return producto[i];
+                        }
+                    }
+                }
+            }
+            catch (err) {
+                console.log("Ocurrio un error " + err);
+            }
+        });
+    }
+    generarIdCarrito() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = yield promises_1.default.readFile(carritos_ds, "utf-8");
+            let carrito = JSON.parse(data);
+            return carrito.productos.length;
+        });
+    }
+    ;
+    generarId(array) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return array.length;
+        });
+    }
+    generarCarrito(carrito) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield promises_1.default.appendFile(carritos_ds, "\n" + JSON.stringify(carrito));
+                return 1;
+            }
+            catch (err) {
+                console.log("Ocurrio un error " + err);
+            }
+        });
+    }
+    //Metodo utilizado para borrar el archivo
+    deleteProductsOnCart(idProducto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let carrito = yield this.findCarrito();
+                let producto = yield this.findById(idProducto);
+                let productos = yield this.findAll();
+                if (productos) {
+                    for (let i in productos) {
+                        if (productos[i].idCarrito == idProducto) {
+                            productos.splice(parseInt(i), 1);
+                            carrito.productos = productos;
+                            //carrito.carrito = prodCarr;
+                            yield promises_1.default.unlink(carritos_ds);
+                            yield promises_1.default.writeFile(carritos_ds, "");
+                            break;
+                        }
+                    }
+                    let data = yield this.generarCarrito(carrito);
+                    if (data == 1) {
+                        return producto;
+                    }
+                }
+            }
+            catch (err) {
+                throw err;
+            }
+        });
+    }
+    ;
+    addProductsToCart(producto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let actualizada = false;
+            try {
+                let carrito = yield this.findCarrito();
+                if (carrito) {
+                    let carrProds = carrito.productos;
+                    producto.idCarrito = yield this.generarIdCarrito();
+                    carrProds.push(producto);
+                    carrito.productos = carrProds;
+                    actualizada = true;
+                    if (actualizada) {
+                        yield promises_1.default.unlink(carritos_ds);
+                        yield promises_1.default.writeFile(carritos_ds, "");
+                        yield promises_1.default.appendFile(carritos_ds, "\n" + JSON.stringify(carrito));
+                        return producto;
+                    }
+                }
+            }
+            catch (err) {
+                throw err;
+            }
         });
     }
     ;

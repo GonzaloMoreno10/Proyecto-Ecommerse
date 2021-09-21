@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productsAPI = void 0;
+exports.api = void 0;
 const DAOs_factory_1 = require("../config/DAOs.factory");
 const persistencias_1 = require("../constantes/persistencias");
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
 const tipo = persistencias_1.tipoPersistencias.FIREBASE;
-class prodAPI {
+class Api {
     constructor() {
         this.productos = DAOs_factory_1.ProductFactoryDAO.get(tipo);
     }
@@ -70,4 +70,4 @@ class prodAPI {
         });
     }
 }
-exports.productsAPI = new prodAPI();
+exports.api = new Api();

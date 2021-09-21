@@ -14,46 +14,73 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseRepository = void 0;
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
-let serviceAccount = require("../config/firebase.json");
+const firebase_1 = require("./firebase");
 class FirebaseRepository {
-    constructor(local = false) {
+    constructor() {
         firebase_admin_1.default.initializeApp({
-            credential: firebase_admin_1.default.credential.cert(serviceAccount),
+            credential: firebase_admin_1.default.credential.cert(firebase_1.firebaseConfig),
         });
         let con = firebase_admin_1.default.firestore();
         this.db = con.collection('productos');
     }
-    //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-    /*async findAll(): Promise<ProductInterface[]> {
-       
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = yield this.db.get();
+            let docs = res.docs;
+            const productos = docs.map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            }));
+            console.log(productos);
+            return productos;
+        });
     }
-  
-    async findById(id: string): Promise<ProductInterface | undefined> {
-      try {
-       
-      } catch (err) {
-        
-      }
-    }*/
+    findById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = yield this.db.doc(id).get();
+            return ({
+                id: res.id,
+                data: res.data()
+            });
+        });
+    }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const doc = this.db.doc();
-                return yield doc.create(data);
+                const productDocument = this.db.doc();
+                return yield productDocument.create(data);
             }
             catch (err) {
                 console.log(err);
             }
         });
     }
-    /*async update(
-      id: string,
-      newProductData: newProductInterface
-    ): Promise<ProductInterface> {
-      
-    }*/
+    update(id, newProductData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.db.doc(id).update(newProductData);
+            return this.findById(id);
+        });
+    }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            return yield this.db.doc(id).delete();
+        });
+    }
+    query(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query = {};
+            if (options.nombre)
+                query.nombre = options.nombre;
+            if (options.codigo)
+                query.codigo = options.codigo;
+            let res = yield this.db.get(query);
+            let docs = res.docs;
+            const productos = docs.map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            }));
+            console.log(productos);
+            return productos;
         });
     }
 }

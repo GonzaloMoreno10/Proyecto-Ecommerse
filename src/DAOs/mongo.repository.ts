@@ -1,59 +1,79 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import {
   newProductInterface,
   ProductInterface,
-  ProductBaseClass
-} from '../interface/producto.inteface';
-import {Venv} from '../constantes/venv';
+  ProductBaseClass,
+  ProductQueryInterface,
+} from "../interface/producto.inteface";
+import { Venv } from "../constantes/venv";
+import { CarritoInterface } from "../interface/carrito.interface";
+import { Producto } from "../models";
 
 const productsSchema = new mongoose.Schema<ProductInterface>({
+  nombre: String,
+  precio: Number,
+  stock: Number,
+  codigo: Number,
+  foto: String,
+  descripcion: String,
+});
+
+const carritoSchema = new mongoose.Schema<CarritoInterface>({
+  timestamp: Date,
+  productos: [{
     nombre: String,
     precio: Number,
     stock: Number,
     codigo: Number,
     foto: String,
     descripcion: String,
+  }],
 });
 
 export class MongoProductsRepository implements ProductBaseClass {
   private srv: string;
   private productos;
+  private carrito;
 
   constructor(local: boolean = false) {
-    if (local)
-      this.srv = `mongodb://localhost:27017/${Venv.MONGO_DB}`;
+    if (local) this.srv = `mongodb://localhost:27017/${Venv.MONGO_DB}`;
     else
       this.srv = `mongodb+srv://${Venv.MONGO_ATLAS_USER}:${Venv.MONGO_ATLAS_PASSWORD}@${Venv.MONGO_ATLAS_CLUSTER}/${Venv.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
-      mongoose.connect(this.srv);
-      console.log('Se conecto a atlas')
-    this.productos = mongoose.model<ProductInterface>('producto', productsSchema);
+    mongoose.connect(this.srv);
+    console.log("Se conecto a atlas");
+    this.productos = mongoose.model<ProductInterface>(
+      "producto",
+      productsSchema
+    );
+    this.carrito = mongoose.model<CarritoInterface>(
+      "carrito",
+      carritoSchema
+    );
   }
 
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
   async findAll(): Promise<ProductInterface[]> {
     let output: ProductInterface[] = [];
     try {
-        output = await this.productos.find();
+      output = await this.productos.find();
       return output;
     } catch (err) {
       return output;
     }
   }
 
-  async findById(id:string):Promise<ProductInterface|undefined>{
-      try{
-        console.log(id.toString());
-        let productos = await this.productos.findById(id.toString())
-        console.log(productos);
-        return productos;
-      }
-      catch(err){
-        console.log(err);
-      }
+  async findById(id: string): Promise<ProductInterface | undefined> {
+    try {
+      let productos = await this.productos.findById(id.toString());
+      console.log(productos);
+      return productos;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async create(data: newProductInterface): Promise<ProductInterface> {
-    if (!data.nombre || !data.precio) throw new Error('invalid data');
+    if (!data.nombre || !data.precio) throw new Error("invalid data");
 
     const newProduct = new this.productos(data);
     await newProduct.save();
@@ -61,7 +81,10 @@ export class MongoProductsRepository implements ProductBaseClass {
     return newProduct;
   }
 
-  async update(id: string, newProductData: newProductInterface): Promise<ProductInterface> {
+  async update(
+    id: string,
+    newProductData: newProductInterface
+  ): Promise<ProductInterface> {
     return this.productos.findByIdAndUpdate(id, newProductData);
   }
 
@@ -69,13 +92,43 @@ export class MongoProductsRepository implements ProductBaseClass {
     await this.productos.findByIdAndDelete(id.toString());
   }
 
-  /*async query(options: ProductQuery): Promise<ProductInterface[]> {
-    let query: ProductQuery = {};
+  async query(options: ProductQueryInterface): Promise<ProductInterface[]> {
+    let query: ProductQueryInterface = {};
+
+    console.log("Entre a query");
+    console.log(options.nombre);
 
     if (options.nombre) query.nombre = options.nombre;
 
-    if (options.precio) query.precio = options.precio;
+    if (options.minPrice && options.maxPrice)
+      query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
+
+    if (options.minStock && options.maxStock)
+      query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
+
+    if (options.codigo) query.codigo = options.codigo;
+
+    console.log(query);
 
     return this.productos.find(query);
-  }*/
+  }
+
+
+  async addProductsToCart(idProducto: any){
+    let producto = await this.findById(idProducto.toString());
+    if(producto){
+      const newCarrito = new this.carrito(producto);
+      await newCarrito.save();
+
+      return newCarrito;
+    }
+  }
+
+  async findProductsOnCartById(){
+    return [];
+  }
+
+  async findProductsOnCart(){
+    return [];
+  }
 }

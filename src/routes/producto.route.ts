@@ -14,4 +14,6 @@ router.post("/crear",asyncHandler(productoController.agregar));
 
 router.delete("/eliminar/:id",asyncHandler(productoController.borrar));
 
+router.get("/vista",asyncHandler(productoController.vista));
+
 export default router;

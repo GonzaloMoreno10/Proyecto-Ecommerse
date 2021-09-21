@@ -12,4 +12,5 @@ router.get("/listar/:id", express_async_handler_1.default(controllers_1.producto
 router.put("/actualizar/:id", express_async_handler_1.default(controllers_1.productoController.actualizar));
 router.post("/crear", express_async_handler_1.default(controllers_1.productoController.agregar));
 router.delete("/eliminar/:id", express_async_handler_1.default(controllers_1.productoController.borrar));
+router.get("/vista", express_async_handler_1.default(controllers_1.productoController.vista));
 exports.default = router;

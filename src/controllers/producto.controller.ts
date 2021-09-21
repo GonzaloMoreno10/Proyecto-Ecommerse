@@ -1,14 +1,14 @@
 import { Producto } from "../models";
 import { FSRepositorio } from "../DAOs/fs.repository";
 import { Request, Response } from "express";
-import { productsAPI } from "../apis/productosApi";
-import { newProductInterface } from "../interface/producto.inteface";
+import { api } from "../apis/api";
+import { newProductInterface, ProductQueryInterface } from "../interface/producto.inteface";
 
 export class ProductoController {
   async getById(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      let data = await productsAPI.getProducts(id);
+      let data = await api.getProducts(id);
       if (data) {
         res.status(200).json({ producto: data });
       } else {
@@ -21,7 +21,7 @@ export class ProductoController {
 
   async get(req: Request, res: Response) {
     try {
-      let data = await productsAPI.getProducts();
+      let data = await api.getProducts();
       if (data) {
         if (data.length > 0) {
           res.status(200).json({ producto: data });
@@ -45,7 +45,7 @@ export class ProductoController {
         precio,
         stock,
       };
-      let result = await productsAPI.addProduct(producto);
+      let result = await api.addProduct(producto);
       if (result) {
         res.status(200).json({ data: "Producto guardado" });
       } else {
@@ -70,7 +70,7 @@ export class ProductoController {
       };
 
       if (producto) {
-        let data = await productsAPI.updateProduct(id, producto);
+        let data = await api.updateProduct(id, producto);
         if (data) {
           res.status(200).json({ producto: "Producto Actualizado", data });
         } else {
@@ -84,10 +84,17 @@ export class ProductoController {
     }
   }
 
+  async vista(req:Request,res:Response){
+     let{minPrice,maxPrice,minStock,maxStock,nombre,codigo} = req.body;
+     let options:ProductQueryInterface = {minPrice,maxPrice,minStock,maxStock,nombre,codigo}
+     let productos = await api.query(options)
+     res.json(productos)
+  }
+
   async borrar(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      await productsAPI.deleteProduct(id);
+      await api.deleteProduct(id);
       res.json({
         msg: "producto borrado",
       });

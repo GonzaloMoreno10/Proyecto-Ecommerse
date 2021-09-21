@@ -1,16 +1,14 @@
 export class Producto {
   id: number;
-  timestamp: Date;
   nombre: string;
   descripcion: string;
   codigo: number;
   foto: string;
   precio: number;
   stock: number;
-  idCarrito:number | undefined
+  idCarrito?:number | undefined
 
   constructor(
-    timestamp: Date,
     nombre: string,
     descripcion: string,
     codigo: number,
@@ -22,7 +20,6 @@ export class Producto {
     
   ) {
     this.id = id;
-    this.timestamp = timestamp;
     this.nombre = nombre;
     this.descripcion = descripcion;
     this.codigo = codigo;

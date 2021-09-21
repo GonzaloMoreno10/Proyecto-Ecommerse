@@ -14,12 +14,17 @@ export interface ProductInterface {
   codigo:number;
   foto:string;
   precio: number;
-  stock:number
+  stock:number;
+  idCarrito?:number;
 }
 
 export interface ProductQueryInterface {
   nombre?: string;
-  precio?: number;
+  codigo?:number;
+  minStock?:number;
+  maxStock?:number;
+  minPrice?:number;
+  maxPrice?:number;
 }
 
 export interface ProductBaseClass {
@@ -28,5 +33,5 @@ export interface ProductBaseClass {
   create(data: newProductInterface): Promise<ProductInterface>;
   update(id: any, newProductData: ProductInterface): Promise<ProductInterface>;
   delete(id: any): Promise<void>;
-  //query(options: ProductQueryInterface): Promise<ProductInteface[]>;
+  query(options: ProductQueryInterface): Promise<ProductInterface[]>;
 }

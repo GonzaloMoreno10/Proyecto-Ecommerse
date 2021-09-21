@@ -47,5 +47,49 @@ class SqliteRepository {
             return this.sqliteDB('productos').where('id', '=', id).del();
         });
     }
+    query(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query = `this.sqliteDB('productos').where('id','>','0')`;
+            if (options.nombre)
+                query += `.andWhere('nombre','=','${options.nombre}')`;
+            if (options.codigo)
+                query += `.andWhere('codigo',${options.codigo})`;
+            if (options.minPrice)
+                query += `.andWhere('precio','>',${options.minPrice})`;
+            if (options.maxPrice)
+                query += `.andWhere('precio','<',${options.maxPrice})`;
+            if (options.minStock)
+                query += `.andWhere('stock','>',${options.minStock})`;
+            if (options.minStock)
+                query += `.andWhere('stock','<',${options.maxStock})`;
+            console.log(query);
+            return yield eval(query);
+        });
+    }
+    findProductsOnCart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.sqliteDB({ a: 'carritos_productos', b: 'productos' }).select({ id: 'b.id', nombre: 'b.nombre', descripcion: 'b.descripcion',
+                precio: 'b.precio', stock: 'b.stock', foto: 'b.foto', codigo: 'b.codigo' }).whereRaw('?? = ??', ['a.id_producto', 'b.id']);
+        });
+    }
+    findProductsOnCartById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(id);
+            return this.sqliteDB({ a: 'carritos_productos', b: 'productos' }).select({ id: 'b.id', nombre: 'b.nombre', descripcion: 'b.descripcion',
+                precio: 'b.precio', stock: 'b.stock', foto: 'b.foto', codigo: 'b.codigo' }).whereRaw('?? = ??', ['a.id_producto', 'b.id']).andWhere('b.id', '=', id);
+        });
+    }
+    addProductsToCart(idProducto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sqliteDB('carritos_productos').insert({ id_carrito: 1, id_producto: idProducto });
+            return yield this.findById(idProducto);
+        });
+    }
+    deleteProductsOnCart(idProducto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sqliteDB('carritos_productos').where('id_producto', '=', idProducto).andWhere('id_carrito', '=', 1).del();
+            return this.findById(idProducto);
+        });
+    }
 }
 exports.SqliteRepository = SqliteRepository;

@@ -3,63 +3,75 @@ import {
   newProductInterface,
   ProductInterface,
   ProductBaseClass,
+  ProductQueryInterface,
 } from "../interface/producto.inteface";
 import admin  from "firebase-admin";
-let serviceAccount = require("../config/firebase.json");
+import { firebaseConfig } from "./firebase";
 
 export class FirebaseRepository  {
-  private db: { doc: () => any; };
-  private productos: any;
+  private db: any;
 
-  constructor(local: boolean = false) {
+  constructor() {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(firebaseConfig),
     });
     let con = admin.firestore();
-    this.db = con.collection('productos')
+    this.db = con.collection('productos');
   }
 
-  //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-  /*async findAll(): Promise<ProductInterface[]> {
-     
+  async findAll(){
+      let res = await this.db.get();
+      let docs = res.docs;
+      const productos = docs.map(doc=>({
+          id:doc.id,
+          data:doc.data()
+      }))
+      console.log(productos);
+      return productos;
   }
 
-  async findById(id: string): Promise<ProductInterface | undefined> {
-    try {
-     
-    } catch (err) {
-      
-    }
-  }*/
+  async findById(id:string){
+    let res = await this.db.doc(id).get();
+    
+    return ({
+        id:res.id,
+        data:res.data()
+    });
+}   
 
   async create(data: newProductInterface): Promise<ProductInterface> {
     try{
-        const doc = this.db.doc();
-        return await doc.create(data)
+        const productDocument = this.db.doc();
+        return await productDocument.create(data)
     }
     catch(err){
         console.log(err);
     }
   }
 
-  /*async update(
-    id: string,
-    newProductData: newProductInterface
-  ): Promise<ProductInterface> {
-    
-  }*/
-
-  async delete(id: string) {
-    
+  async update(id: string, newProductData: newProductInterface) {
+    await this.db.doc(id).update(newProductData);
+    return this.findById(id);
   }
 
-  /*async query(options: ProductQuery): Promise<ProductInterface[]> {
-    let query: ProductQuery = {};
+  async delete(id: string) {
+     return await this.db.doc(id).delete();
+  }
+
+  async query(options: ProductQueryInterface): Promise<ProductInterface[]> {
+    let query: ProductQueryInterface = {};
 
     if (options.nombre) query.nombre = options.nombre;
 
-    if (options.precio) query.precio = options.precio;
+    if (options.codigo) query.codigo = options.codigo;
 
-    return this.productos.find(query);
-  }*/
+    let res = await this.db.get(query);
+      let docs = res.docs;
+      const productos = docs.map(doc=>({
+          id:doc.id,
+          data:doc.data()
+      }))
+      console.log(productos);
+      return productos;
+  }
 }

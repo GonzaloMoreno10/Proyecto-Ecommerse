@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productoController = exports.ProductoController = void 0;
-const productosApi_1 = require("../apis/productosApi");
+const api_1 = require("../apis/api");
 class ProductoController {
     getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = req.params.id;
-                let data = yield productosApi_1.productsAPI.getProducts(id);
+                let data = yield api_1.api.getProducts(id);
                 if (data) {
                     res.status(200).json({ producto: data });
                 }
@@ -32,7 +32,7 @@ class ProductoController {
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let data = yield productosApi_1.productsAPI.getProducts();
+                let data = yield api_1.api.getProducts();
                 if (data) {
                     if (data.length > 0) {
                         res.status(200).json({ producto: data });
@@ -59,7 +59,7 @@ class ProductoController {
                     precio,
                     stock,
                 };
-                let result = yield productosApi_1.productsAPI.addProduct(producto);
+                let result = yield api_1.api.addProduct(producto);
                 if (result) {
                     res.status(200).json({ data: "Producto guardado" });
                 }
@@ -86,7 +86,7 @@ class ProductoController {
                     stock,
                 };
                 if (producto) {
-                    let data = yield productosApi_1.productsAPI.updateProduct(id, producto);
+                    let data = yield api_1.api.updateProduct(id, producto);
                     if (data) {
                         res.status(200).json({ producto: "Producto Actualizado", data });
                     }
@@ -103,11 +103,19 @@ class ProductoController {
             }
         });
     }
+    vista(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { minPrice, maxPrice, minStock, maxStock, nombre, codigo } = req.body;
+            let options = { minPrice, maxPrice, minStock, maxStock, nombre, codigo };
+            let productos = yield api_1.api.query(options);
+            res.json(productos);
+        });
+    }
     borrar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = req.params.id;
-                yield productosApi_1.productsAPI.deleteProduct(id);
+                yield api_1.api.deleteProduct(id);
                 res.json({
                     msg: "producto borrado",
                 });

@@ -1,8 +1,8 @@
 import { createPool } from "mysql2/promise";
-import { ProductBaseClass, ProductInterface } from "../interface/producto.inteface";
+import { ProductBaseClass, ProductInterface, ProductQueryInterface } from "../interface/producto.inteface";
 import { Carrito, Producto } from "../models";
 
-export class MySqlProductoRepository implements ProductBaseClass {
+export class MySqlProductoRepository  {
   async createConnection() {
     const connection = await createPool({
       host: "localhost",
@@ -63,37 +63,55 @@ export class MySqlProductoRepository implements ProductBaseClass {
     
   }
 
+  async query(options:ProductQueryInterface):Promise<ProductInterface[]>{
+    let conexion = await this.createConnection();
+    let query = ' select * from productos where id > 0 ';
+    if(options.nombre) query += ` and  nombre = '${options.nombre}' `
+    if(options.codigo) query += ` and  codigo = ${options.codigo} `
+    if(options.minPrice) query += ` and  precio > ${options.minPrice} `
+    if(options.maxPrice) query += ` and  precio < ${options.maxPrice}`
+    if(options.minStock) query += ` and  stock > ${options.minStock}`
+    if(options.maxStock) query += ` and  stock < ${options.maxStock}`
+    console.log(query);
+    let data = await conexion.query(query);
+    return <ProductInterface[]>data[0]
+    
+  }
+
 
   //Carritos
-  async findAllCarts(){
+
+  async findProductsOnCart(){
     let conexion = await this.createConnection();
-    let data = await conexion.query(`select * from carritos`);
+    let data = await conexion.query(`select p.* from carrito_productos cp,productos p where p.id = cp.id_producto`);
     return data[0];
   }
 
-  async findCartsById(id:number){
+  async findProductsOnCartById(id:number):Promise<ProductInterface>{
     let conexion = await this.createConnection();
-    let data = await conexion.query(`select * from carritos where id = ${id}`);
-    return data[0];
+    let data = await conexion.query(`select p.* from carrito_productos cp,productos p where p.id = cp.id_producto and p.id = ${id}`);
+    return <ProductInterface><unknown>data[0];
   }
 
-  async updateCarts(id:number,carrito:Carrito){
+
+  async addProductsToCart(idProducto:number){
     let conexion = await this.createConnection();
-    let data = await conexion.query(`update carrito set timestamp = ${carrito.timestamp} where id = ${id}`)
-    return data[0];
+     await conexion.query(`insert into carrito_productos (id_carrito,id_producto) values(1,${idProducto})`);
+    return await this.findById(idProducto);
   }
 
-  async createCarts(carrito:Carrito){
+  async deleteProductsOnCart(idProducto:number){
     let conexion = await this.createConnection();
-    let data = await conexion.query(`insert into carritos (timestamp) values( ${carrito.timestamp})`)
-    return data[0];
+    let prod = await this.findById(idProducto);
+    if(prod){
+      await conexion.query(`delete from carrito_productos where id_carrito = 1 and id_producto = ${idProducto}`);
+    }
+    
+    return prod;
   }
 
-  async deleteCarts(id:number){
-    let conexion = await this.createConnection();
-    let data = await conexion.query(`delete from carritos where id = ${id}`);
-    return data[0];
-  }
+
+
 }
 
 

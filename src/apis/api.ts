@@ -1,4 +1,4 @@
-import { newProductInterface, ProductInterface } from '../interface/producto.inteface';
+import { newProductInterface, ProductInterface, ProductQueryInterface } from '../interface/producto.inteface';
 import { ProductFactoryDAO } from '../config/DAOs.factory';
 import { tipoPersistencias } from '../constantes/persistencias';
 
@@ -7,8 +7,9 @@ import { tipoPersistencias } from '../constantes/persistencias';
  */
 const tipo = tipoPersistencias.FIREBASE;
 
-class prodAPI {
+class Api {
   private productos;
+  private carrito: any;
 
   constructor() {
     this.productos = ProductFactoryDAO.get(tipo);
@@ -36,9 +37,24 @@ class prodAPI {
     await this.productos.delete(id);
   }
 
-  /*async query(options: ProductQuery) {
+  async query(options: ProductQueryInterface) {
     return await this.productos.query(options);
-  }*/
+  }
+
+  async find(id?: any) {
+    if (id) {
+      return this.carrito.findProductsOnCartById(id);
+    }
+    return this.carrito.findProductsOnCart();
+  }
+
+  async add(idProducto: any) {
+    return this.carrito.addProductsToCart(idProducto);
+  }
+
+  async delete(idProducto: any) {
+    return this.carrito.deleteProductsOnCart(idProducto);
+  }
 }
 
-export const productsAPI = new prodAPI();
+export const api = new Api();

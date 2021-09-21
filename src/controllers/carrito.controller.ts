@@ -1,23 +1,25 @@
-/*import express from "express";
+import express from "express";
 import { Producto } from "../models/producto.model";
-import {FScarritoRepositorio,FSproductoRepository} from "../repositorios";
+import {MySqlProductoRepository} from "../DAOs/mySql.repository";
 import { NextFunction,Request,Response } from "express";
 import{check} from '../middlewares/check';
 const Router = express.Router();
+import {api} from '../apis/api'
 
 class CarritoController{
   async findById(req:Request,res:Response){
     try {
+      console.log('entre al controlador de carrito')
       if (req.params.idProducto) {
         let idProducto: number = parseInt(req.params.idProducto);
-        let data = await FScarritoRepositorio.findById(idProducto);
+        let data = await api.find(idProducto);
         if (data) {
           res.status(200).json({ data: data });
         } else {
           res.status(400).json({ data: "No se encontro el producto" });
         }
       } else {
-        let productos = await FScarritoRepositorio.findAll();
+        let productos = await api.find();
         if (productos) {
           res.status(200).json({ producto: productos});
         } else {
@@ -32,9 +34,9 @@ class CarritoController{
   async agregar(req:Request,res:Response){
     try {
       let idProd: number = parseInt(req.params.idProd);
-      let prod: Producto | undefined = await FSproductoRepository.findById(idProd);
-      if (prod) {
-        let data = await FScarritoRepositorio.create(prod);
+      //let prod = await carritoRepo.findProductsOnCartById(idProd);
+      if (idProd) {
+        let data = await api.add(idProd);
         if (data) {
           res.status(200).json({ data: data });
         } else {
@@ -51,7 +53,7 @@ class CarritoController{
   async delete(req:Request,res:Response){
     let idProducto: number = parseInt(req.params.idProducto);
   try {
-    let data = await FScarritoRepositorio.delete(idProducto);
+    let data = await api.delete(idProducto);
     if (data) {
       res.status(200).json({ data: data });
     } else {
@@ -65,4 +67,3 @@ class CarritoController{
 
 
 export const carritoController = new CarritoController();
-*/
