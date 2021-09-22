@@ -15,58 +15,58 @@ const persistencias_1 = require("../constantes/persistencias");
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = persistencias_1.tipoPersistencias.FIREBASE;
+const tipo = persistencias_1.tipoPersistencias.MYSQL_LOCAL;
 class Api {
     constructor() {
-        this.productos = DAOs_factory_1.ProductFactoryDAO.get(tipo);
+        this.persistance = DAOs_factory_1.ProductFactoryDAO.get(tipo);
     }
     getProducts(id = undefined) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id) {
-                return this.productos.findById(id);
+                return this.persistance.findById(id);
             }
-            return this.productos.findAll();
+            return this.persistance.findAll();
         });
     }
     addProduct(productData) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(productData);
-            const newProduct = yield this.productos.create(productData);
+            const newProduct = yield this.persistance.create(productData);
             return newProduct;
         });
     }
     updateProduct(id, productData) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.productos.update(id, productData);
+            yield this.persistance.update(id, productData);
             return productData;
         });
     }
     deleteProduct(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.productos.delete(id);
+            yield this.persistance.delete(id);
         });
     }
     query(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.productos.query(options);
+            return yield this.persistance.query(options);
         });
     }
     find(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id) {
-                return this.carrito.findProductsOnCartById(id);
+                return this.persistance.findProductsOnCartById(id);
             }
-            return this.carrito.findProductsOnCart();
+            return this.persistance.findProductsOnCart();
         });
     }
     add(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.carrito.addProductsToCart(idProducto);
+            return this.persistance.addProductsToCart(idProducto);
         });
     }
     delete(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.carrito.deleteProductsOnCart(idProducto);
+            return this.persistance.deleteProductsOnCart(idProducto);
         });
     }
 }

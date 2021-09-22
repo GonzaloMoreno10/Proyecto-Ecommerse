@@ -11,7 +11,7 @@ class CarritoController{
     try {
       console.log('entre al controlador de carrito')
       if (req.params.idProducto) {
-        let idProducto: number = parseInt(req.params.idProducto);
+        let idProducto = req.params.idProducto;
         let data = await api.find(idProducto);
         if (data) {
           res.status(200).json({ data: data });
@@ -33,7 +33,7 @@ class CarritoController{
 
   async agregar(req:Request,res:Response){
     try {
-      let idProd: number = parseInt(req.params.idProd);
+      let idProd = req.params.idProd;
       //let prod = await carritoRepo.findProductsOnCartById(idProd);
       if (idProd) {
         let data = await api.add(idProd);
@@ -51,7 +51,7 @@ class CarritoController{
   }
 
   async delete(req:Request,res:Response){
-    let idProducto: number = parseInt(req.params.idProducto);
+    let idProducto = req.params.idProducto;
   try {
     let data = await api.delete(idProducto);
     if (data) {

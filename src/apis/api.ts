@@ -5,55 +5,54 @@ import { tipoPersistencias } from '../constantes/persistencias';
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = tipoPersistencias.FIREBASE;
+const tipo = tipoPersistencias.MYSQL_LOCAL;
 
 class Api {
-  private productos;
-  private carrito: any;
+  private persistance;
 
   constructor() {
-    this.productos = ProductFactoryDAO.get(tipo);
+    this.persistance = ProductFactoryDAO.get(tipo);
   }
 
   async getProducts(id: any | undefined = undefined): Promise<ProductInterface[]> {
     if (id){
-        return this.productos.findById(id);
+        return this.persistance.findById(id);
     }
-    return this.productos.findAll();
+    return this.persistance.findAll();
   }
 
   async addProduct(productData: newProductInterface): Promise<ProductInterface> {
       console.log(productData)
-    const newProduct = await this.productos.create(productData)
+    const newProduct = await this.persistance.create(productData)
     return newProduct;
   }
 
   async updateProduct(id: any, productData: newProductInterface) {
-    await this.productos.update(id,productData);
+    await this.persistance.update(id,productData);
     return productData;
   }
 
   async deleteProduct(id: any) {
-    await this.productos.delete(id);
+    await this.persistance.delete(id);
   }
 
   async query(options: ProductQueryInterface) {
-    return await this.productos.query(options);
+    return await this.persistance.query(options);
   }
 
   async find(id?: any) {
     if (id) {
-      return this.carrito.findProductsOnCartById(id);
+      return this.persistance.findProductsOnCartById(id);
     }
-    return this.carrito.findProductsOnCart();
+    return this.persistance.findProductsOnCart();
   }
 
   async add(idProducto: any) {
-    return this.carrito.addProductsToCart(idProducto);
+    return this.persistance.addProductsToCart(idProducto);
   }
 
   async delete(idProducto: any) {
-    return this.carrito.deleteProductsOnCart(idProducto);
+    return this.persistance.deleteProductsOnCart(idProducto);
   }
 }
 

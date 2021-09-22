@@ -1,6 +1,6 @@
-import Server from './services/server';
-import mainRouter from './routes/main.route'
-import { Venv } from './constantes/venv';
+import Server from './src/services/server';
+import mainRouter from './src/routes/main.route'
+import { Venv } from './src/constantes/venv';
 //Inicializacion
 
 const puerto = Venv.PORT;

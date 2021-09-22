@@ -1,2 +1,0 @@
-
-{"id":1,"timestamp":"2021-09-15T20:00:09.898Z","nombre":"Television","descripcion":"Nada eso","codigo":321,"foto":"foto","precio":150,"stock":10}

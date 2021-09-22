@@ -23,6 +23,19 @@ const productsSchema = new mongoose_1.default.Schema({
     foto: String,
     descripcion: String,
 });
+const carritosSchema = new mongoose_1.default.Schema({
+    timestamp: Date,
+    productos: [
+        {
+            nombre: String,
+            precio: Number,
+            stock: Number,
+            codigo: Number,
+            foto: String,
+            descripcion: String,
+        },
+    ],
+});
 class MongoRepository {
     constructor(local = false) {
         if (local)
@@ -30,8 +43,9 @@ class MongoRepository {
         else
             this.srv = `mongodb+srv://${venv_1.Venv.MONGO_ATLAS_USER}:${venv_1.Venv.MONGO_ATLAS_PASSWORD}@${venv_1.Venv.MONGO_ATLAS_CLUSTER}/${venv_1.Venv.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
         mongoose_1.default.connect(this.srv);
-        console.log("Se conecto a atlas");
-        this.productos = mongoose_1.default.model("producto", productsSchema);
+        //console.log("Se conecto a atlas");
+        this.productos = mongoose_1.default.model("productos", productsSchema);
+        this.carritos = mongoose_1.default.model("carritos", carritosSchema);
     }
     //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
     findAll() {
@@ -95,16 +109,51 @@ class MongoRepository {
         });
     }
     findProductsOnCart() {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.carritos.find();
+            return carrito[0].productos;
+        });
     }
     findProductsOnCartById(id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.carritos.find();
+            let productos = carrito[0].productos;
+            console.log(productos);
+            for (let i in productos) {
+                if (productos[i] !== null) {
+                    if (productos[i]._id.equals(id)) {
+                        return productos[i];
+                    }
+                }
+            }
+        });
     }
     deleteProductsOnCart(id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.carritos.find();
+            let cart = carrito[0];
+            let productos = cart.productos;
+            for (let i = 0; i < productos.length; i++) {
+                if (productos[i] !== null) {
+                    if (productos[i]._id.equals(id)) {
+                        let prodFilt = productos.splice(i, 1);
+                        cart.productos = prodFilt;
+                    }
+                }
+            }
+            return yield this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0]);
+        });
     }
     addProductsToCart(idProducto) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.carritos.find();
+            let producto = yield this.findById(idProducto);
+            let productos = carrito[0].productos;
+            productos.push(producto);
+            console.log(productos);
+            carrito[0].productos = productos;
+            return yield this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0]);
+        });
     }
 }
 exports.MongoRepository = MongoRepository;

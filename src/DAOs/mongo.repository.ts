@@ -7,7 +7,7 @@ import {
 } from "../interface/producto.inteface";
 import { Venv } from "../constantes/venv";
 import { CarritoInterface } from "../interface/carrito.interface";
-import { Producto } from "../models";
+import { Carrito, Producto } from "../models";
 
 const productsSchema = new mongoose.Schema<ProductInterface>({
   nombre: String,
@@ -18,22 +18,39 @@ const productsSchema = new mongoose.Schema<ProductInterface>({
   descripcion: String,
 });
 
+const carritosSchema = new mongoose.Schema<CarritoInterface>({
+  timestamp: Date,
+  productos: [
+    {
+      nombre: String,
+      precio: Number,
+      stock: Number,
+      codigo: Number,
+      foto: String,
+      descripcion: String,
+    },
+  ],
+});
 
 export class MongoRepository implements PersistanceBaseClass {
   private srv: string;
   private productos;
+  private carritos;
 
   constructor(local: boolean = false) {
     if (local) this.srv = `mongodb://localhost:27017/${Venv.MONGO_DB}`;
     else
       this.srv = `mongodb+srv://${Venv.MONGO_ATLAS_USER}:${Venv.MONGO_ATLAS_PASSWORD}@${Venv.MONGO_ATLAS_CLUSTER}/${Venv.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
     mongoose.connect(this.srv);
-    console.log("Se conecto a atlas");
+    //console.log("Se conecto a atlas");
     this.productos = mongoose.model<ProductInterface>(
-      "producto",
+      "productos",
       productsSchema
     );
-    
+    this.carritos = mongoose.model<CarritoInterface>(
+      "carritos",
+      carritosSchema
+    );
   }
 
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
@@ -98,18 +115,46 @@ export class MongoRepository implements PersistanceBaseClass {
     return this.productos.find(query);
   }
 
+  async findProductsOnCart(): Promise<ProductInterface[]> {
+    let carrito = await this.carritos.find();
+    return carrito[0].productos;
+  }
+  async findProductsOnCartById(id: any): Promise<ProductInterface> {
+    let carrito = await this.carritos.find();
+    let productos = carrito[0].productos;
+    console.log(productos);
+    for(let i in productos){
+      if(productos[i] !== null){
+        if(productos[i]._id.equals(id)){
+           return productos[i];
+        }
+      }
+    }
+  }
+  async deleteProductsOnCart(id: any): Promise<ProductInterface> {
+    let carrito = await this.carritos.find();
+     
+    let cart = carrito[0];
+    let productos = cart.productos;
+    for(let i= 0 ; i < productos.length;i++){
+      if(productos[i] !== null){
+        if(productos[i]._id.equals(id)){
+           let prodFilt = productos.splice(i,1);
+           cart.productos = prodFilt;
+        }
+      }
+    }
+    return await this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0])
 
-  findProductsOnCart(): Promise<ProductInterface[]> {
-    throw new Error("Method not implemented.");
   }
-  findProductsOnCartById(id: any): Promise<ProductInterface> {
-    throw new Error("Method not implemented.");
+  async addProductsToCart(idProducto: any): Promise<ProductInterface> {
+    let carrito = await this.carritos.find();
+    let producto = await this.findById(idProducto);
+    let productos = carrito[0].productos;
+    productos.push(producto);
+    console.log(productos)
+    carrito[0].productos = productos;
+    return await this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0])
+    
   }
-  deleteProductsOnCart(id: any): Promise<ProductInterface> {
-    throw new Error("Method not implemented.");
-  }
-  addProductsToCart(idProducto: any): Promise<ProductInterface> {
-    throw new Error("Method not implemented.");
-  }
-
 }
