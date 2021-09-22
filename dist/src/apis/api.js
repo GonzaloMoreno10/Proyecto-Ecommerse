@@ -15,7 +15,7 @@ const persistencias_1 = require("../constantes/persistencias");
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = persistencias_1.tipoPersistencias.MYSQL_LOCAL;
+const tipo = persistencias_1.tipoPersistencias.FIREBASE;
 class Api {
     constructor() {
         this.persistance = DAOs_factory_1.ProductFactoryDAO.get(tipo);

@@ -5,7 +5,7 @@ import { tipoPersistencias } from '../constantes/persistencias';
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = tipoPersistencias.MYSQL_LOCAL;
+const tipo = tipoPersistencias.FIREBASE;
 
 class Api {
   private persistance;

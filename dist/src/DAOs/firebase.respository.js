@@ -21,33 +21,34 @@ class FirebaseRepository {
             credential: firebase_admin_1.default.credential.cert(firebase_1.firebaseConfig),
         });
         let con = firebase_admin_1.default.firestore();
-        this.db = con.collection('productos');
+        this.productos = con.collection("productos");
+        this.carritos = con.collection("carritos");
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            let res = yield this.db.get();
+            let res = yield this.productos.get();
             let docs = res.docs;
-            const productos = docs.map(doc => ({
+            const productos = docs.map((doc) => ({
                 id: doc.id,
-                data: doc.data()
+                data: doc.data(),
             }));
-            console.log(productos);
+            //console.log(productos);
             return productos;
         });
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            let res = yield this.db.doc(id).get();
-            return ({
+            let res = yield this.productos.doc(id).get();
+            return {
                 id: res.id,
-                data: res.data()
-            });
+                data: res.data(),
+            };
         });
     }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const productDocument = this.db.doc();
+                const productDocument = this.productos.doc();
                 return yield productDocument.create(data);
             }
             catch (err) {
@@ -57,43 +58,77 @@ class FirebaseRepository {
     }
     update(id, newProductData) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.db.doc(id).update(newProductData);
+            yield this.productos.doc(id).update(newProductData);
             return this.findById(id);
         });
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.db.doc(id).delete();
-        });
-    }
-    query(options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let query = {};
-            if (options.nombre)
-                query.nombre = options.nombre;
-            if (options.codigo)
-                query.codigo = options.codigo;
-            let res = yield this.db.get(query);
-            let docs = res.docs;
-            const productos = docs.map(doc => ({
-                id: doc.id,
-                data: doc.data()
-            }));
-            console.log(productos);
-            return productos;
+            return yield this.productos.doc(id).delete();
         });
     }
     //No llegue
     findProductsOnCart() {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = yield this.carritos.get();
+            let docs = res.docs;
+            const carrito = docs.map((doc) => ({
+                id: doc.id,
+                data: doc.data(),
+            }));
+            console.log(carrito[0].data.data.productos);
+            return carrito[0].data.data.productos;
+        });
     }
     findProductsOnCartById(id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = yield this.carritos.get();
+            let docs = res.docs;
+            const carrito = docs.map((doc) => ({
+                id: doc.id,
+                data: doc.data(),
+            }));
+            let cart = carrito[0].data.productos;
+            for (let i in cart) {
+                if (cart[i].id === id) {
+                    return cart[i];
+                }
+            }
+        });
     }
     deleteProductsOnCart(id) {
         throw new Error("Method not implemented.");
     }
     addProductsToCart(idProducto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let resCar = yield this.carritos.get();
+                let docs = resCar.docs;
+                const carrito = docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data(),
+                }));
+                /*if(carrito.length == 0){
+                  const carritoDoc = this.carritos.doc()
+                  let data = {timestamp:new Date(),productos:[]}
+                  return await carritoDoc.create(data);
+                }*/
+                let prod = yield this.findById(idProducto);
+                if (prod) {
+                    let cart = carrito[0].data.productos;
+                    cart.push(prod);
+                    carrito[0].data.productos = cart;
+                    console.log(carrito[0]);
+                    yield this.carritos.doc(carrito[0].id).update(carrito[0]);
+                    return this.findProductsOnCartById(idProducto);
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        });
+    }
+    query(options) {
         throw new Error("Method not implemented.");
     }
 }
