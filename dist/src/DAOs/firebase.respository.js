@@ -67,7 +67,6 @@ class FirebaseRepository {
             return yield this.productos.doc(id).delete();
         });
     }
-    //No llegue
     findProductsOnCart() {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.carritos.get();
@@ -76,8 +75,7 @@ class FirebaseRepository {
                 id: doc.id,
                 data: doc.data(),
             }));
-            console.log(carrito[0].data.data.productos);
-            return carrito[0].data.data.productos;
+            return carrito[0].data.productos;
         });
     }
     findProductsOnCartById(id) {
@@ -101,31 +99,7 @@ class FirebaseRepository {
     }
     addProductsToCart(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let resCar = yield this.carritos.get();
-                let docs = resCar.docs;
-                const carrito = docs.map((doc) => ({
-                    id: doc.id,
-                    data: doc.data(),
-                }));
-                /*if(carrito.length == 0){
-                  const carritoDoc = this.carritos.doc()
-                  let data = {timestamp:new Date(),productos:[]}
-                  return await carritoDoc.create(data);
-                }*/
-                let prod = yield this.findById(idProducto);
-                if (prod) {
-                    let cart = carrito[0].data.productos;
-                    cart.push(prod);
-                    carrito[0].data.productos = cart;
-                    console.log(carrito[0]);
-                    yield this.carritos.doc(carrito[0].id).update(carrito[0]);
-                    return this.findProductsOnCartById(idProducto);
-                }
-            }
-            catch (err) {
-                console.log(err);
-            }
+            throw new Error("Method not implemented.");
         });
     }
     query(options) {
