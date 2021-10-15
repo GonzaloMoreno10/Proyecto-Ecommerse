@@ -20,12 +20,11 @@ class CarritoController {
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('entre al controlador de carrito');
                 if (req.params.idProducto) {
                     let idProducto = req.params.idProducto;
                     let data = yield api_1.api.find(idProducto);
                     if (data) {
-                        res.status(200).json({ data: data });
+                        res.json(data);
                     }
                     else {
                         res.status(400).json({ data: "No se encontro el producto" });
@@ -33,8 +32,12 @@ class CarritoController {
                 }
                 else {
                     let productos = yield api_1.api.find();
+                    let total = 0;
+                    for (let i in productos) {
+                        total += productos[i].precio;
+                    }
                     if (productos) {
-                        res.status(200).json({ producto: productos });
+                        res.json(productos);
                     }
                     else {
                         res.status(400).json({ Producto: "No se encontro el producto" });
@@ -49,19 +52,21 @@ class CarritoController {
     agregar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("Entre en post carrito");
                 let idProd = req.params.idProd;
-                //let prod = await carritoRepo.findProductsOnCartById(idProd);
-                if (idProd) {
-                    let data = yield api_1.api.add(idProd);
-                    if (data) {
-                        res.status(200).json({ data: data });
+                let existInCart = yield api_1.api.find(idProd);
+                let existsProd = yield api_1.api.getProducts(idProd);
+                if (existsProd) {
+                    if (!existInCart) {
+                        yield api_1.api.add(idProd);
+                        res.json(1);
                     }
                     else {
-                        res.status(400).json({ data: "Ocurrio un error" });
+                        res.status(203).json(-1);
                     }
                 }
                 else {
-                    res.status(400).json({ data: "El producto no existe" });
+                    res.status(400).json(-2);
                 }
             }
             catch (err) {
@@ -73,12 +78,13 @@ class CarritoController {
         return __awaiter(this, void 0, void 0, function* () {
             let idProducto = req.params.idProducto;
             try {
-                let data = yield api_1.api.delete(idProducto);
-                if (data) {
-                    res.status(200).json({ data: data });
+                let prod = yield api_1.api.find(idProducto);
+                if (prod) {
+                    yield api_1.api.delete(idProducto);
+                    res.json('Producto removido del carrito');
                 }
                 else {
-                    res.status(400).json({ data: "No se encontro el producto" });
+                    res.json({ data: "Producto no existente en el carrito" });
                 }
             }
             catch (err) {

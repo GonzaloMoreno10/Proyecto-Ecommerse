@@ -43,9 +43,17 @@ class MongoRepository {
         else
             this.srv = `mongodb+srv://${venv_1.Venv.MONGO_ATLAS_USER}:${venv_1.Venv.MONGO_ATLAS_PASSWORD}@${venv_1.Venv.MONGO_ATLAS_CLUSTER}/${venv_1.Venv.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
         mongoose_1.default.connect(this.srv);
-        //console.log("Se conecto a atlas");
         this.productos = mongoose_1.default.model("productos", productsSchema);
         this.carritos = mongoose_1.default.model("carritos", carritosSchema);
+    }
+    getUsers() {
+        throw new Error("Method not implemented.");
+    }
+    getUsersById(id) {
+        throw new Error("Method not implemented.");
+    }
+    getUsersByUserName(userName) {
+        throw new Error("Method not implemented.");
     }
     //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
     findAll() {
@@ -64,7 +72,7 @@ class MongoRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let productos = yield this.productos.findById(id.toString());
-                console.log(productos);
+                //console.log(productos);
                 return productos;
             }
             catch (err) {
@@ -83,7 +91,15 @@ class MongoRepository {
     }
     update(id, newProductData) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.productos.findByIdAndUpdate(id, newProductData);
+            try {
+                let productos = yield this.productos.findByIdAndUpdate(id.toString(), newProductData);
+                //console.log(productos);
+                return productos;
+            }
+            catch (err) {
+                console.log(err);
+                return null;
+            }
         });
     }
     delete(id) {
@@ -94,8 +110,6 @@ class MongoRepository {
     query(options) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = {};
-            console.log("Entre a query");
-            console.log(options.nombre);
             if (options.nombre)
                 query.nombre = options.nombre;
             if (options.minPrice && options.maxPrice)
@@ -118,7 +132,7 @@ class MongoRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let carrito = yield this.carritos.find();
             let productos = carrito[0].productos;
-            console.log(productos);
+            //console.log(productos);
             for (let i in productos) {
                 if (productos[i] !== null) {
                     if (productos[i]._id.equals(id)) {
@@ -136,12 +150,18 @@ class MongoRepository {
             for (let i = 0; i < productos.length; i++) {
                 if (productos[i] !== null) {
                     if (productos[i]._id.equals(id)) {
-                        let prodFilt = productos.splice(i, 1);
-                        cart.productos = prodFilt;
+                        if (productos.length > 1) {
+                            productos.splice(i, 1);
+                            console.log(productos);
+                            cart.productos = productos;
+                        }
+                        else {
+                            cart.productos = [];
+                        }
                     }
                 }
             }
-            return yield this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0]);
+            return yield this.carritos.findByIdAndUpdate(carrito[0].id, cart);
         });
     }
     addProductsToCart(idProducto) {
@@ -150,7 +170,6 @@ class MongoRepository {
             let producto = yield this.findById(idProducto);
             let productos = carrito[0].productos;
             productos.push(producto);
-            console.log(productos);
             carrito[0].productos = productos;
             return yield this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0]);
         });

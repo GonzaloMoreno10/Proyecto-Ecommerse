@@ -5,6 +5,7 @@ import {
   ProductInterface,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
+import { userInterface } from "../interface/user.interface";
 
 export class SqliteRepository implements PersistanceBaseClass{
   private sqliteDB: any;
@@ -14,6 +15,15 @@ export class SqliteRepository implements PersistanceBaseClass{
       connection: { filename: "./ecommerce" },
       useNullAsDefault: false,
     });
+  }
+  getUsers(): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersById(id: any): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersByUserName(userName: String): Promise<userInterface> {
+    throw new Error("Method not implemented.");
   }
 
   async findAll() {

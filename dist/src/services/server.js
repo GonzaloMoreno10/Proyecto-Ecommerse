@@ -25,10 +25,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const main_route_1 = __importDefault(require("../routes/main.route"));
 const http = __importStar(require("http"));
+const cors_1 = __importDefault(require("cors"));
 const app = express_1.default();
 //Configuracion
-app.set('port', process.env.PORT || 8080);
-//Middlewares sdfdsfsdfsd
+app.set('port', process.env.PORT || 3000);
+//Middlewares
+app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api', main_route_1.default);

@@ -46,6 +46,15 @@ class MemoriaRepository {
         //mockData.forEach((aMock) => this.carrito.productos.push(aMock));
         this.carrito = { id: 1, timestamp: new Date(), productos: mockData };
     }
+    getUsers() {
+        throw new Error("Method not implemented.");
+    }
+    getUsersById(id) {
+        throw new Error("Method not implemented.");
+    }
+    getUsersByUserName(userName) {
+        throw new Error("Method not implemented.");
+    }
     findIndex(id) {
         return this.productos.findIndex((aProduct) => aProduct.id == id);
     }
@@ -143,7 +152,7 @@ class MemoriaRepository {
                     //console.log(producto);
                     for (let i = 0; i < this.carrito.productos.length; i++) {
                         if (this.carrito.productos[i].id == idProducto) {
-                            console.log(this.carrito.productos[i]);
+                            // console.log(this.carrito.productos[i])
                             let prods = this.carrito.productos.splice(i, 1);
                         }
                     }

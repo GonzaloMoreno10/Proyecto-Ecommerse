@@ -22,6 +22,15 @@ class SqliteRepository {
             useNullAsDefault: false,
         });
     }
+    getUsers() {
+        throw new Error("Method not implemented.");
+    }
+    getUsersById(id) {
+        throw new Error("Method not implemented.");
+    }
+    getUsersByUserName(userName) {
+        throw new Error("Method not implemented.");
+    }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
             return this.sqliteDB.from('productos').select();

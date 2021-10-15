@@ -5,6 +5,7 @@ import {
   PersistanceBaseClass,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
+import { userInterface } from "../interface/user.interface";
 import { Producto } from "../models";
 
 export class MemoriaRepository implements PersistanceBaseClass {
@@ -46,6 +47,15 @@ export class MemoriaRepository implements PersistanceBaseClass {
     //mockData.forEach((aMock) => this.carrito.productos.push(aMock));
 
     this.carrito = { id: 1, timestamp: new Date(), productos: mockData };
+  }
+  getUsers(): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersById(id: any): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersByUserName(userName: String): Promise<userInterface> {
+    throw new Error("Method not implemented.");
   }
 
   findIndex(id: string) {
@@ -165,7 +175,7 @@ export class MemoriaRepository implements PersistanceBaseClass {
         //console.log(producto);
         for(let i= 0 ; i < this.carrito.productos.length;i++){
           if(this.carrito.productos[i].id == idProducto){
-            console.log(this.carrito.productos[i])
+           // console.log(this.carrito.productos[i])
             let prods = this.carrito.productos.splice(i,1)
           }
         }

@@ -6,6 +6,7 @@ import {
   ProductInterface,
   ProductQueryInterface,
 } from "../interface/producto.inteface";
+import { userInterface } from "../interface/user.interface";
 import { Carrito } from "../models/carrito.model";
 import { Producto } from "../models/producto.model";
 
@@ -16,6 +17,15 @@ let productos_ds = path.join(
 );
 
 export class FileSystemRepository implements PersistanceBaseClass {
+  getUsers(): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersById(id: any): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersByUserName(userName: String): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
   //Productos
   async findAll(): Promise<ProductInterface[]> {
     let array = [];

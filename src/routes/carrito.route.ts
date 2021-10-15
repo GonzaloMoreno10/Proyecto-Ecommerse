@@ -3,10 +3,10 @@ import { carritoController } from "../controllers/carrito.controller";
 
 const router = Router();
 
-router.get("/listar/:idProducto?",carritoController.findById);
+router.get("/:idProducto?",carritoController.findById);
 
-router.post("/agregar/:idProd",carritoController.agregar);
+router.post("/:idProd",carritoController.agregar);
 
-router.delete("/eliminar/:idProducto",carritoController.delete);
+router.delete("/:idProducto",carritoController.delete);
 
 export default router;

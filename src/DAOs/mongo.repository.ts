@@ -7,7 +7,7 @@ import {
 } from "../interface/producto.inteface";
 import { Venv } from "../constantes/venv";
 import { CarritoInterface } from "../interface/carrito.interface";
-import { Carrito, Producto } from "../models";
+import { userInterface } from "../interface/user.interface";
 
 const productsSchema = new mongoose.Schema<ProductInterface>({
   nombre: String,
@@ -32,6 +32,7 @@ const carritosSchema = new mongoose.Schema<CarritoInterface>({
   ],
 });
 
+
 export class MongoRepository implements PersistanceBaseClass {
   private srv: string;
   private productos;
@@ -42,7 +43,6 @@ export class MongoRepository implements PersistanceBaseClass {
     else
       this.srv = `mongodb+srv://${Venv.MONGO_ATLAS_USER}:${Venv.MONGO_ATLAS_PASSWORD}@${Venv.MONGO_ATLAS_CLUSTER}/${Venv.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
     mongoose.connect(this.srv);
-    //console.log("Se conecto a atlas");
     this.productos = mongoose.model<ProductInterface>(
       "productos",
       productsSchema
@@ -51,6 +51,15 @@ export class MongoRepository implements PersistanceBaseClass {
       "carritos",
       carritosSchema
     );
+  }
+  getUsers(): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersById(id: any): Promise<userInterface> {
+    throw new Error("Method not implemented.");
+  }
+  getUsersByUserName(userName: String): Promise<userInterface> {
+    throw new Error("Method not implemented.");
   }
 
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
@@ -67,7 +76,7 @@ export class MongoRepository implements PersistanceBaseClass {
   async findById(id: string): Promise<ProductInterface | undefined> {
     try {
       let productos = await this.productos.findById(id.toString());
-      console.log(productos);
+      //console.log(productos);
       return productos;
     } catch (err) {
       console.log(err);
@@ -84,10 +93,19 @@ export class MongoRepository implements PersistanceBaseClass {
   }
 
   async update(
-    id: string,
+    id:string,
     newProductData: newProductInterface
   ): Promise<ProductInterface> {
-    return this.productos.findByIdAndUpdate(id, newProductData);
+    try{
+      let productos = await this.productos.findByIdAndUpdate(id.toString(), newProductData);
+     //console.log(productos);
+      return productos;
+    }
+    catch(err){
+      console.log(err);
+      return null;
+    }
+     
   }
 
   async delete(id: string) {
@@ -96,9 +114,6 @@ export class MongoRepository implements PersistanceBaseClass {
 
   async query(options: ProductQueryInterface): Promise<ProductInterface[]> {
     let query: ProductQueryInterface = {};
-
-    console.log("Entre a query");
-    console.log(options.nombre);
 
     if (options.nombre) query.nombre = options.nombre;
 
@@ -122,7 +137,7 @@ export class MongoRepository implements PersistanceBaseClass {
   async findProductsOnCartById(id: any): Promise<ProductInterface> {
     let carrito = await this.carritos.find();
     let productos = carrito[0].productos;
-    console.log(productos);
+    //console.log(productos);
     for(let i in productos){
       if(productos[i] !== null){
         if(productos[i]._id.equals(id)){
@@ -133,18 +148,24 @@ export class MongoRepository implements PersistanceBaseClass {
   }
   async deleteProductsOnCart(id: any): Promise<ProductInterface> {
     let carrito = await this.carritos.find();
-     
     let cart = carrito[0];
     let productos = cart.productos;
     for(let i= 0 ; i < productos.length;i++){
       if(productos[i] !== null){
         if(productos[i]._id.equals(id)){
-           let prodFilt = productos.splice(i,1);
-           cart.productos = prodFilt;
+          if(productos.length > 1){
+            productos.splice(i,1);
+            console.log(productos);
+            cart.productos = productos;
+          }
+          else{
+            cart.productos = [];
+          }
+           
         }
       }
     }
-    return await this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0])
+    return await this.carritos.findByIdAndUpdate(carrito[0].id, cart)
 
   }
   async addProductsToCart(idProducto: any): Promise<ProductInterface> {
@@ -152,7 +173,6 @@ export class MongoRepository implements PersistanceBaseClass {
     let producto = await this.findById(idProducto);
     let productos = carrito[0].productos;
     productos.push(producto);
-    console.log(productos)
     carrito[0].productos = productos;
     return await this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0])
     

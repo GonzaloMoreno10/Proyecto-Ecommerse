@@ -15,13 +15,14 @@ const persistencias_1 = require("../constantes/persistencias");
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = persistencias_1.tipoPersistencias.FIREBASE;
+const tipo = persistencias_1.tipoPersistencias.MONGO_ATLAS;
 class Api {
     constructor() {
         this.persistance = DAOs_factory_1.ProductFactoryDAO.get(tipo);
     }
     getProducts(id = undefined) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(id);
             if (id) {
                 return this.persistance.findById(id);
             }
@@ -30,15 +31,20 @@ class Api {
     }
     addProduct(productData) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(productData);
+            //console.log(productData)
             const newProduct = yield this.persistance.create(productData);
             return newProduct;
         });
     }
     updateProduct(id, productData) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.persistance.update(id, productData);
-            return productData;
+            try {
+                yield this.persistance.update(id, productData);
+                return productData;
+            }
+            catch (err) {
+                console.log(err);
+            }
         });
     }
     deleteProduct(id) {
@@ -61,12 +67,29 @@ class Api {
     }
     add(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.persistance.addProductsToCart(idProducto);
+            let result = yield this.persistance.addProductsToCart(idProducto);
+            if (result == -1) {
+                return "El producto ya se encuentra en el carrito";
+            }
+            if (result == -2) {
+                return "El producto a agregar no existe o no esta disponible";
+            }
+            return result;
         });
     }
     delete(idProducto) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.persistance.deleteProductsOnCart(idProducto);
+        });
+    }
+    getUsers(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (id) {
+                return yield this.persistance.getUsersById(id);
+            }
+            else {
+                return yield this.persistance.getUsers();
+            }
         });
     }
 }

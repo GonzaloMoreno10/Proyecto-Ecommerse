@@ -1,3 +1,5 @@
+import { userInterface } from "./user.interface";
+
 export interface newProductInterface {
   nombre: string;
   descripcion:string;
@@ -38,4 +40,7 @@ export interface PersistanceBaseClass {
   findProductsOnCartById(id:any):Promise<ProductInterface>
   deleteProductsOnCart(id:any):Promise<ProductInterface>
   addProductsToCart(idProducto:any):Promise<ProductInterface>
+  getUsers():Promise<userInterface>
+  getUsersById(id:any):Promise<userInterface>
+  getUsersByUserName(userName:String):Promise<userInterface>
 }

@@ -19,6 +19,15 @@ const carrito_model_1 = require("../models/carrito.model");
 let carritos_ds = path_1.default.join(__dirname, "../datasource/carritos.datasource.txt");
 let productos_ds = path_1.default.join(__dirname, "../datasource/productos.datasource.txt");
 class FileSystemRepository {
+    getUsers() {
+        throw new Error("Method not implemented.");
+    }
+    getUsersById(id) {
+        throw new Error("Method not implemented.");
+    }
+    getUsersByUserName(userName) {
+        throw new Error("Method not implemented.");
+    }
     //Productos
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {

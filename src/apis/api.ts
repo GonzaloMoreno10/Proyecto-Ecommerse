@@ -5,7 +5,7 @@ import { tipoPersistencias } from '../constantes/persistencias';
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = tipoPersistencias.FIREBASE;
+const tipo = tipoPersistencias.MONGO_ATLAS;
 
 class Api {
   private persistance;
@@ -15,6 +15,7 @@ class Api {
   }
 
   async getProducts(id: any | undefined = undefined): Promise<ProductInterface[]> {
+    console.log(id);
     if (id){
         return this.persistance.findById(id);
     }
@@ -22,14 +23,19 @@ class Api {
   }
 
   async addProduct(productData: newProductInterface): Promise<ProductInterface> {
-      console.log(productData)
+      //console.log(productData)
     const newProduct = await this.persistance.create(productData)
     return newProduct;
   }
 
   async updateProduct(id: any, productData: newProductInterface) {
-    await this.persistance.update(id,productData);
-    return productData;
+    try{
+      await this.persistance.update(id,productData);
+      return productData;
+    }
+    catch(err){
+      console.log(err);
+    }
   }
 
   async deleteProduct(id: any) {
@@ -48,11 +54,27 @@ class Api {
   }
 
   async add(idProducto: any) {
-    return this.persistance.addProductsToCart(idProducto);
+    let result = await  this.persistance.addProductsToCart(idProducto);
+    if(result == -1){
+      return "El producto ya se encuentra en el carrito"
+    }
+    if(result == -2){
+      return "El producto a agregar no existe o no esta disponible"
+    }
+    return result;
   }
 
   async delete(idProducto: any) {
     return this.persistance.deleteProductsOnCart(idProducto);
+  }
+
+  async getUsers(id:any){
+    if(id){
+      return await this.persistance.getUsersById(id)
+    }
+    else{
+      return await this.persistance.getUsers();
+    }
   }
 }
 

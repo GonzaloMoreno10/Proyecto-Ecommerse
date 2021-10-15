@@ -18,7 +18,7 @@ class ProductoController {
                 let id = req.params.id;
                 let data = yield api_1.api.getProducts(id);
                 if (data) {
-                    res.status(200).json({ producto: data });
+                    res.status(200).json(data);
                 }
                 else {
                     res.status(400).json({ data: "No se encontro el producto" });
@@ -32,10 +32,11 @@ class ProductoController {
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('Pidieron en get');
                 let data = yield api_1.api.getProducts();
                 if (data) {
                     if (data.length > 0) {
-                        res.status(200).json({ producto: data });
+                        res.status(200).json(data);
                     }
                     else {
                         res.status(400).json({ data: "No existen productos" });
@@ -86,16 +87,15 @@ class ProductoController {
                     stock,
                 };
                 if (producto) {
-                    let data = yield api_1.api.updateProduct(id, producto);
-                    if (data) {
+                    let prod = yield api_1.api.getProducts(id);
+                    // console.log(prod);
+                    if (prod) {
+                        let data = yield api_1.api.updateProduct(id, producto);
                         res.status(200).json({ producto: "Producto Actualizado", data });
                     }
                     else {
                         res.status(500).json({ data: "No se encontro el producto" });
                     }
-                }
-                else {
-                    res.status(400).json({ data: "No se encontro el producto" });
                 }
             }
             catch (err) {

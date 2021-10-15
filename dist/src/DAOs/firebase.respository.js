@@ -24,6 +24,15 @@ class FirebaseRepository {
         this.productos = con.collection("productos");
         this.carritos = con.collection("carritos");
     }
+    getUsers() {
+        throw new Error("Method not implemented.");
+    }
+    getUsersById(id) {
+        throw new Error("Method not implemented.");
+    }
+    getUsersByUserName(userName) {
+        throw new Error("Method not implemented.");
+    }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.productos.get();
@@ -71,25 +80,30 @@ class FirebaseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.carritos.get();
             let docs = res.docs;
-            const carrito = docs.map((doc) => ({
-                id: doc.id,
-                data: doc.data(),
-            }));
-            return carrito[0].data.productos;
+            if (docs.length > 0) {
+                const carrito = docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data(),
+                }));
+                return carrito[0].data.productos;
+            }
         });
     }
     findProductsOnCartById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.carritos.get();
             let docs = res.docs;
-            const carrito = docs.map((doc) => ({
-                id: doc.id,
-                data: doc.data(),
-            }));
-            let cart = carrito[0].data.productos;
-            for (let i in cart) {
-                if (cart[i].id === id) {
-                    return cart[i];
+            console.log(docs);
+            if (docs.length > 0) {
+                const carrito = docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data(),
+                }));
+                let cart = carrito[0].data.productos;
+                for (let i in cart) {
+                    if (cart[i].id === id) {
+                        return cart[i];
+                    }
                 }
             }
         });

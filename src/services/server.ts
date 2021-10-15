@@ -1,13 +1,16 @@
 import express, { ErrorRequestHandler } from 'express';
 import mainRouter from '../routes/main.route'
 import * as http from 'http'
+import cors from 'cors';
 
 const app = express();
 
 //Configuracion
-app.set('port',process.env.PORT||8080);
+app.set('port',process.env.PORT||3000);
 
-//Middlewares sdfdsfsdfsd
+//Middlewares
+
+app.use(cors())
 
 app.use(express.json());
 
