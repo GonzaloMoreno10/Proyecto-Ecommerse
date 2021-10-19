@@ -15,7 +15,7 @@ const persistencias_1 = require("../constantes/persistencias");
 /**
  * Con esta variable elegimos el tipo de persistencia
  */
-const tipo = persistencias_1.tipoPersistencias.MONGO_ATLAS;
+const tipo = persistencias_1.tipoPersistencias.MONGO_LOCAL;
 class Api {
     constructor() {
         this.persistance = DAOs_factory_1.ProductFactoryDAO.get(tipo);

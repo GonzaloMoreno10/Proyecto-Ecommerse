@@ -85,8 +85,8 @@ class MongoRepository {
             if (!data.nombre || !data.precio)
                 throw new Error("invalid data");
             const newProduct = new this.productos(data);
-            yield newProduct.save();
-            return newProduct;
+            let res = yield newProduct.save();
+            return res;
         });
     }
     update(id, newProductData) {

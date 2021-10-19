@@ -62,7 +62,7 @@ class ProductoController {
                 };
                 let result = yield api_1.api.addProduct(producto);
                 if (result) {
-                    res.status(200).json({ data: "Producto guardado" });
+                    res.status(200).json({ producto: result });
                 }
                 else {
                     res.status(500).json({ data: "Algo fallo" });
