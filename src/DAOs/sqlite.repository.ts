@@ -1,37 +1,27 @@
-import knex from "knex";
+import knex from 'knex';
 import {
   newProductInterface,
   PersistanceBaseClass,
   ProductInterface,
   ProductQueryInterface,
-} from "../interface/producto.inteface";
-import { userInterface } from "../interface/user.interface";
+} from '../interface/producto.inteface';
 
-export class SqliteRepository implements PersistanceBaseClass{
+export class SqliteRepository implements PersistanceBaseClass {
   private sqliteDB: any;
   constructor() {
     this.sqliteDB = knex({
-      client: "sqlite3",
-      connection: { filename: "./ecommerce" },
+      client: 'sqlite3',
+      connection: { filename: './ecommerce' },
       useNullAsDefault: false,
     });
-  }
-  getUsers(): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersById(id: any): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersByUserName(userName: String): Promise<userInterface> {
-    throw new Error("Method not implemented.");
   }
 
   async findAll() {
     return this.sqliteDB.from('productos').select();
   }
 
-  async findById(id:number){
-    return this.sqliteDB.from('productos').where('id','=',id).select();
+  async findById(id: number) {
+    return this.sqliteDB.from('productos').where('id', '=', id).select();
   }
 
   async create(data: newProductInterface) {
@@ -39,48 +29,67 @@ export class SqliteRepository implements PersistanceBaseClass{
   }
 
   async update(id: number, data: ProductInterface) {
-    return this.sqliteDB('productos').where('id','=',id).update(data);
+    return this.sqliteDB('productos').where('id', '=', id).update(data);
   }
 
   async delete(id: number) {
-    return this.sqliteDB('productos').where('id','=',id).del();
+    return this.sqliteDB('productos').where('id', '=', id).del();
   }
 
-  async query(options:ProductQueryInterface):Promise<ProductInterface[]>{
+  async query(options: ProductQueryInterface): Promise<ProductInterface[]> {
     let query = `this.sqliteDB('productos').where('id','>','0')`;
-    if(options.nombre) query += `.andWhere('nombre','=','${options.nombre}')`;
-    if(options.codigo) query += `.andWhere('codigo',${options.codigo})`;
-    if(options.minPrice) query += `.andWhere('precio','>',${options.minPrice})`
-    if(options.maxPrice) query += `.andWhere('precio','<',${options.maxPrice})`;
-    if(options.minStock) query += `.andWhere('stock','>',${options.minStock})`
-    if(options.minStock) query += `.andWhere('stock','<',${options.maxStock})`
+    if (options.nombre) query += `.andWhere('nombre','=','${options.nombre}')`;
+    if (options.codigo) query += `.andWhere('codigo',${options.codigo})`;
+    if (options.minPrice) query += `.andWhere('precio','>',${options.minPrice})`;
+    if (options.maxPrice) query += `.andWhere('precio','<',${options.maxPrice})`;
+    if (options.minStock) query += `.andWhere('stock','>',${options.minStock})`;
+    if (options.minStock) query += `.andWhere('stock','<',${options.maxStock})`;
 
     console.log(query);
 
-  
-    return <ProductInterface[]><unknown>await eval(query);
+    return <ProductInterface[]>(<unknown>await eval(query));
   }
 
-  async findProductsOnCart():Promise<ProductInterface[]>{
-    return this.sqliteDB({a:'carritos_productos',b:'productos'}).select({id:'b.id',nombre:'b.nombre',descripcion:'b.descripcion',
-  precio:'b.precio',stock:'b.stock',foto:'b.foto',codigo:'b.codigo'}).whereRaw('?? = ??', ['a.id_producto', 'b.id'])
+  async findProductsOnCart(): Promise<ProductInterface[]> {
+    return this.sqliteDB({ a: 'carritos_productos', b: 'productos' })
+      .select({
+        id: 'b.id',
+        nombre: 'b.nombre',
+        descripcion: 'b.descripcion',
+        precio: 'b.precio',
+        stock: 'b.stock',
+        foto: 'b.foto',
+        codigo: 'b.codigo',
+      })
+      .whereRaw('?? = ??', ['a.id_producto', 'b.id']);
   }
 
-  async findProductsOnCartById(id:any):Promise<ProductInterface>{
+  async findProductsOnCartById(id: any): Promise<ProductInterface> {
     console.log(id);
-    return this.sqliteDB({a:'carritos_productos',b:'productos'}).select({id:'b.id',nombre:'b.nombre',descripcion:'b.descripcion',
-    precio:'b.precio',stock:'b.stock',foto:'b.foto',codigo:'b.codigo'}).whereRaw('?? = ??', ['a.id_producto', 'b.id']).andWhere('b.id','=',id)
+    return this.sqliteDB({ a: 'carritos_productos', b: 'productos' })
+      .select({
+        id: 'b.id',
+        nombre: 'b.nombre',
+        descripcion: 'b.descripcion',
+        precio: 'b.precio',
+        stock: 'b.stock',
+        foto: 'b.foto',
+        codigo: 'b.codigo',
+      })
+      .whereRaw('?? = ??', ['a.id_producto', 'b.id'])
+      .andWhere('b.id', '=', id);
   }
 
-
-  async addProductsToCart(idProducto:number):Promise<ProductInterface>{
-    
-    await this.sqliteDB('carritos_productos').insert({id_carrito:1,id_producto:idProducto});
+  async addProductsToCart(idProducto: number): Promise<ProductInterface> {
+    await this.sqliteDB('carritos_productos').insert({ id_carrito: 1, id_producto: idProducto });
     return await this.findById(idProducto);
   }
 
-  async deleteProductsOnCart(idProducto:number):Promise<ProductInterface>{
-    await this.sqliteDB('carritos_productos').where('id_producto','=',idProducto).andWhere('id_carrito','=',1).del();
-    return this.findById(idProducto)
+  async deleteProductsOnCart(idProducto: number): Promise<ProductInterface> {
+    await this.sqliteDB('carritos_productos')
+      .where('id_producto', '=', idProducto)
+      .andWhere('id_carrito', '=', 1)
+      .del();
+    return this.findById(idProducto);
   }
 }

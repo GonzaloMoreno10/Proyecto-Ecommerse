@@ -1,65 +1,55 @@
-import { CarritoInterface } from "../interface/carrito.interface";
+import { CarritoInterface } from '../interface/carrito.interface';
 import {
   newProductInterface,
   ProductInterface,
   PersistanceBaseClass,
   ProductQueryInterface,
-} from "../interface/producto.inteface";
-import { userInterface } from "../interface/user.interface";
-import { Producto } from "../models";
+} from '../interface/producto.inteface';
+import { Producto } from '../models';
 
 export class MemoriaRepository implements PersistanceBaseClass {
   private productos: ProductInterface[] = [];
-  private carrito:CarritoInterface;
+  private carrito: CarritoInterface;
   constructor() {
     const mockData = [
       {
         id: 1,
-        nombre: "lapiz",
+        nombre: 'lapiz',
         codigo: 1,
-        foto: "",
-        descripcion: "",
+        foto: '',
+        descripcion: '',
         precio: 100,
         stock: 10,
       },
       {
         id: 2,
-        nombre: "cartuchera",
+        nombre: 'cartuchera',
         codigo: 1,
-        foto: "",
-        descripcion: "",
+        foto: '',
+        descripcion: '',
         precio: 100,
         stock: 10,
       },
       {
         id: 3,
-        nombre: "boligoma",
+        nombre: 'boligoma',
         codigo: 1,
-        foto: "",
-        descripcion: "",
+        foto: '',
+        descripcion: '',
         precio: 100,
         stock: 10,
       },
     ];
 
-    mockData.forEach((aMock) => this.productos.push(aMock));
+    mockData.forEach(aMock => this.productos.push(aMock));
 
     //mockData.forEach((aMock) => this.carrito.productos.push(aMock));
 
     this.carrito = { id: 1, timestamp: new Date(), productos: mockData };
   }
-  getUsers(): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersById(id: any): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersByUserName(userName: String): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
 
   findIndex(id: string) {
-    return this.productos.findIndex((aProduct) => aProduct.id == id);
+    return this.productos.findIndex(aProduct => aProduct.id == id);
   }
 
   async findAll(): Promise<ProductInterface[] | undefined> {
@@ -75,7 +65,7 @@ export class MemoriaRepository implements PersistanceBaseClass {
   }
 
   async create(data: newProductInterface): Promise<ProductInterface> {
-    if (!data.nombre || !data.precio) throw new Error("invalid data");
+    if (!data.nombre || !data.precio) throw new Error('invalid data');
 
     const newItem: ProductInterface = {
       id: (this.productos.length + 1).toString(),
@@ -92,10 +82,7 @@ export class MemoriaRepository implements PersistanceBaseClass {
     return newItem;
   }
 
-  async update(
-    id: string,
-    newProductData: newProductInterface
-  ): Promise<ProductInterface> {
+  async update(id: string, newProductData: newProductInterface): Promise<ProductInterface> {
     const index = this.findIndex(id);
     const oldProduct = this.productos[index];
 
@@ -116,31 +103,22 @@ export class MemoriaRepository implements PersistanceBaseClass {
     type Conditions = (aProduct: ProductInterface) => boolean;
     const query: Conditions[] = [];
 
-    if (options.nombre)
-      query.push(
-        (aProduct: ProductInterface) => aProduct.nombre == options.nombre
-      );
+    if (options.nombre) query.push((aProduct: ProductInterface) => aProduct.nombre == options.nombre);
 
-    if (options.codigo)
-      query.push(
-        (aProduct: ProductInterface) => aProduct.codigo == options.codigo
-      );
+    if (options.codigo) query.push((aProduct: ProductInterface) => aProduct.codigo == options.codigo);
 
     if (options.minStock && options.maxStock) {
       query.push(
-        (aProduct: ProductInterface) =>
-          aProduct.stock > options.minStock && aProduct.stock < options.maxStock
+        (aProduct: ProductInterface) => aProduct.stock > options.minStock && aProduct.stock < options.maxStock
       );
     }
 
     if (options.minPrice && options.maxPrice)
       query.push(
-        (aProduct: ProductInterface) =>
-          aProduct.precio > options.minPrice &&
-          aProduct.precio < options.maxPrice
+        (aProduct: ProductInterface) => aProduct.precio > options.minPrice && aProduct.precio < options.maxPrice
       );
 
-    return this.productos.filter((aProduct) => query.every((x) => x(aProduct)));
+    return this.productos.filter(aProduct => query.every(x => x(aProduct)));
   }
 
   async findProductsOnCart(): Promise<Producto[]> {
@@ -151,38 +129,31 @@ export class MemoriaRepository implements PersistanceBaseClass {
     }
   }
 
-  async findProductsOnCartById(
-    idProducto: number
-  ): Promise<Producto | undefined> {
+  async findProductsOnCartById(idProducto: number): Promise<Producto | undefined> {
     try {
-        for(let i in this.carrito.productos){
-          if(this.carrito.productos[i].id == idProducto){
-            return this.carrito.productos[i];
-          }
+      for (let i in this.carrito.productos) {
+        if (this.carrito.productos[i].id == idProducto) {
+          return this.carrito.productos[i];
         }
+      }
     } catch (err) {
-      console.log("Ocurrio un error " + err);
+      console.log('Ocurrio un error ' + err);
     }
   }
 
-
-  async deleteProductsOnCart(
-    idProducto: number
-  ): Promise<Producto | undefined> {
-    try{
-      let producto = await this.findProductsOnCartById(idProducto)
-      if(producto){
+  async deleteProductsOnCart(idProducto: number): Promise<Producto | undefined> {
+    try {
+      let producto = await this.findProductsOnCartById(idProducto);
+      if (producto) {
         //console.log(producto);
-        for(let i= 0 ; i < this.carrito.productos.length;i++){
-          if(this.carrito.productos[i].id == idProducto){
-           // console.log(this.carrito.productos[i])
-            let prods = this.carrito.productos.splice(i,1)
+        for (let i = 0; i < this.carrito.productos.length; i++) {
+          if (this.carrito.productos[i].id == idProducto) {
+            // console.log(this.carrito.productos[i])
+            let prods = this.carrito.productos.splice(i, 1);
           }
         }
-        return producto
+        return producto;
       }
-      
-      
     } catch (err) {
       console.log(err);
     }
@@ -191,8 +162,8 @@ export class MemoriaRepository implements PersistanceBaseClass {
   async addProductsToCart(idProducto: number): Promise<ProductInterface | undefined> {
     try {
       let producto = await this.findById(idProducto);
-      console.log(producto)
-      if(producto){
+      console.log(producto);
+      if (producto) {
         console.log(producto);
         this.carrito.productos.push(producto);
         return producto;

@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FIREBASE_CLIENT_EMAIL = exports.FIREBASE_PRIVATE_KEY = exports.FIREBASE_PROJECT_ID = exports.MONGO_ATLAS_CLUSTER = exports.MONGO_ATLAS_DB = exports.MONGO_ATLAS_PASSWORD = exports.MONGO_ATLAS_USER = exports.MONGO_DB = exports.MONGO_PASSWORD = exports.MONGO_USER = exports.MYSQL_DBNAME = exports.MYSQL_PASSWORD = exports.MYSQL_USER = exports.PORT = void 0;
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+exports.PORT = process.env.PORT;
+exports.MYSQL_USER = process.env.MYSQL_USER;
+exports.MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
+exports.MYSQL_DBNAME = process.env.MYSQL_DBNAME;
+exports.MONGO_USER = process.env.MONGO_USER;
+exports.MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+exports.MONGO_DB = process.env.MONGO_DB;
+exports.MONGO_ATLAS_USER = process.env.MONGO_ATLAS_USER;
+exports.MONGO_ATLAS_PASSWORD = process.env.MONGO_ATLAS_PASSWORD;
+exports.MONGO_ATLAS_DB = process.env.MONGO_ATLAS_DB;
+exports.MONGO_ATLAS_CLUSTER = process.env.MONGO_ATLAS_CLUSTER;
+exports.FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+exports.FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
+exports.FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;

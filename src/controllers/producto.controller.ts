@@ -1,15 +1,13 @@
-import { Producto } from '../models';
-import { FSRepositorio } from '../DAOs/fs.repository';
 import { Request, Response } from 'express';
-import { api } from '../apis/api';
 
 import { newProductInterface, ProductQueryInterface } from '../interface/producto.inteface';
+import { mongoProductRepository } from '../repositories/mongo';
 
 export class ProductoController {
   async getById(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      let data = await api.getProducts(id);
+      let data = await mongoProductRepository.findById(id);
       if (data) {
         res.status(200).json(data);
       } else {
@@ -22,8 +20,7 @@ export class ProductoController {
 
   async get(req: Request, res: Response) {
     try {
-      console.log('Pidieron en get');
-      let data = await api.getProducts();
+      let data = await mongoProductRepository.findAll();
       if (data) {
         if (data.length > 0) {
           res.status(200).json(data);
@@ -47,7 +44,7 @@ export class ProductoController {
         precio,
         stock,
       };
-      let result = await api.addProduct(producto);
+      let result = await mongoProductRepository.create(producto);
       if (result) {
         res.status(200).json({ producto: result });
       } else {
@@ -72,10 +69,10 @@ export class ProductoController {
       };
 
       if (producto) {
-        let prod = await api.getProducts(id);
+        let prod = await mongoProductRepository.findById(id);
         // console.log(prod);
         if (prod) {
-          let data = await api.updateProduct(id, producto);
+          let data = await mongoProductRepository.update(id, producto);
 
           res.status(200).json({ producto: 'Producto Actualizado', data });
         } else {
@@ -90,14 +87,14 @@ export class ProductoController {
   async vista(req: Request, res: Response) {
     let { minPrice, maxPrice, minStock, maxStock, nombre, codigo } = req.body;
     let options: ProductQueryInterface = { minPrice, maxPrice, minStock, maxStock, nombre, codigo };
-    let productos = await api.query(options);
+    let productos = await mongoProductRepository.query(options);
     res.json(productos);
   }
 
   async borrar(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      await api.deleteProduct(id);
+      await mongoProductRepository.delete(id);
       res.json({
         msg: 'producto borrado',
       });

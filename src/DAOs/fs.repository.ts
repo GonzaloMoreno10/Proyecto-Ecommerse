@@ -1,44 +1,26 @@
-import fs from "fs/promises";
-import path from "path";
-import { api } from "../apis/api";
-import {
-  PersistanceBaseClass,
-  ProductInterface,
-  ProductQueryInterface,
-} from "../interface/producto.inteface";
-import { userInterface } from "../interface/user.interface";
-import { Carrito } from "../models/carrito.model";
-import { Producto } from "../models/producto.model";
+import fs from 'fs/promises';
+import path from 'path';
+import { PersistanceBaseClass, ProductInterface, ProductQueryInterface } from '../interface/producto.inteface';
+import { Carrito } from '../models/carrito.model';
+import { Producto } from '../models/producto.model';
 
-let carritos_ds = path.join(__dirname, "../datasource/carritos.datasource.txt");
-let productos_ds = path.join(
-  __dirname,
-  "../datasource/productos.datasource.txt"
-);
+let carritos_ds = path.join(__dirname, '../datasource/carritos.datasource.txt');
+let productos_ds = path.join(__dirname, '../datasource/productos.datasource.txt');
 
 export class FileSystemRepository implements PersistanceBaseClass {
-  getUsers(): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersById(id: any): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersByUserName(userName: String): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
   //Productos
   async findAll(): Promise<ProductInterface[]> {
     let array = [];
     try {
-      let data = await fs.readFile(productos_ds, "utf-8");
-      array = data.split("\n");
-      let array2 = array.filter((data) => data != "");
+      let data = await fs.readFile(productos_ds, 'utf-8');
+      array = data.split('\n');
+      let array2 = array.filter(data => data != '');
       if (array2.length > 0) {
-        let productos = array2.map((data) => JSON.parse(data));
+        let productos = array2.map(data => JSON.parse(data));
         return productos;
       }
     } catch (err) {
-      console.log("Ocurrio un error " + err);
+      console.log('Ocurrio un error ' + err);
     }
     return [];
   }
@@ -55,33 +37,28 @@ export class FileSystemRepository implements PersistanceBaseClass {
         }
       }
     } catch (error) {
-      console.log("Error: " + error);
+      console.log('Error: ' + error);
     }
   }
 
   //Metodo utilizado para guardar un objeto producto
-  async create(
-    producto: ProductInterface
-  ): Promise<ProductInterface | undefined> {
+  async create(producto: ProductInterface): Promise<ProductInterface | undefined> {
     let id = await this.generarIdProduct();
     let productos = await this.findAll();
     if (productos) {
       producto.id = id;
       if (producto.nombre) {
         try {
-          await fs.appendFile(productos_ds, "\n" + JSON.stringify(producto));
-          let productoTeReturn: ProductInterface | undefined =
-            await this.findById(id);
+          await fs.appendFile(productos_ds, '\n' + JSON.stringify(producto));
+          let productoTeReturn: ProductInterface | undefined = await this.findById(id);
           return productoTeReturn;
         } catch (err) {
-          console.log("Ocurrio un error " + err);
+          console.log('Ocurrio un error ' + err);
         }
       }
     } else {
       await fs.writeFile(productos_ds, JSON.stringify(producto));
-      let productoTeReturn: ProductInterface | undefined = await this.findById(
-        id
-      );
+      let productoTeReturn: ProductInterface | undefined = await this.findById(id);
       return productoTeReturn;
     }
   }
@@ -89,8 +66,8 @@ export class FileSystemRepository implements PersistanceBaseClass {
   //Metodo utilizado para generar el id
   async generarIdProduct() {
     let array = [];
-    let data = await fs.readFile(productos_ds, "utf-8");
-    array = data.split("\n");
+    let data = await fs.readFile(productos_ds, 'utf-8');
+    array = data.split('\n');
     return array.length;
   }
 
@@ -104,7 +81,7 @@ export class FileSystemRepository implements PersistanceBaseClass {
           if (productos[i].id == id) {
             productos.splice(i, 1);
             await fs.unlink(productos_ds);
-            await fs.writeFile(productos_ds, "");
+            await fs.writeFile(productos_ds, '');
           }
         }
       }
@@ -116,10 +93,7 @@ export class FileSystemRepository implements PersistanceBaseClass {
     }
   }
 
-  async update(
-    id: number,
-    producto: ProductInterface
-  ): Promise<ProductInterface | undefined> {
+  async update(id: number, producto: ProductInterface): Promise<ProductInterface | undefined> {
     let actualizada = 0;
     try {
       let productos = await this.findAll();
@@ -140,7 +114,7 @@ export class FileSystemRepository implements PersistanceBaseClass {
         }
         if (actualizada == 1) {
           await fs.unlink(productos_ds);
-          await fs.writeFile(productos_ds, "");
+          await fs.writeFile(productos_ds, '');
           for (let i in productos) {
             await this.create(productos[i]);
           }
@@ -156,17 +130,11 @@ export class FileSystemRepository implements PersistanceBaseClass {
     type Conditions = (aProduct: ProductInterface) => boolean;
     const query: Conditions[] = [];
 
-    if (options.nombre)
-      query.push(
-        (aProduct: ProductInterface) => aProduct.nombre == options.nombre
-      );
+    if (options.nombre) query.push((aProduct: ProductInterface) => aProduct.nombre == options.nombre);
 
-    if (options.codigo)
-      query.push(
-        (aProduct: ProductInterface) => aProduct.codigo == options.codigo
-      );
-    
-    if(options.minStock && options.maxStock){
+    if (options.codigo) query.push((aProduct: ProductInterface) => aProduct.codigo == options.codigo);
+
+    if (options.minStock && options.maxStock) {
       query.push(
         (aProduct: ProductInterface) => aProduct.stock > options.minStock && aProduct.stock < options.maxStock
       );
@@ -177,18 +145,16 @@ export class FileSystemRepository implements PersistanceBaseClass {
         (aProduct: ProductInterface) => aProduct.precio > options.minPrice && aProduct.precio < options.maxPrice
       );
 
-    return (await this.findAll()).filter((aProduct) =>
-      query.every((x) => x(aProduct))
-    );
+    return (await this.findAll()).filter(aProduct => query.every(x => x(aProduct)));
   }
 
   //Metodo para leer la info del archivo productos.txt
   async findProductsOnCart(): Promise<Producto[]> {
     let array = [];
     try {
-      let data = await fs.readFile(carritos_ds, "utf-8");
-      array = data.split("\n");
-      let array2 = array.filter((data) => data != "");
+      let data = await fs.readFile(carritos_ds, 'utf-8');
+      array = data.split('\n');
+      let array2 = array.filter(data => data != '');
       if (array2.length > 0) {
         for (let i in array2) {
           let carrito = JSON.parse(array2[i]);
@@ -198,7 +164,7 @@ export class FileSystemRepository implements PersistanceBaseClass {
         return [];
       }
     } catch (err) {
-      console.log("Ocurrio un error " + err);
+      console.log('Ocurrio un error ' + err);
     }
     return [];
   }
@@ -206,115 +172,101 @@ export class FileSystemRepository implements PersistanceBaseClass {
   async findCarrito(): Promise<Carrito> {
     let carrito: Carrito = new Carrito(0, new Date(), []);
     try {
-      let data = await fs.readFile(carritos_ds, "utf-8");
-      let array = data.split("\n");
-      let array2 = array.filter((data) => data != "");
+      let data = await fs.readFile(carritos_ds, 'utf-8');
+      let array = data.split('\n');
+      let array2 = array.filter(data => data != '');
       for (let i in array2) {
         carrito = JSON.parse(array2[i]);
       }
     } catch (err) {
-      console.log("Ocurrio un error " + err);
+      console.log('Ocurrio un error ' + err);
     }
     return carrito;
   }
 
-  async findProductsOnCartById(idProducto:number):Promise<Producto|undefined> {
-        try {
-            let producto = await this.findAll();
-            if (producto) {
-                for (let i in producto) {
-                    if (producto[i].idCarrito == idProducto) {
-                        return producto[i];
-                    }
-                }
-            }
-
+  async findProductsOnCartById(idProducto: number): Promise<Producto | undefined> {
+    try {
+      let producto = await this.findAll();
+      if (producto) {
+        for (let i in producto) {
+          if (producto[i].idCarrito == idProducto) {
+            return producto[i];
+          }
         }
-        catch (err) {
-            console.log("Ocurrio un error " + err)
-        }
+      }
+    } catch (err) {
+      console.log('Ocurrio un error ' + err);
     }
+  }
 
+  async generarIdCarrito() {
+    let data = await fs.readFile(carritos_ds, 'utf-8');
+    let carrito = JSON.parse(data);
+    return carrito.productos.length;
+  }
 
-    async generarIdCarrito() {
-        let data = await fs.readFile(carritos_ds, "utf-8");
-        let carrito = JSON.parse(data);
-        return carrito.productos.length;
-    };
+  async generarId(array: Array<Object>) {
+    return array.length;
+  }
 
-
-    async generarId(array:Array<Object>) {
-        return array.length;
+  async generarCarrito(carrito: Carrito) {
+    try {
+      await fs.appendFile(carritos_ds, '\n' + JSON.stringify(carrito));
+      return 1;
+    } catch (err) {
+      console.log('Ocurrio un error ' + err);
     }
+  }
 
-    async generarCarrito(carrito:Carrito) {
+  //Metodo utilizado para borrar el archivo
+  async deleteProductsOnCart(idProducto: number): Promise<Producto | undefined> {
+    try {
+      let carrito = await this.findCarrito();
+      let producto = await this.findById(idProducto);
+      let productos = await this.findAll();
+      if (productos) {
+        for (let i in productos) {
+          if (productos[i].idCarrito == idProducto) {
+            productos.splice(parseInt(i), 1);
+            carrito.productos = productos;
+            //carrito.carrito = prodCarr;
+            await fs.unlink(carritos_ds);
+            await fs.writeFile(carritos_ds, '');
 
-        try {
-            await fs.appendFile(carritos_ds, "\n" + JSON.stringify(carrito));
-            return 1;
+            break;
+          }
         }
-        catch (err) {
-            console.log("Ocurrio un error " + err)
+        let data = await this.generarCarrito(carrito);
+        if (data == 1) {
+          return producto;
         }
+      }
+    } catch (err) {
+      throw err;
     }
+  }
 
-
-    //Metodo utilizado para borrar el archivo
-    async deleteProductsOnCart(idProducto:number):Promise<Producto|undefined> {
-        try {
-            let carrito = await this.findCarrito();
-            let producto = await this.findById(idProducto);
-            let productos = await this.findAll();
-            if (productos) {
-                for (let i in productos) {
-                    if (productos[i].idCarrito == idProducto) {
-                        productos.splice(parseInt(i), 1)
-                        carrito.productos = productos;
-                        //carrito.carrito = prodCarr;
-                        await fs.unlink(carritos_ds);
-                        await fs.writeFile(carritos_ds, "");
-
-                        break;
-                    }
-                }
-                let data = await this.generarCarrito(carrito);
-                if (data == 1) {
-                    return producto;
-                }
-            }
-            
+  async addProductsToCart(producto: Producto): Promise<Producto | undefined> {
+    let actualizada = false;
+    try {
+      let carrito = await this.findCarrito();
+      if (carrito) {
+        let carrProds = carrito.productos;
+        producto.idCarrito = await this.generarIdCarrito();
+        carrProds.push(producto);
+        carrito.productos = carrProds;
+        actualizada = true;
+        if (actualizada) {
+          await fs.unlink(carritos_ds);
+          await fs.writeFile(carritos_ds, '');
+          await fs.appendFile(carritos_ds, '\n' + JSON.stringify(carrito));
+          return producto;
         }
-        catch (err) {
-            throw err;
-        }
-
-    };
-
-
-    async addProductsToCart(producto:Producto):Promise<Producto|undefined> {
-        let actualizada = false;
-        try {
-            
-                let carrito = await this.findCarrito();
-                if (carrito) {
-                    let carrProds = carrito.productos;
-                    producto.idCarrito = await this.generarIdCarrito();
-                    carrProds.push(producto)
-                    carrito.productos = carrProds;
-                    actualizada = true;
-                    if (actualizada) {
-                        await fs.unlink(carritos_ds);
-                        await fs.writeFile(carritos_ds, "");
-                        await fs.appendFile(carritos_ds, "\n" + JSON.stringify(carrito));
-                        return producto;
-                    }
-                }
-            }
-
-        catch (err) {
-            throw err;
-        }
-    };
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export const FSRepositorio = new FileSystemRepository();

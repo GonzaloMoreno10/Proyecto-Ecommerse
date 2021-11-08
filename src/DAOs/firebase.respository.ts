@@ -1,13 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {
   newProductInterface,
   ProductInterface,
   PersistanceBaseClass,
   ProductQueryInterface,
-} from "../interface/producto.inteface";
-import admin from "firebase-admin";
-import { firebaseConfig } from "../../keys/firebase";
-import { userInterface } from "../interface/user.interface";
+} from '../interface/producto.inteface';
+import admin from 'firebase-admin';
+import { firebaseConfig } from '../keys/firebase';
 
 export class FirebaseRepository implements PersistanceBaseClass {
   private productos: any;
@@ -18,23 +17,14 @@ export class FirebaseRepository implements PersistanceBaseClass {
       credential: admin.credential.cert(firebaseConfig),
     });
     let con = admin.firestore();
-    this.productos = con.collection("productos");
-    this.carritos = con.collection("carritos");
-  }
-  getUsers(): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersById(id: any): Promise<userInterface> {
-    throw new Error("Method not implemented.");
-  }
-  getUsersByUserName(userName: String): Promise<userInterface> {
-    throw new Error("Method not implemented.");
+    this.productos = con.collection('productos');
+    this.carritos = con.collection('carritos');
   }
 
   async findAll() {
     let res = await this.productos.get();
     let docs = res.docs;
-    const productos = docs.map((doc:any) => ({
+    const productos = docs.map((doc: any) => ({
       id: doc.id,
       data: doc.data(),
     }));
@@ -51,7 +41,7 @@ export class FirebaseRepository implements PersistanceBaseClass {
     });
   }
 
-  async create(data: newProductInterface): Promise<ProductInterface>|undefined {
+  async create(data: newProductInterface): Promise<ProductInterface> | undefined {
     try {
       const productDocument = this.productos.doc();
       return await productDocument.create(data);
@@ -69,25 +59,23 @@ export class FirebaseRepository implements PersistanceBaseClass {
     return await this.productos.doc(id).delete();
   }
 
-
   async findProductsOnCart(): Promise<ProductInterface[]> {
     let res = await this.carritos.get();
     let docs = res.docs;
-    if(docs.length > 0){
-      const carrito = docs.map((doc) => ({
+    if (docs.length > 0) {
+      const carrito = docs.map(doc => ({
         id: doc.id,
         data: doc.data(),
       }));
       return carrito[0].data.productos;
     }
-    
   }
   async findProductsOnCartById(id: any): Promise<ProductInterface> {
     let res = await this.carritos.get();
     let docs = res.docs;
-    console.log(docs)
-    if(docs.length > 0){
-      const carrito = docs.map((doc) => ({
+    console.log(docs);
+    if (docs.length > 0) {
+      const carrito = docs.map(doc => ({
         id: doc.id,
         data: doc.data(),
       }));
@@ -98,15 +86,14 @@ export class FirebaseRepository implements PersistanceBaseClass {
         }
       }
     }
-    
   }
   deleteProductsOnCart(id: any): Promise<ProductInterface> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   async addProductsToCart(idProducto: any): Promise<ProductInterface> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   query(options: ProductQueryInterface): Promise<ProductInterface[]> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }
