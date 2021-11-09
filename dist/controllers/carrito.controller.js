@@ -16,31 +16,42 @@ exports.carritoController = void 0;
 const express_1 = __importDefault(require("express"));
 const Router = express_1.default.Router();
 const mongo_1 = require("../repositories/mongo");
+const MailStructure_1 = require("../utils/MailStructure");
+const gmail_1 = require("../services/gmail");
+const twilio_1 = require("../services/twilio");
 class CarritoController {
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                let user = Object.assign(req.user);
                 if (req.params.idProducto) {
                     let idProducto = req.params.idProducto;
-                    let data = yield mongo_1.mongoCarritoRepository.findProductsOnCartById(idProducto);
+                    let data = yield mongo_1.mongoCarritoRepository.findProductsOnCartById(idProducto, user._id);
+                    console.log(data);
                     if (data) {
                         res.json(data);
                     }
                     else {
-                        res.status(400).json({ data: 'No se encontro el producto' });
+                        res.json('nada');
                     }
                 }
                 else {
-                    let productos = yield mongo_1.mongoCarritoRepository.findProductsOnCart();
-                    let total = 0;
+                    let cart = yield mongo_1.mongoCarritoRepository.findCartByUser(user._id);
+                    if (!cart)
+                        yield mongo_1.mongoCarritoRepository.createCart(user._id);
+                    let productos = yield mongo_1.mongoCarritoRepository.findProductsOnCart(user._id);
+                    let conteo = 0;
+                    let cantidad = 0;
                     for (let i in productos) {
-                        total += productos[i].precio;
+                        conteo += productos[i].precio;
+                        cantidad++;
                     }
+                    let total = conteo.toFixed(2);
                     if (productos) {
-                        res.json(productos);
+                        res.render('carritos/allCarrito', { productos, total, cantidad });
                     }
                     else {
-                        res.status(400).json({ Producto: 'No se encontro el producto' });
+                        res.render('carritos/allCarrito');
                     }
                 }
             }
@@ -52,26 +63,51 @@ class CarritoController {
     agregar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Entre en post carrito');
+                let user = Object.assign(req.user);
+                let existeCarrito = yield mongo_1.mongoCarritoRepository.findCartByUser(user._id);
+                if (!existeCarrito) {
+                    yield mongo_1.mongoCarritoRepository.createCart(user._id);
+                }
                 let idProd = req.params.idProd;
-                let existInCart = yield mongo_1.mongoCarritoRepository.findProductsOnCartById(idProd);
+                let existInCart = yield mongo_1.mongoCarritoRepository.findProductsOnCartById(idProd, user._id);
+                if (existInCart) {
+                    req.flash('error_msg', 'El producto ya esta en el carrito');
+                    return res.redirect('/api/carrito');
+                }
                 let existsProd = yield mongo_1.mongoProductRepository.findById(idProd);
                 if (existsProd) {
-                    if (!existInCart) {
-                        yield mongo_1.mongoCarritoRepository.addProductsToCart(idProd);
-                        res.json(1);
-                    }
-                    else {
-                        res.status(203).json(-1);
-                    }
+                    yield mongo_1.mongoCarritoRepository.addProductsToCart(idProd, user._id);
+                    req.flash('success_msg', 'Producto agregado al carrito');
+                    res.redirect('/api/productos');
                 }
                 else {
-                    res.status(400).json(-2);
+                    req.flash('error_msg', 'Ocurrio un error');
+                    res.redirect('/api/productos');
                 }
             }
             catch (err) {
                 console.log(err);
             }
+        });
+    }
+    compra(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let user = Object.assign(req.user);
+            let usuario = yield mongo_1.mongoUserRepository.findById(user._id);
+            let carrito = yield mongo_1.mongoCarritoRepository.findCartByUser(user._id);
+            let products = yield mongo_1.mongoCarritoRepository.findProductsOnCart(user._id);
+            let suma = 0;
+            for (let i in products) {
+                suma += products[i].precio;
+            }
+            let total = suma.toFixed(3);
+            yield gmail_1.GmailService.sendEmail(usuario.email, 'Nueva compra', (0, MailStructure_1.compra)(products, usuario, total));
+            carrito.productos = [];
+            yield twilio_1.SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
+            yield twilio_1.SmsService.sendWhatSapp('+5493548574529', (0, MailStructure_1.compraWhatSapp)(products, usuario, total));
+            yield mongo_1.mongoCarritoRepository.vaciarCarrito(user._id);
+            req.flash('success_msg', 'Pedido Realizado correctamente');
+            res.redirect('/api/productos');
         });
     }
     delete(req, res) {
@@ -81,10 +117,12 @@ class CarritoController {
                 let prod = yield mongo_1.mongoProductRepository.findById(idProducto);
                 if (prod) {
                     yield mongo_1.mongoCarritoRepository.deleteProductsOnCart(idProducto);
-                    res.json('Producto removido del carrito');
+                    req.flash('success_msg', 'Producto removido del carrito');
+                    res.redirect('/api/carrito');
                 }
                 else {
-                    res.json({ data: 'Producto no existente en el carrito' });
+                    req.flash('error_msg', 'Ocurrio un problema');
+                    res.redirect('/api/carrito');
                 }
             }
             catch (err) {

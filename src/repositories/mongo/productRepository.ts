@@ -20,19 +20,14 @@ class ProductRepository {
   }
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
   async findAll(): Promise<ProductInterface[]> {
-    let output: ProductInterface[] = [];
-    try {
-      output = await this.productos.find();
-      return output;
-    } catch (err) {
-      return output;
-    }
+    let products: ProductInterface[] = [];
+    products = await this.productos.find();
+    return products;
   }
 
   async findById(id: string): Promise<ProductInterface | undefined> {
     try {
       let productos = await this.productos.findById(id.toString());
-      //console.log(productos);
       return productos;
     } catch (err) {
       console.log(err);

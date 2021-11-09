@@ -2,15 +2,7 @@ import mongoose from 'mongoose';
 import { MONGO_ATLAS_CLUSTER, MONGO_ATLAS_DB, MONGO_ATLAS_PASSWORD, MONGO_ATLAS_USER } from '../../constantes/venv';
 import { NewUserInterface, UserInterface } from '../../interface';
 import connect from '../../config/mongoDbConnect';
-const usersSchema = new mongoose.Schema<UserInterface>({
-  email: String,
-  password: String,
-  nombre: String,
-  direccion: String,
-  edad: Number,
-  telefono: String,
-  avatar: String,
-});
+import userModel from '../../models/user.model';
 
 class UsersRepository {
   private srv: string;
@@ -18,7 +10,7 @@ class UsersRepository {
 
   constructor() {
     connect(this.srv);
-    this.users = mongoose.model<UserInterface>('users', usersSchema);
+    this.users = userModel;
   }
   async findAll(): Promise<UserInterface[]> {
     let output: UserInterface[] = [];
@@ -26,8 +18,13 @@ class UsersRepository {
       output = await this.users.find();
       return output;
     } catch (err) {
-      return output;
+      return err;
     }
+  }
+
+  async findByEmail(email: string) {
+    let data = await this.users.findOne({ email: email });
+    return data;
   }
 
   async findById(id: string): Promise<UserInterface | undefined> {
@@ -40,10 +37,14 @@ class UsersRepository {
     }
   }
 
+  async update(data: UserInterface | Partial<UserInterface>, userId: string): Promise<UserInterface> {
+    let res = await this.users.findByIdAndUpdate(userId, data);
+    return res;
+  }
+
   async create(data: NewUserInterface): Promise<UserInterface> {
     if (!data.email || !data.password) throw new Error('invalid data');
     const newUser = new this.users(data);
-    console.log(newUser);
     let res = await newUser.save();
     return res;
   }

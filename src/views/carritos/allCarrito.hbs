@@ -1,0 +1,71 @@
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/api/productos">Home</a></li>
+        <li class="breadcrumb-item"><a href="">Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+<div class="container-fluid" style="background-color:#EEEEEE; padding:30px;border-radius:5px">
+
+    <div class="card" style="border-radius:5px">
+        <div class="cardbody">
+            <div class="row" style="padding-top: 10px; padding-left:10px">
+                <div class="col">
+                    <h4 style="color:#0A58CA">Carrito({{cantidad}})</h4>
+                </div>
+            </div>
+            <hr>
+            {{#if productos}}
+            {{#each productos}}
+            <div class="row" style="padding:50px">
+                <div class="col producto-tumb">
+                    <img src="{{foto}}" style="width: 100px;height:100px">
+
+                </div>
+                <div class="col">
+                    <h6>{{descripcion}}</h6>
+                </div>
+                <div class="col">
+
+                </div>
+                <div class="col">
+                    <h4>${{precio}}</h4>
+                </div>
+                <div class="col">
+                    <form method="POST" _method="DELETE" action="/api/carrito/{{_id}}"
+                        style="background-color:#FFFFFF;border:none;box-shadow:none;padding:0px;margin:0px">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Quitar del carrito" class="btn btn-link"
+                            style="text-decoration:none">
+                    </form>
+
+
+                </div>
+            </div>
+            <hr>
+            {{/each}}
+
+            <div class="row" style="padding: 10px; text-align:right">
+                <div class="col-md-9 col-md-push-3"><a href="">
+                        <h4>Envio a: {{user.direccion}}</h4>
+                    </a> </div>
+                <div class="col-md-3 col-md-pull-9">
+                    <h4>Total: $ {{total}}</h4>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px; text-align:right">
+                <div class="col-md-8 col-md-push-8"></div>
+                <div class="col-md-4 col-md-pull-4">
+                    <form action="/api/carrito/compra/new" method="post"
+                        style="background-color:#FFFFFF;border:none;box-shadow:none;padding:0px;margin:0px">
+                        <input type="submit" value="Comprar" class="btn btn-primary">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div style="text-align: center;">
+            <h4>No tienes productos en el carrito, agrega uno <a href="/api/productos"
+                    style="text-decoration: none;">Aqui</a></h4>
+            {{/if}}
+        </div>

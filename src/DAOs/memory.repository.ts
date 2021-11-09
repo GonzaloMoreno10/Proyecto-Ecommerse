@@ -1,4 +1,4 @@
-import { CarritoInterface } from '../interface/carrito.interface';
+/*import { CarritoInterface } from '../interface/carrito.interface';
 import {
   newProductInterface,
   ProductInterface,
@@ -45,7 +45,7 @@ export class MemoriaRepository implements PersistanceBaseClass {
 
     //mockData.forEach((aMock) => this.carrito.productos.push(aMock));
 
-    this.carrito = { id: 1, timestamp: new Date(), productos: mockData };
+    this.carrito = { userId: '1', _id: 1, timestamp: new Date(), productos: mockData };
   }
 
   findIndex(id: string) {
@@ -173,3 +173,4 @@ export class MemoriaRepository implements PersistanceBaseClass {
     }
   }
 }
+*/

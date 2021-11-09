@@ -18,9 +18,10 @@ const mongoDbConnect_1 = __importDefault(require("../../config/mongoDbConnect"))
 const productRepository_1 = require("./productRepository");
 const carritosSchema = new mongoose_1.default.Schema({
     timestamp: Date,
+    userId: String,
     productos: [
         {
-            _id: Number,
+            prodId: Object,
             nombre: String,
             precio: Number,
             stock: Number,
@@ -35,17 +36,16 @@ class CarritoRepository {
         (0, mongoDbConnect_1.default)(this.srv);
         this.carritos = mongoose_1.default.model('carritos', carritosSchema);
     }
-    findProductsOnCart() {
+    findProductsOnCart(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let carrito = yield this.carritos.find();
-            return carrito[0].productos;
+            let carrito = yield this.findCartByUser(userId);
+            return carrito.productos;
         });
     }
-    findProductsOnCartById(id) {
+    findProductsOnCartById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let carrito = yield this.carritos.find();
-            let productos = carrito[0].productos;
-            //console.log(productos);
+            let carrito = yield this.findCartByUser(userId);
+            let productos = carrito.productos;
             for (let i in productos) {
                 if (productos[i] !== null) {
                     if (productos[i]._id.equals(id)) {
@@ -53,6 +53,13 @@ class CarritoRepository {
                     }
                 }
             }
+        });
+    }
+    vaciarCarrito(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.findCartByUser(userId);
+            carrito.productos = [];
+            yield this.carritos.findByIdAndUpdate(carrito._id, carrito);
         });
     }
     deleteProductsOnCart(id) {
@@ -65,7 +72,6 @@ class CarritoRepository {
                     if (productos[i]._id.equals(id)) {
                         if (productos.length > 1) {
                             productos.splice(i, 1);
-                            console.log(productos);
                             cart.productos = productos;
                         }
                         else {
@@ -77,14 +83,32 @@ class CarritoRepository {
             return yield this.carritos.findByIdAndUpdate(carrito[0].id, cart);
         });
     }
-    addProductsToCart(idProducto) {
+    addProductsToCart(idProducto, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let carrito = yield this.carritos.find();
+            let carrito = yield this.findCartByUser(userId);
             let producto = yield productRepository_1.mongoProductRepository.findById(idProducto);
-            let productos = carrito[0].productos;
+            let productos = carrito.productos;
             productos.push(producto);
-            carrito[0].productos = productos;
-            return yield this.carritos.findByIdAndUpdate(carrito[0].id, carrito[0]);
+            console.log(productos);
+            carrito.productos = productos;
+            console.log(carrito);
+            return yield this.carritos.findByIdAndUpdate(carrito._id, carrito);
+        });
+    }
+    findCartByUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = yield this.carritos.findOne({ userId: userId });
+            return carrito ? carrito : null;
+        });
+    }
+    createCart(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let carrito = {
+                userId: userId,
+                timestamp: new Date(),
+                productos: [],
+            };
+            yield this.carritos.create(carrito);
         });
     }
 }

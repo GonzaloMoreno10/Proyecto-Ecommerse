@@ -13,21 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoUserRepository = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
 const mongoDbConnect_1 = __importDefault(require("../../config/mongoDbConnect"));
-const usersSchema = new mongoose_1.default.Schema({
-    email: String,
-    password: String,
-    nombre: String,
-    direccion: String,
-    edad: Number,
-    telefono: String,
-    avatar: String,
-});
+const user_model_1 = __importDefault(require("../../models/user.model"));
 class UsersRepository {
     constructor() {
         (0, mongoDbConnect_1.default)(this.srv);
-        this.users = mongoose_1.default.model('users', usersSchema);
+        this.users = user_model_1.default;
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -37,8 +28,14 @@ class UsersRepository {
                 return output;
             }
             catch (err) {
-                return output;
+                return err;
             }
+        });
+    }
+    findByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = yield this.users.findOne({ email: email });
+            return data;
         });
     }
     findById(id) {
@@ -53,12 +50,17 @@ class UsersRepository {
             }
         });
     }
+    update(data, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = yield this.users.findByIdAndUpdate(userId, data);
+            return res;
+        });
+    }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!data.email || !data.password)
                 throw new Error('invalid data');
             const newUser = new this.users(data);
-            console.log(newUser);
             let res = yield newUser.save();
             return res;
         });

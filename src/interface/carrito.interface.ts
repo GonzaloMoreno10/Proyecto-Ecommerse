@@ -2,7 +2,14 @@ import { Producto } from '../models';
 import { ProductInterface } from './producto.inteface';
 
 export interface CarritoInterface {
-  id: any;
+  userId: string;
+  _id: any;
   timestamp: Date;
-  productos: ProductInterface[];
+  productos: any[];
+}
+
+export interface NewCarritoInterface {
+  userId: string;
+  timestamp: Date;
+  productos: any[];
 }

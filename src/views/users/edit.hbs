@@ -1,0 +1,41 @@
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/api/productos">Home</a></li>
+        <li class="breadcrumb-item"><a href="/api/users/profile">UserProfile</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<hgroup>
+    <h3>Editar</h3>
+</hgroup>
+<form action="/api/users/edit" method="post">
+    <div class="group">
+        <input type="email" name="email" class="used" value={{user.email}}><span class="highlight"></span><span
+            class="bar"></span>
+        <label>Email</label>
+    </div>
+    <div class="group">
+        <input type="text" name="nombre" class="used" value={{user.nombre}}><span class="highlight"></span><span
+            class="bar"></span>
+        <label>Nombre</label>
+    </div>
+    <div class="group">
+        <input type="text" name="direccion" class="used" value={{user.direccion}}> <span class="highlight"></span><span
+            class="bar"></span>
+        <label>Direccion</label>
+    </div>
+    <div class="group">
+        <input type="text" name="edad" class="used" value={{user.edad}}><span class="highlight"></span><span
+            class="bar"></span>
+        <label>Edad</label>
+    </div>
+    <div class="group">
+        <input type="text" name="telefono" class="used" value={{user.telefono}}><span class="highlight"></span><span
+            class="bar"></span>
+        <label>Telefono</label>
+    </div>
+    <button type="submit" class="button buttonBlue">Confirmar
+        <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+    </button>
+</form>

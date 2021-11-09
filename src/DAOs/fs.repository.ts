@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+/*import fs from 'fs/promises';
 import path from 'path';
 import { PersistanceBaseClass, ProductInterface, ProductQueryInterface } from '../interface/producto.inteface';
 import { Carrito } from '../models/carrito.model';
@@ -170,7 +170,7 @@ export class FileSystemRepository implements PersistanceBaseClass {
   }
 
   async findCarrito(): Promise<Carrito> {
-    let carrito: Carrito = new Carrito(0, new Date(), []);
+    let carrito: Carrito = new Carrito(0, new Date(), [], 1);
     try {
       let data = await fs.readFile(carritos_ds, 'utf-8');
       let array = data.split('\n');
@@ -270,3 +270,4 @@ export class FileSystemRepository implements PersistanceBaseClass {
 }
 
 export const FSRepositorio = new FileSystemRepository();
+*/

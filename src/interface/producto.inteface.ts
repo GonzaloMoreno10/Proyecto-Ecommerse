@@ -8,14 +8,13 @@ export interface newProductInterface {
 }
 
 export interface ProductInterface {
-  id: any;
+  _id: any;
   nombre: string;
   descripcion: string;
   codigo: number;
   foto: string;
   precio: number;
   stock: number;
-  idCarrito?: number;
 }
 
 export interface ProductQueryInterface {

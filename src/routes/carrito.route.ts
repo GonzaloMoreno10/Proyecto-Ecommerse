@@ -1,12 +1,15 @@
-import { Router } from "express";
-import { carritoController } from "../controllers/carrito.controller";
+import { Router } from 'express';
+import { carritoController } from '../controllers/carrito.controller';
+import { auth } from '../middlewares/auth';
 
 const router = Router();
 
-router.get("/:idProducto?",carritoController.findById);
+router.post('/compra/new', carritoController.compra);
 
-router.post("/:idProd",carritoController.agregar);
+router.get('/:idProducto?', auth, carritoController.findById);
 
-router.delete("/:idProducto",carritoController.delete);
+router.post('/:idProd', auth, carritoController.agregar);
+
+router.delete('/:idProducto', auth, carritoController.delete);
 
 export default router;

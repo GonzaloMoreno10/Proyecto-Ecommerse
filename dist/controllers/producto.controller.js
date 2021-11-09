@@ -16,9 +16,10 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = req.params.id;
-                let data = yield mongo_1.mongoProductRepository.findById(id);
-                if (data) {
-                    res.status(200).json(data);
+                let product = yield mongo_1.mongoProductRepository.findById(id);
+                let user = req.user;
+                if (product) {
+                    res.render('productos/detail', { product, user });
                 }
                 else {
                     res.status(400).json({ data: 'No se encontro el producto' });
@@ -32,14 +33,14 @@ class ProductoController {
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Pidieron en get');
                 let data = yield mongo_1.mongoProductRepository.findAll();
                 if (data) {
                     if (data.length > 0) {
-                        res.status(200).json(data);
+                        let products = yield mongo_1.mongoProductRepository.findAll();
+                        res.render('productos/allProducts', { products });
                     }
                     else {
-                        res.status(400).json({ data: 'No existen productos' });
+                        res.render('productos/allProducts');
                     }
                 }
             }

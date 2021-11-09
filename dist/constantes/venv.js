@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FIREBASE_CLIENT_EMAIL = exports.FIREBASE_PRIVATE_KEY = exports.FIREBASE_PROJECT_ID = exports.MONGO_ATLAS_CLUSTER = exports.MONGO_ATLAS_DB = exports.MONGO_ATLAS_PASSWORD = exports.MONGO_ATLAS_USER = exports.MONGO_DB = exports.MONGO_PASSWORD = exports.MONGO_USER = exports.MYSQL_DBNAME = exports.MYSQL_PASSWORD = exports.MYSQL_USER = exports.PORT = void 0;
+exports.TWILIO_ADMIN_WHATSAPP = exports.ADMIN_CELPHONE = exports.TWILIO_TOKEN = exports.TWILIO_SID = exports.ADMIN_MAIL = exports.FIREBASE_CLIENT_EMAIL = exports.FIREBASE_PRIVATE_KEY = exports.FIREBASE_PROJECT_ID = exports.MONGO_ATLAS_CLUSTER = exports.MONGO_ATLAS_DB = exports.MONGO_ATLAS_PASSWORD = exports.MONGO_ATLAS_USER = exports.MONGO_DB = exports.MONGO_PASSWORD = exports.MONGO_USER = exports.MYSQL_DBNAME = exports.MYSQL_PASSWORD = exports.MYSQL_USER = exports.PORT = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.PORT = process.env.PORT;
@@ -20,3 +20,8 @@ exports.MONGO_ATLAS_CLUSTER = process.env.MONGO_ATLAS_CLUSTER;
 exports.FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
 exports.FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
 exports.FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
+exports.ADMIN_MAIL = process.env.ADMIN_MAIL;
+exports.TWILIO_SID = process.env.TWILIO_SID;
+exports.TWILIO_TOKEN = process.env.TWILIO_TOKEN;
+exports.ADMIN_CELPHONE = process.env.ADMIN_CELPHONE;
+exports.TWILIO_ADMIN_WHATSAPP = process.env.TWILIO_ADMIN_WHATSAPP;

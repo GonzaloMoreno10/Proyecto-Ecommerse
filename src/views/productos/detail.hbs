@@ -1,0 +1,30 @@
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/api/productos">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{product.nombre}} </li>
+    </ol>
+</nav>
+
+<div class="container-sm" style="text-align: center;width:600px;box-shadow: 0 2px 7px #dfdfdf; padding:20px">
+
+
+    <div class="row">
+        <div class="imagen">
+            <img src="{{product.foto}}" alt="">
+        </div>
+        <h2>{{product.nombre}}</h2>
+        <br>
+        <h6>{{product.descripcion}}</h6>
+        <h2>${{product.precio}}</h2>
+        <small>Stock: {{product.stock}} unidades</small>
+        <br>
+        <hr>
+        <form action="/api/carrito/{{product._id}}" method="post"
+            style="background-color:#FFFFFF;border:none;box-shadow:none;padding:0px;margin:0px">
+            <button type="submit" class="btn btn-primary" style="width:200px"><i class="fa fa-shopping-cart"></i></a>
+        </form>
+
+
+    </div>
+
+</div>

@@ -31,21 +31,15 @@ class ProductRepository {
     //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            let output = [];
-            try {
-                output = yield this.productos.find();
-                return output;
-            }
-            catch (err) {
-                return output;
-            }
+            let products = [];
+            products = yield this.productos.find();
+            return products;
         });
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let productos = yield this.productos.findById(id.toString());
-                //console.log(productos);
                 return productos;
             }
             catch (err) {

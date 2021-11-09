@@ -7,9 +7,10 @@ export class ProductoController {
   async getById(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      let data = await mongoProductRepository.findById(id);
-      if (data) {
-        res.status(200).json(data);
+      let product = await mongoProductRepository.findById(id);
+      let user = req.user;
+      if (product) {
+        res.render('productos/detail', { product, user });
       } else {
         res.status(400).json({ data: 'No se encontro el producto' });
       }
@@ -23,9 +24,11 @@ export class ProductoController {
       let data = await mongoProductRepository.findAll();
       if (data) {
         if (data.length > 0) {
-          res.status(200).json(data);
+          let products = await mongoProductRepository.findAll();
+
+          res.render('productos/allProducts', { products });
         } else {
-          res.status(400).json({ data: 'No existen productos' });
+          res.render('productos/allProducts');
         }
       }
     } catch (err) {

@@ -1,21 +1,27 @@
-import { Router } from "express";
-import asyncHandler from 'express-async-handler'
-import { productoController } from "../controllers";
-import cors from 'cors'
+import { Router } from 'express';
+import asyncHandler from 'express-async-handler';
+import { productoController } from '../controllers';
+import { Request, Response } from 'express';
+import cors from 'cors';
+import { auth } from '../middlewares/auth';
 const router = Router();
 
 router.use(cors());
 
-router.get("/",asyncHandler(productoController.get));
+router.get('/new/product', (req: Request, res: Response) => {
+  res.render('productos/newProduct');
+});
 
-router.get("/:id",asyncHandler(productoController.getById));
+router.get('/', asyncHandler(productoController.get));
 
-router.put("/:id",asyncHandler(productoController.actualizar));
+router.get('/:id', asyncHandler(productoController.getById));
 
-router.post("/",asyncHandler(productoController.agregar));
+router.put('/:id', auth, asyncHandler(productoController.actualizar));
 
-router.delete("/:id",asyncHandler(productoController.borrar));
+router.post('/', auth, asyncHandler(productoController.agregar));
 
-router.get("/vista/1",asyncHandler(productoController.vista));
+router.delete('/:id', auth, asyncHandler(productoController.borrar));
+
+router.get('/vista/1', auth, asyncHandler(productoController.vista));
 
 export default router;
