@@ -92,11 +92,12 @@ class CarritoController {
   }
 
   async delete(req: Request, res: Response) {
+    let user = Object.assign(req.user);
     let idProducto = req.params.idProducto;
     try {
       let prod = await mongoProductRepository.findById(idProducto);
       if (prod) {
-        await mongoCarritoRepository.deleteProductsOnCart(idProducto);
+        await mongoCarritoRepository.deleteProductsOnCart(idProducto, user._id);
         req.flash('success_msg', 'Producto removido del carrito');
         res.redirect('/api/carrito');
       } else {

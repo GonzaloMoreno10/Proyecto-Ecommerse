@@ -49,6 +49,9 @@ app.use((0, connect_flash_1.default)());
 app.use(express_1.default.static(path.resolve(__dirname, '../../public')));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.get('/', (req, res) => {
+    res.redirect('/api/productos');
+});
 //Engine
 app.set('views', path.resolve(__dirname, '../../src/views'));
 app.engine('.hbs', (0, express_handlebars_1.default)({

@@ -37,6 +37,10 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+  res.redirect('/api/productos');
+});
+
 //Engine
 
 app.set('views', path.resolve(__dirname, '../../src/views'));

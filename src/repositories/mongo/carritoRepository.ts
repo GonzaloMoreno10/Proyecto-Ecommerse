@@ -51,9 +51,8 @@ export class CarritoRepository {
     await this.carritos.findByIdAndUpdate(carrito._id, carrito);
   }
 
-  async deleteProductsOnCart(id: any): Promise<ProductInterface> {
-    let carrito = await this.carritos.find();
-    let cart = carrito[0];
+  async deleteProductsOnCart(id: any, userId: string): Promise<ProductInterface> {
+    let cart = await this.findCartByUser(userId);
     let productos = cart.productos;
     for (let i = 0; i < productos.length; i++) {
       if (productos[i] !== null) {
@@ -68,7 +67,7 @@ export class CarritoRepository {
         }
       }
     }
-    return await this.carritos.findByIdAndUpdate(carrito[0].id, cart);
+    return await this.carritos.findByIdAndUpdate(cart._id, cart);
   }
   async addProductsToCart(idProducto: any, userId): Promise<ProductInterface> {
     let carrito = await this.findCartByUser(userId);

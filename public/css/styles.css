@@ -424,7 +424,7 @@ a {
     justify-content: center;
     height: 300px;
     padding: 50px;
-    background: #f0f0f0;
+    background: white;
 }
 
 .product-tumb img {
@@ -530,6 +530,10 @@ a {
     border-radius: .25rem;
 }
 
+body{
+    background-color: #EBEBEB;
+}
+
 .card-body {
     flex: 1 1 auto;
     min-height: 1px;
@@ -559,10 +563,17 @@ a {
     box-shadow: none!important;
 }
 
-@media screen and (min-width: 768px) {
+#productDetailCart{
+    text-align: center;
+    width:600px;
+    box-shadow: 0 2px 7px #dfdfdf;
+    padding:10px
+}
+
+@media screen and (max-width: 640px) {
     body {
         margin: calc(var(--header-height) + 1rem) 0 0 0;
-        padding-left: calc(var(--nav-width) + 2rem)
+        padding-left: calc(var(--nav-width) + 1rem)
     }
 
     .header {
@@ -570,18 +581,22 @@ a {
         padding: 0 2rem 0 calc(var(--nav-width) + 2rem)
     }
 
+    .header_toggle {
+        font-size: 0px;
+    }
+
     .header_img {
-        width: 40px;
-        height: 40px
+        width: 0px;
+        height: 0px;
     }
 
     .header_img img {
-        width: 45px
+        width: 0px
     }
 
     .l-navbar {
         left: 0;
-        padding: 1rem 1rem 0 0
+        height:100%
     }
 
     .show {
@@ -590,6 +605,21 @@ a {
 
     .body-pd {
         padding-left: calc(var(--nav-width) + 188px)
+    }
+
+    .product-card {
+        width: 250px;
+        position: relative;
+        box-shadow: 0 2px 7px #dfdfdf;
+        margin: 50px auto;
+        background: #fafafa;
+    }
+
+    #productDetailCart{
+        text-align: center;
+        width:250px;
+        box-shadow: 0 2px 7px #dfdfdf;
+        padding:10px
     }
 
     

@@ -5,14 +5,18 @@ import { GmailService } from '../services/gmail';
 import { cadena } from '../utils/MailStructure';
 import User from '../models/user.model';
 import passport from 'passport';
-import { ADMIN_MAIL } from '../constantes/venv';
+import { ADMIN_MAIL, PORT } from '../constantes/venv';
 class UsersController {
   async editPicture(req: Request, res: Response) {
     let user = Object.assign(req.user);
+    //let dir = '';
     let usuario = await mongoUserRepository.findById(user._id);
+
     let dir = `http://localhost:3000/storage/imgs/${user._id}.jpg`;
+
     console.log(dir);
     usuario.avatar = dir;
+    console.log(usuario);
     await mongoUserRepository.update(usuario, user._id);
     res.redirect('/api/users/profile');
   }

@@ -63,10 +63,12 @@ class ProductoController {
                 };
                 let result = yield mongo_1.mongoProductRepository.create(producto);
                 if (result) {
-                    res.status(200).json({ producto: result });
+                    req.flash('success_msg', 'Producto agregado');
+                    res.redirect('/api/productos');
                 }
                 else {
-                    res.status(500).json({ data: 'Algo fallo' });
+                    req.flash('error_msg', 'Ocurrio un error');
+                    res.redirect('/api/productos');
                 }
             }
             catch (err) {

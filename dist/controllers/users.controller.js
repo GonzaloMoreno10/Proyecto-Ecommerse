@@ -23,10 +23,12 @@ class UsersController {
     editPicture(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let user = Object.assign(req.user);
+            //let dir = '';
             let usuario = yield mongo_1.mongoUserRepository.findById(user._id);
             let dir = `http://localhost:3000/storage/imgs/${user._id}.jpg`;
             console.log(dir);
             usuario.avatar = dir;
+            console.log(usuario);
             yield mongo_1.mongoUserRepository.update(usuario, user._id);
             res.redirect('/api/users/profile');
         });

@@ -62,10 +62,9 @@ class CarritoRepository {
             yield this.carritos.findByIdAndUpdate(carrito._id, carrito);
         });
     }
-    deleteProductsOnCart(id) {
+    deleteProductsOnCart(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let carrito = yield this.carritos.find();
-            let cart = carrito[0];
+            let cart = yield this.findCartByUser(userId);
             let productos = cart.productos;
             for (let i = 0; i < productos.length; i++) {
                 if (productos[i] !== null) {
@@ -80,7 +79,7 @@ class CarritoRepository {
                     }
                 }
             }
-            return yield this.carritos.findByIdAndUpdate(carrito[0].id, cart);
+            return yield this.carritos.findByIdAndUpdate(cart._id, cart);
         });
     }
     addProductsToCart(idProducto, userId) {

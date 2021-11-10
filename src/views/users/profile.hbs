@@ -13,17 +13,20 @@
 
         <div class="row gutters-sm">
             <div class="col-md-4 mb-3">
-                <div class="card" style="height:450px">
-                    <div class="card-body" style="padding-top: 80px;">
-                        <div class="d-flex flex-column align-items-center text-center">
-                            <img src="{{user.avatar}}" alt="Admin" class="rounded-circle" width="150">
+                <div class="card" style="text-align:center">
+                    <div class="card-body" style="padding-top: 80px;text-align:center">
+                        <div class="d-flex flex-column align-items-center text-center" style="text-align: center;">
+                            <img src="{{user.avatar}}" alt="Admin" class="rounded-circle" width="150" height="150">
                             <br>
                             <input type="button" class="btn btn-primary" style="width:150px" value="Modificar Imagen"
                                 id="modifImage">
-                            <form action="/api/users/editPicture" method="post" id="formImage"
+                            <form action="/api/users/editPicture" class="form-control" method="post" id="formImage"
                                 enctype="multipart/form-data"
-                                style="background-color:#FFFFFF;border:none;text-align:center;box-shadow:none;padding:0px;margin:0px;display:none">
-                                <input type="file" name="avatar" class="form-control" placeholder="imagen">
+                                style="background-color:#FFFFFF;border:none;box-shadow:none;text-align:center;padding:0px;margin:0px;display:none">
+                                <div class="mb-3">
+                                    <input class="form-control form-control-sm" name="avatar" id="formFileSm"
+                                        type="file">
+                                </div>
                                 <br>
                                 <input type="submit" class="btn btn-primary" value="Aceptar" style="width:100px">
                             </form>
@@ -37,7 +40,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="card mb-3" style="height:450px">
+                <div class="card mb-3">
                     <div class="card-body" style="padding-top: 20px;">
                         <div class="row">
                             <div class="col-sm-3">

@@ -19,6 +19,7 @@ class UsersRepository {
     constructor() {
         (0, mongoDbConnect_1.default)(this.srv);
         this.users = user_model_1.default;
+        console.log(this.srv);
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,8 +35,13 @@ class UsersRepository {
     }
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            let data = yield this.users.findOne({ email: email });
-            return data;
+            try {
+                let data = yield this.users.findOne({ email: email });
+                return data;
+            }
+            catch (err) {
+                throw new Error(err);
+            }
         });
     }
     findById(id) {

@@ -112,11 +112,12 @@ class CarritoController {
     }
     delete(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            let user = Object.assign(req.user);
             let idProducto = req.params.idProducto;
             try {
                 let prod = yield mongo_1.mongoProductRepository.findById(idProducto);
                 if (prod) {
-                    yield mongo_1.mongoCarritoRepository.deleteProductsOnCart(idProducto);
+                    yield mongo_1.mongoCarritoRepository.deleteProductsOnCart(idProducto, user._id);
                     req.flash('success_msg', 'Producto removido del carrito');
                     res.redirect('/api/carrito');
                 }

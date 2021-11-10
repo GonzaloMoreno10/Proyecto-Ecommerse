@@ -11,6 +11,7 @@ class UsersRepository {
   constructor() {
     connect(this.srv);
     this.users = userModel;
+    console.log(this.srv);
   }
   async findAll(): Promise<UserInterface[]> {
     let output: UserInterface[] = [];
@@ -23,8 +24,12 @@ class UsersRepository {
   }
 
   async findByEmail(email: string) {
-    let data = await this.users.findOne({ email: email });
-    return data;
+    try {
+      let data = await this.users.findOne({ email: email });
+      return data;
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async findById(id: string): Promise<UserInterface | undefined> {
