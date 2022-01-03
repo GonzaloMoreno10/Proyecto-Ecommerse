@@ -13,28 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoCarritoRepository = exports.CarritoRepository = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const mongoDbConnect_1 = __importDefault(require("../../config/mongoDbConnect"));
 const productRepository_1 = require("./productRepository");
-const carritosSchema = new mongoose_1.default.Schema({
-    timestamp: Date,
-    userId: String,
-    productos: [
-        {
-            prodId: Object,
-            nombre: String,
-            precio: Number,
-            stock: Number,
-            codigo: Number,
-            foto: String,
-            descripcion: String,
-        },
-    ],
-});
+const carrito_model_1 = __importDefault(require("../../models/carrito.model"));
 class CarritoRepository {
     constructor() {
-        (0, mongoDbConnect_1.default)(this.srv);
-        this.carritos = mongoose_1.default.model('carritos', carritosSchema);
+        this.carritos = carrito_model_1.default;
     }
     findProductsOnCart(userId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -82,15 +65,26 @@ class CarritoRepository {
             return yield this.carritos.findByIdAndUpdate(cart._id, cart);
         });
     }
-    addProductsToCart(idProducto, userId) {
+    addProductsToCart(idProducto, cantidad, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let carrito = yield this.findCartByUser(userId);
             let producto = yield productRepository_1.mongoProductRepository.findById(idProducto);
             let productos = carrito.productos;
-            productos.push(producto);
-            console.log(productos);
+            const productOnCart = {
+                _id: producto._id,
+                nombre: producto.nombre,
+                descripcion: producto.descripcion,
+                codigo: producto.codigo,
+                foto: producto.foto,
+                precio: producto.precio,
+                stock: producto.stock,
+                categoria: producto.categoria,
+                cantidad: cantidad,
+                precioTotal: producto.precio * cantidad,
+            };
+            console.log(productOnCart);
+            productos.push(productOnCart);
             carrito.productos = productos;
-            console.log(carrito);
             return yield this.carritos.findByIdAndUpdate(carrito._id, carrito);
         });
     }

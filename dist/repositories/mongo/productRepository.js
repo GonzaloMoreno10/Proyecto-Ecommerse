@@ -13,20 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoProductRepository = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const mongoDbConnect_1 = __importDefault(require("../../config/mongoDbConnect"));
-const productsSchema = new mongoose_1.default.Schema({
-    nombre: String,
-    precio: Number,
-    stock: Number,
-    codigo: Number,
-    foto: String,
-    descripcion: String,
-});
+const producto_model_1 = __importDefault(require("../../models/producto.model"));
 class ProductRepository {
     constructor() {
-        (0, mongoDbConnect_1.default)(this.srv);
-        this.productos = mongoose_1.default.model('productos', productsSchema);
+        this.productos = producto_model_1.default;
     }
     //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
     findAll() {
@@ -34,6 +24,11 @@ class ProductRepository {
             let products = [];
             products = yield this.productos.find();
             return products;
+        });
+    }
+    findByCategory(categoryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let productos = yield this.productos.find({ categoria: categoryId });
         });
     }
     findById(id) {
@@ -52,6 +47,7 @@ class ProductRepository {
             if (!data.nombre || !data.precio)
                 throw new Error('invalid data');
             const newProduct = new this.productos(data);
+            console.log(newProduct);
             let res = yield newProduct.save();
             return res;
         });
@@ -84,7 +80,7 @@ class ProductRepository {
                 query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
             if (options.codigo)
                 query.codigo = options.codigo;
-            console.log(query);
+            //console.log(query);
             return this.productos.find(query);
         });
     }

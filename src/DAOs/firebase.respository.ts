@@ -73,7 +73,7 @@ export class FirebaseRepository implements PersistanceBaseClass {
   async findProductsOnCartById(id: any): Promise<ProductInterface> {
     let res = await this.carritos.get();
     let docs = res.docs;
-    console.log(docs);
+    //console.log(docs);
     if (docs.length > 0) {
       const carrito = docs.map(doc => ({
         id: doc.id,

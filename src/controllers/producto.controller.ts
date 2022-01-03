@@ -8,12 +8,7 @@ export class ProductoController {
     try {
       let id = req.params.id;
       let product = await mongoProductRepository.findById(id);
-      let user = req.user;
-      if (product) {
-        res.render('productos/detail', { product, user });
-      } else {
-        res.status(400).json({ data: 'No se encontro el producto' });
-      }
+      res.json(product);
     } catch (err) {
       console.log(err);
     }
@@ -22,15 +17,8 @@ export class ProductoController {
   async get(req: Request, res: Response) {
     try {
       let data = await mongoProductRepository.findAll();
-      if (data) {
-        if (data.length > 0) {
-          let products = await mongoProductRepository.findAll();
-
-          res.render('productos/allProducts', { products });
-        } else {
-          res.render('productos/allProducts');
-        }
-      }
+      console.log(data);
+      res.json(data);
     } catch (err) {
       console.log(err);
     }
@@ -38,7 +26,7 @@ export class ProductoController {
 
   async agregar(req: Request, res: Response) {
     try {
-      let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
+      let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
       let producto: newProductInterface = {
         nombre,
         descripcion,
@@ -46,15 +34,10 @@ export class ProductoController {
         foto,
         precio,
         stock,
+        categoria,
       };
       let result = await mongoProductRepository.create(producto);
-      if (result) {
-        req.flash('success_msg', 'Producto agregado');
-        res.redirect('/api/productos');
-      } else {
-        req.flash('error_msg', 'Ocurrio un error');
-        res.redirect('/api/productos');
-      }
+      return res.status(200).json(result);
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +46,7 @@ export class ProductoController {
   async actualizar(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
+      let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
       let producto: newProductInterface = {
         nombre,
         descripcion,
@@ -71,36 +54,24 @@ export class ProductoController {
         foto,
         precio,
         stock,
+        categoria,
       };
 
       if (producto) {
         let prod = await mongoProductRepository.findById(id);
-        // console.log(prod);
-        if (prod) {
-          let data = await mongoProductRepository.update(id, producto);
-
-          res.status(200).json({ producto: 'Producto Actualizado', data });
-        } else {
-          res.status(500).json({ data: 'No se encontro el producto' });
-        }
+        let data = await mongoProductRepository.update(id, producto);
+        res.status(200).json({ producto: 'Producto Actualizado', data });
       }
     } catch (err) {
-      console.log(err);
+      return res.json(err);
     }
-  }
-
-  async vista(req: Request, res: Response) {
-    let { minPrice, maxPrice, minStock, maxStock, nombre, codigo } = req.body;
-    let options: ProductQueryInterface = { minPrice, maxPrice, minStock, maxStock, nombre, codigo };
-    let productos = await mongoProductRepository.query(options);
-    res.json(productos);
   }
 
   async borrar(req: Request, res: Response) {
     try {
       let id = req.params.id;
       await mongoProductRepository.delete(id);
-      res.json({
+      res.status(202).json({
         msg: 'producto borrado',
       });
     } catch (err) {

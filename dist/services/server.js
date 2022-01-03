@@ -26,49 +26,32 @@ const express_1 = __importDefault(require("express"));
 const path = __importStar(require("path"));
 const main_route_1 = __importDefault(require("../routes/main.route"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const express_session_1 = __importDefault(require("express-session"));
-const session_1 = require("../config/session");
 const passport_1 = __importDefault(require("passport"));
-const express_handlebars_1 = __importDefault(require("express-handlebars"));
-const allow_prototype_access_1 = require("@handlebars/allow-prototype-access");
-const handlebars_1 = __importDefault(require("handlebars"));
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const log4js_1 = __importDefault(require("log4js"));
 const log4js_2 = require("../config/log4js");
+const cors_1 = __importDefault(require("cors"));
+const mongoDbConnect_1 = __importDefault(require("../config/mongoDbConnect"));
+const errors_controller_1 = require("../controllers/errors.controller");
 log4js_1.default.configure(log4js_2.log4jsConfig);
 require('../services/passport');
+(0, mongoDbConnect_1.default)();
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 //Configuracion
 app.set('port', process.env.PORT);
+app.use(errors_controller_1.errorHandler);
+const pugPath = path.resolve(__dirname, '../views');
+app.set('views', pugPath);
 //Middlewares
-app.use((0, express_session_1.default)(session_1.StoreOptions));
 app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
 app.use((0, connect_flash_1.default)());
 app.use(express_1.default.static(path.resolve(__dirname, '../../public')));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.json({ limit: '50mb' }));
+app.use(express_1.default.urlencoded({ extended: true, limit: '50mb' }));
 app.get('/', (req, res) => {
     res.redirect('/api/productos');
 });
-//Engine
-app.set('views', path.resolve(__dirname, '../../src/views'));
-app.engine('.hbs', (0, express_handlebars_1.default)({
-    //Configuro handlebars
-    defaultLayout: 'main',
-    layoutsDir: path.join(app.get('views'), 'layouts'),
-    partialsDir: path.join(app.get('views'), 'partials'),
-    extname: '.hbs',
-    handlebars: (0, allow_prototype_access_1.allowInsecurePrototypeAccess)(handlebars_1.default),
-}));
-app.use((req, res, next) => {
-    res.locals.user = req.user || undefined;
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
-});
-app.set('view engine', '.hbs');
 app.use('/api', main_route_1.default);
 exports.default = app;

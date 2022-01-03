@@ -45,7 +45,7 @@ export class SqliteRepository implements PersistanceBaseClass {
     if (options.minStock) query += `.andWhere('stock','>',${options.minStock})`;
     if (options.minStock) query += `.andWhere('stock','<',${options.maxStock})`;
 
-    console.log(query);
+    //console.log(query);
 
     return <ProductInterface[]>(<unknown>await eval(query));
   }
@@ -65,7 +65,7 @@ export class SqliteRepository implements PersistanceBaseClass {
   }
 
   async findProductsOnCartById(id: any): Promise<ProductInterface> {
-    console.log(id);
+    // console.log(id);
     return this.sqliteDB({ a: 'carritos_productos', b: 'productos' })
       .select({
         id: 'b.id',

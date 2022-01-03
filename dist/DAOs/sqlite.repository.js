@@ -62,7 +62,7 @@ class SqliteRepository {
                 query += `.andWhere('stock','>',${options.minStock})`;
             if (options.minStock)
                 query += `.andWhere('stock','<',${options.maxStock})`;
-            console.log(query);
+            //console.log(query);
             return yield eval(query);
         });
     }
@@ -83,7 +83,7 @@ class SqliteRepository {
     }
     findProductsOnCartById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(id);
+            // console.log(id);
             return this.sqliteDB({ a: 'carritos_productos', b: 'productos' })
                 .select({
                 id: 'b.id',

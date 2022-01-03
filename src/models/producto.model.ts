@@ -1,31 +1,14 @@
-export class Producto {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  codigo: number;
-  foto: string;
-  precio: number;
-  stock: number;
-  idCarrito?:number | undefined
+import { Schema, model } from 'mongoose';
+import { ProductInterface } from '../interface';
 
-  constructor(
-    nombre: string,
-    descripcion: string,
-    codigo: number,
-    foto: string,
-    precio: number,
-    stock: number,
-    idCarrito:number | undefined,
-    id:number,
-    
-  ) {
-    this.id = id;
-    this.nombre = nombre;
-    this.descripcion = descripcion;
-    this.codigo = codigo;
-    this.foto = foto;
-    this.precio = precio;
-    this.stock = stock;
-    this.idCarrito = idCarrito;
-  }
-}
+const productoSchema = new Schema({
+  nombre: String,
+  descripcion: String,
+  codigo: Number,
+  foto: String,
+  precio: Number,
+  stock: Number,
+  categoria: String,
+});
+
+export default model<ProductInterface>('productos', productoSchema);

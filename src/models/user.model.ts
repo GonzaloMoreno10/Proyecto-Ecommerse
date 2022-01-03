@@ -1,11 +1,17 @@
 import { Schema, model } from 'mongoose';
-import { UserInterface } from '../interface';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
+  _id: string;
+  nombre: string;
+  direccion: string;
+  edad: number;
+  telefono: string;
+  avatar: string;
   email: string;
   password: string;
   matchPassword: Function;
+  admin: Number;
 }
 
 const usersSchema = new Schema({
@@ -16,6 +22,7 @@ const usersSchema = new Schema({
   edad: Number,
   telefono: String,
   avatar: String,
+  admin: Number,
 });
 
 usersSchema.pre<IUser>('save', async function (next) {

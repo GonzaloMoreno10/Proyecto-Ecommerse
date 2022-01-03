@@ -32,7 +32,6 @@ class Gmail {
                 rejectUnauthorized: false,
             },
         });
-        //this.transporter.verify().then(() => console.log('READY To Send Email'));
     }
     sendEmail(dest, subject, content) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,12 +40,6 @@ class Gmail {
                 to: dest,
                 subject,
                 html: content,
-                //   attachments: [
-                //     {
-                //       // filename and content type is derived from path
-                //       path: path.resolve(__dirname, '../nodemailer.png'),
-                //     },
-                //   ],
             };
             const response = yield this.transporter.sendMail(mailOptions);
             return response;

@@ -17,13 +17,7 @@ class ProductoController {
             try {
                 let id = req.params.id;
                 let product = yield mongo_1.mongoProductRepository.findById(id);
-                let user = req.user;
-                if (product) {
-                    res.render('productos/detail', { product, user });
-                }
-                else {
-                    res.status(400).json({ data: 'No se encontro el producto' });
-                }
+                res.json(product);
             }
             catch (err) {
                 console.log(err);
@@ -34,15 +28,8 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let data = yield mongo_1.mongoProductRepository.findAll();
-                if (data) {
-                    if (data.length > 0) {
-                        let products = yield mongo_1.mongoProductRepository.findAll();
-                        res.render('productos/allProducts', { products });
-                    }
-                    else {
-                        res.render('productos/allProducts');
-                    }
-                }
+                console.log(data);
+                res.json(data);
             }
             catch (err) {
                 console.log(err);
@@ -52,7 +39,7 @@ class ProductoController {
     agregar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
+                let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
                 let producto = {
                     nombre,
                     descripcion,
@@ -60,16 +47,10 @@ class ProductoController {
                     foto,
                     precio,
                     stock,
+                    categoria,
                 };
                 let result = yield mongo_1.mongoProductRepository.create(producto);
-                if (result) {
-                    req.flash('success_msg', 'Producto agregado');
-                    res.redirect('/api/productos');
-                }
-                else {
-                    req.flash('error_msg', 'Ocurrio un error');
-                    res.redirect('/api/productos');
-                }
+                return res.status(200).json(result);
             }
             catch (err) {
                 console.log(err);
@@ -80,7 +61,7 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = req.params.id;
-                let { nombre, descripcion, codigo, foto, precio, stock } = req.body;
+                let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
                 let producto = {
                     nombre,
                     descripcion,
@@ -88,30 +69,17 @@ class ProductoController {
                     foto,
                     precio,
                     stock,
+                    categoria,
                 };
                 if (producto) {
                     let prod = yield mongo_1.mongoProductRepository.findById(id);
-                    // console.log(prod);
-                    if (prod) {
-                        let data = yield mongo_1.mongoProductRepository.update(id, producto);
-                        res.status(200).json({ producto: 'Producto Actualizado', data });
-                    }
-                    else {
-                        res.status(500).json({ data: 'No se encontro el producto' });
-                    }
+                    let data = yield mongo_1.mongoProductRepository.update(id, producto);
+                    res.status(200).json({ producto: 'Producto Actualizado', data });
                 }
             }
             catch (err) {
-                console.log(err);
+                return res.json(err);
             }
-        });
-    }
-    vista(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let { minPrice, maxPrice, minStock, maxStock, nombre, codigo } = req.body;
-            let options = { minPrice, maxPrice, minStock, maxStock, nombre, codigo };
-            let productos = yield mongo_1.mongoProductRepository.query(options);
-            res.json(productos);
         });
     }
     borrar(req, res) {
@@ -119,7 +87,7 @@ class ProductoController {
             try {
                 let id = req.params.id;
                 yield mongo_1.mongoProductRepository.delete(id);
-                res.json({
+                res.status(202).json({
                     msg: 'producto borrado',
                 });
             }

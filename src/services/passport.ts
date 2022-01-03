@@ -1,38 +1,69 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
-import { UserInterface } from '../interface';
+import passportJwt from 'passport-jwt';
 import userSchema, { IUser } from '../models/user.model';
+const localStrategy = passportLocal.Strategy;
+const ExtractJWT = passportJwt.ExtractJwt;
+const JWTStrategy = passportJwt.Strategy;
 
-const LocalStrategy = passportLocal.Strategy;
+passport.use(
+  'signup',
+  new localStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+    },
+    async (email, password, done) => {
+      try {
+        const user = await userSchema.create({ email, password });
+        return done(null, user);
+      } catch (e) {
+        done(e);
+      }
+    }
+  )
+);
 
-const strategyOptions = {
-  usernameField: 'email',
-  passwordField: 'password',
-  passReqToCallback: true,
-};
+passport.use(
+  'login',
+  new localStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+    },
+    async (email, password, done) => {
+      try {
+        const user: IUser = await userSchema.findOne({ email });
+        console.log(user);
+        if (!user) {
+          return done(null, false, { message: 'User not found' });
+        }
 
-const login = async (req, email: string, password: string, done: any) => {
-  const user: IUser = await userSchema.findOne({ email: email });
-  if (!user) {
-    req.flash('error_msg', 'Usuario incorrecto');
-    return done(null, false, { message: 'Usuario incorrecto.' });
-  }
-  if (!(await user.matchPassword(password))) {
-    req.flash('error_msg', 'Usuario incorrecto');
-    return done(null, false, { message: 'Contraseña incorrecta.' });
-  }
+        if (!(await user.matchPassword(password))) {
+          return done(null, false, { message: 'Contraseña incorrecta.' });
+        }
 
-  return done(null, user);
-};
+        return done(null, user, { message: 'Login successfull' });
+      } catch (e) {
+        return done(e);
+      }
+    }
+  )
+);
 
-passport.use('login', new LocalStrategy(strategyOptions, login));
-
-passport.serializeUser((user: UserInterface, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser((userId, done) => {
-  userSchema.findById(userId, function (err, user) {
-    done(err, user);
-  });
-});
+passport.use(
+  new JWTStrategy(
+    {
+      secretOrKey: 'top_secret',
+      jwtFromRequest: ExtractJWT.fromHeader('bearer'),
+    },
+    async (token, done) => {
+      try {
+        console.log(token);
+        return done(null, token.user);
+      } catch (e) {
+        done(e);
+      }
+    }
+  )
+);

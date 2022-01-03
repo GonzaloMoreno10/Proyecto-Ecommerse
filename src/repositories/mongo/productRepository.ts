@@ -1,28 +1,22 @@
 import mongoose from 'mongoose';
-import { newProductInterface, ProductInterface, ProductQueryInterface } from '../../interface';
-import connect from '../../config/mongoDbConnect';
-const productsSchema = new mongoose.Schema<ProductInterface>({
-  nombre: String,
-  precio: Number,
-  stock: Number,
-  codigo: Number,
-  foto: String,
-  descripcion: String,
-});
+import { newProductInterface, ProductInterface, ProductOnCart, ProductQueryInterface } from '../../interface';
+import productoModel from '../../models/producto.model';
 
 class ProductRepository {
-  private srv: string;
   private productos: any;
 
   constructor() {
-    connect(this.srv);
-    this.productos = mongoose.model<ProductInterface>('productos', productsSchema);
+    this.productos = productoModel;
   }
   //mongodb+srv://admin:<password>@cluster0.6d6g8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
   async findAll(): Promise<ProductInterface[]> {
     let products: ProductInterface[] = [];
     products = await this.productos.find();
     return products;
+  }
+
+  async findByCategory(categoryId) {
+    let productos: ProductInterface = await this.productos.find({ categoria: categoryId });
   }
 
   async findById(id: string): Promise<ProductInterface | undefined> {
@@ -38,6 +32,7 @@ class ProductRepository {
     if (!data.nombre || !data.precio) throw new Error('invalid data');
 
     const newProduct = new this.productos(data);
+    console.log(newProduct);
     let res = await newProduct.save();
     return res;
   }
@@ -67,7 +62,7 @@ class ProductRepository {
 
     if (options.codigo) query.codigo = options.codigo;
 
-    console.log(query);
+    //console.log(query);
 
     return this.productos.find(query);
   }

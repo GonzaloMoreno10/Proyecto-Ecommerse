@@ -1,15 +1,10 @@
-import { Producto } from './producto.model';
+import { Schema, model } from 'mongoose';
+import { CarritoInterface } from '../interface';
 
-export class Carrito {
-  userId: number;
-  id: number;
-  timestamp: Date;
-  productos: Array<Producto>;
+const carritoSchema = new Schema({
+  userId: Object,
+  timestamp: Date,
+  productos: [Object],
+});
 
-  constructor(id: number, timestamp: Date, productos: Array<Producto>, userId: number) {
-    this.userId = userId;
-    this.id = id;
-    this.timestamp = timestamp;
-    this.productos = productos;
-  }
-}
+export default model<CarritoInterface>('carritos', carritoSchema);

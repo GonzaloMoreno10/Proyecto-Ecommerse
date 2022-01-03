@@ -22,8 +22,6 @@ class Gmail {
         rejectUnauthorized: false,
       },
     });
-
-    //this.transporter.verify().then(() => console.log('READY To Send Email'));
   }
 
   async sendEmail(dest, subject, content) {
@@ -32,12 +30,6 @@ class Gmail {
       to: dest,
       subject,
       html: content,
-      //   attachments: [
-      //     {
-      //       // filename and content type is derived from path
-      //       path: path.resolve(__dirname, '../nodemailer.png'),
-      //     },
-      //   ],
     };
 
     const response = await this.transporter.sendMail(mailOptions);

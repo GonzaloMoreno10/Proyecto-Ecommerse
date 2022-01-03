@@ -5,6 +5,7 @@ export interface newProductInterface {
   foto: string;
   precio: number;
   stock: number;
+  categoria: string;
 }
 
 export interface ProductInterface {
@@ -15,6 +16,12 @@ export interface ProductInterface {
   foto: string;
   precio: number;
   stock: number;
+  categoria: string;
+}
+
+export interface ProductOnCart extends ProductInterface {
+  cantidad: number;
+  precioTotal: number;
 }
 
 export interface ProductQueryInterface {

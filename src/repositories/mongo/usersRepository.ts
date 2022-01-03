@@ -1,17 +1,12 @@
-import mongoose from 'mongoose';
-import { MONGO_ATLAS_CLUSTER, MONGO_ATLAS_DB, MONGO_ATLAS_PASSWORD, MONGO_ATLAS_USER } from '../../constantes/venv';
 import { NewUserInterface, UserInterface } from '../../interface';
-import connect from '../../config/mongoDbConnect';
 import userModel from '../../models/user.model';
 
 class UsersRepository {
-  private srv: string;
   private users: any;
 
   constructor() {
-    connect(this.srv);
     this.users = userModel;
-    console.log(this.srv);
+    // console.log(this.srv);
   }
   async findAll(): Promise<UserInterface[]> {
     let output: UserInterface[] = [];

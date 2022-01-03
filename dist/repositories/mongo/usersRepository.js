@@ -13,13 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoUserRepository = void 0;
-const mongoDbConnect_1 = __importDefault(require("../../config/mongoDbConnect"));
 const user_model_1 = __importDefault(require("../../models/user.model"));
 class UsersRepository {
     constructor() {
-        (0, mongoDbConnect_1.default)(this.srv);
         this.users = user_model_1.default;
-        console.log(this.srv);
+        // console.log(this.srv);
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {

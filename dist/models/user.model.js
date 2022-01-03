@@ -22,6 +22,7 @@ const usersSchema = new mongoose_1.Schema({
     edad: Number,
     telefono: String,
     avatar: String,
+    admin: Number,
 });
 usersSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -22,22 +22,34 @@ const venv_1 = require("../constantes/venv");
 class UsersController {
     editPicture(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user = Object.assign(req.user);
+            let { userId } = req.params;
             //let dir = '';
-            let usuario = yield mongo_1.mongoUserRepository.findById(user._id);
-            let dir = `http://localhost:3000/storage/imgs/${user._id}.jpg`;
+            let usuario = yield mongo_1.mongoUserRepository.findById(userId);
+            let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
             console.log(dir);
             usuario.avatar = dir;
-            console.log(usuario);
-            yield mongo_1.mongoUserRepository.update(usuario, user._id);
-            res.redirect('/api/users/profile');
+            try {
+                const updateUser = yield mongo_1.mongoUserRepository.update(usuario, userId);
+                return res.status(200).json(updateUser);
+            }
+            catch (err) {
+                return res.json(err);
+            }
+        });
+    }
+    findById(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { userId } = req.params;
+            console.log(userId);
+            const user = yield mongo_1.mongoUserRepository.findById(userId);
+            console.log(user);
+            return res.json(user);
         });
     }
     editProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let usuario = Object.assign(req.user);
+            let { id } = req.params;
             let { email, nombre, direccion, edad, telefono } = req.body;
-            console.log(email);
             let user = {
                 email,
                 nombre,
@@ -45,15 +57,13 @@ class UsersController {
                 edad,
                 telefono,
             };
-            console.log(user);
-            let result = yield mongo_1.mongoUserRepository.update(user, usuario._id);
-            if (result._id) {
-                req.flash('success_msg', 'Datos actualizados');
-                return res.redirect('/api/users/profile');
+            //console.log(user);
+            try {
+                let result = yield mongo_1.mongoUserRepository.update(user, id);
+                return res.status(200).json(result);
             }
-            else {
-                req.flash('error_msg', 'Algo Fallo');
-                return res.redirect('/api/users/profile');
+            catch (err) {
+                return res.status(500).json(err);
             }
         });
     }
@@ -99,10 +109,8 @@ class UsersController {
                 try {
                     let result = yield mongo_1.mongoUserRepository.create(user);
                     if (result._id) {
-                        let response = yield gmail_1.GmailService.sendEmail(venv_1.ADMIN_MAIL, 'Nuevo Registro', (0, MailStructure_1.cadena)(user));
-                        console.log(response);
-                        req.flash('success_msg', 'Usuario creado !');
-                        res.redirect('/api/users/login');
+                        yield gmail_1.GmailService.sendEmail(venv_1.ADMIN_MAIL, 'Nuevo Registro', (0, MailStructure_1.cadena)(user));
+                        return res.status(201).json(result);
                     }
                     else {
                         res.status(400).json('Bad Request');
@@ -113,8 +121,7 @@ class UsersController {
                 }
             }
             else {
-                req.flash('error_msg', 'Email ya existente');
-                res.redirect('/api/users/singin');
+                return res.status(400).json('Email existente');
             }
         });
     }

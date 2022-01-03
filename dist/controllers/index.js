@@ -12,3 +12,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 //export * from './carrito.controller';
 __exportStar(require("./producto.controller"), exports);
+__exportStar(require("./order.controller"), exports);

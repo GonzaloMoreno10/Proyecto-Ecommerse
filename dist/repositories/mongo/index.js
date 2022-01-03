@@ -13,3 +13,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./usersRepository"), exports);
 __exportStar(require("./productRepository"), exports);
 __exportStar(require("./carritoRepository"), exports);
+__exportStar(require("./ordersRepository"), exports);

@@ -7,6 +7,7 @@ export interface UserInterface extends Document {
   edad: number;
   telefono: string;
   avatar: string;
+  admin: number;
 }
 
 export interface NewUserInterface {

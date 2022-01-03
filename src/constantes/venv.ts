@@ -21,3 +21,4 @@ export const TWILIO_SID = process.env.TWILIO_SID;
 export const TWILIO_TOKEN = process.env.TWILIO_TOKEN;
 export const ADMIN_CELPHONE = process.env.ADMIN_CELPHONE;
 export const TWILIO_ADMIN_WHATSAPP = process.env.TWILIO_ADMIN_WHATSAPP;
+export const HEROKU = process.env.HEROKU;

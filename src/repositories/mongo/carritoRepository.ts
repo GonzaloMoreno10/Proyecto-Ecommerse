@@ -1,38 +1,18 @@
-import mongoose from 'mongoose';
-import connect from '../../config/mongoDbConnect';
-import { ProductInterface } from '../../interface';
-import { CarritoInterface, NewCarritoInterface } from '../../interface/carrito.interface';
-import { Carrito } from '../../models';
+import { ProductOnCart } from '../../interface';
+import { NewCarritoInterface } from '../../interface/carrito.interface';
 import { mongoProductRepository } from './productRepository';
-const carritosSchema = new mongoose.Schema<CarritoInterface>({
-  timestamp: Date,
-  userId: String,
-  productos: [
-    {
-      prodId: Object,
-      nombre: String,
-      precio: Number,
-      stock: Number,
-      codigo: Number,
-      foto: String,
-      descripcion: String,
-    },
-  ],
-});
-
+import carritoModel from '../../models/carrito.model';
 export class CarritoRepository {
-  private srv: string;
   private carritos: any;
   constructor() {
-    connect(this.srv);
-    this.carritos = mongoose.model<CarritoInterface>('carritos', carritosSchema);
+    this.carritos = carritoModel;
   }
 
-  async findProductsOnCart(userId: string): Promise<ProductInterface[]> {
+  async findProductsOnCart(userId: string): Promise<ProductOnCart[]> {
     let carrito = await this.findCartByUser(userId);
     return carrito.productos;
   }
-  async findProductsOnCartById(id: any, userId: string): Promise<ProductInterface> {
+  async findProductsOnCartById(id: any, userId: string): Promise<ProductOnCart> {
     let carrito = await this.findCartByUser(userId);
 
     let productos = carrito.productos;
@@ -51,7 +31,7 @@ export class CarritoRepository {
     await this.carritos.findByIdAndUpdate(carrito._id, carrito);
   }
 
-  async deleteProductsOnCart(id: any, userId: string): Promise<ProductInterface> {
+  async deleteProductsOnCart(id: any, userId: string): Promise<ProductOnCart> {
     let cart = await this.findCartByUser(userId);
     let productos = cart.productos;
     for (let i = 0; i < productos.length; i++) {
@@ -69,16 +49,28 @@ export class CarritoRepository {
     }
     return await this.carritos.findByIdAndUpdate(cart._id, cart);
   }
-  async addProductsToCart(idProducto: any, userId): Promise<ProductInterface> {
+  async addProductsToCart(idProducto: any, cantidad: number, userId: string): Promise<any> {
     let carrito = await this.findCartByUser(userId);
     let producto = await mongoProductRepository.findById(idProducto);
     let productos = carrito.productos;
 
-    productos.push(producto);
-    console.log(productos);
+    const productOnCart: ProductOnCart = {
+      _id: producto._id,
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      codigo: producto.codigo,
+      foto: producto.foto,
+      precio: producto.precio,
+      stock: producto.stock,
+      categoria: producto.categoria,
+      cantidad: cantidad,
+      precioTotal: producto.precio * cantidad,
+    };
+    console.log(productOnCart);
+    productos.push(productOnCart);
 
     carrito.productos = productos;
-    console.log(carrito);
+
     return await this.carritos.findByIdAndUpdate(carrito._id, carrito);
   }
 

@@ -84,7 +84,7 @@ class FirebaseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.carritos.get();
             let docs = res.docs;
-            console.log(docs);
+            //console.log(docs);
             if (docs.length > 0) {
                 const carrito = docs.map(doc => ({
                     id: doc.id,

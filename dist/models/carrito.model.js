@@ -1,12 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Carrito = void 0;
-class Carrito {
-    constructor(id, timestamp, productos, userId) {
-        this.userId = userId;
-        this.id = id;
-        this.timestamp = timestamp;
-        this.productos = productos;
-    }
-}
-exports.Carrito = Carrito;
+const mongoose_1 = require("mongoose");
+const carritoSchema = new mongoose_1.Schema({
+    userId: Object,
+    timestamp: Date,
+    productos: [Object],
+});
+exports.default = (0, mongoose_1.model)('carritos', carritoSchema);

@@ -5,26 +5,36 @@ import { GmailService } from '../services/gmail';
 import { cadena } from '../utils/MailStructure';
 import User from '../models/user.model';
 import passport from 'passport';
-import { ADMIN_MAIL, PORT } from '../constantes/venv';
+import { ADMIN_MAIL } from '../constantes/venv';
 class UsersController {
   async editPicture(req: Request, res: Response) {
-    let user = Object.assign(req.user);
+    let { userId } = req.params;
     //let dir = '';
-    let usuario = await mongoUserRepository.findById(user._id);
+    let usuario = await mongoUserRepository.findById(userId);
 
-    let dir = `http://localhost:3000/storage/imgs/${user._id}.jpg`;
-
+    let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
     console.log(dir);
     usuario.avatar = dir;
-    console.log(usuario);
-    await mongoUserRepository.update(usuario, user._id);
-    res.redirect('/api/users/profile');
+    try {
+      const updateUser = await mongoUserRepository.update(usuario, userId);
+      return res.status(200).json(updateUser);
+    } catch (err) {
+      return res.json(err);
+    }
+  }
+
+  async findById(req: Request, res: Response) {
+    let { userId } = req.params;
+    console.log(userId);
+    const user = await mongoUserRepository.findById(userId);
+    console.log(user);
+    return res.json(user);
   }
 
   async editProfile(req: Request, res: Response) {
-    let usuario = Object.assign(req.user);
+    let { id } = req.params;
+
     let { email, nombre, direccion, edad, telefono } = req.body;
-    console.log(email);
     let user: Partial<UserInterface> = {
       email,
       nombre,
@@ -33,14 +43,12 @@ class UsersController {
       telefono,
     };
 
-    console.log(user);
-    let result = await mongoUserRepository.update(user, usuario._id);
-    if (result._id) {
-      req.flash('success_msg', 'Datos actualizados');
-      return res.redirect('/api/users/profile');
-    } else {
-      req.flash('error_msg', 'Algo Fallo');
-      return res.redirect('/api/users/profile');
+    //console.log(user);
+    try {
+      let result = await mongoUserRepository.update(user, id);
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json(err);
     }
   }
   async login(req: Request, res: Response, next: NextFunction) {
@@ -81,10 +89,8 @@ class UsersController {
       try {
         let result = await mongoUserRepository.create(user);
         if (result._id) {
-          let response = await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
-          console.log(response);
-          req.flash('success_msg', 'Usuario creado !');
-          res.redirect('/api/users/login');
+          await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
+          return res.status(201).json(result);
         } else {
           res.status(400).json('Bad Request');
         }
@@ -92,8 +98,7 @@ class UsersController {
         res.status(500).json(err);
       }
     } else {
-      req.flash('error_msg', 'Email ya existente');
-      res.redirect('/api/users/singin');
+      return res.status(400).json('Email existente');
     }
   }
 }

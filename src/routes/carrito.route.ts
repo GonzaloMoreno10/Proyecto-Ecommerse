@@ -1,26 +1,16 @@
 import { Router } from 'express';
-import methodOverride from 'method-override';
 import { carritoController } from '../controllers/carrito.controller';
 import { auth } from '../middlewares/auth';
-
+import cors from 'cors';
+import passport from 'passport';
 const router = Router();
 
-router.use(
-  methodOverride(function (req, res) {
-    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-      var method = req.body._method;
-      delete req.body._method;
-      return method;
-    }
-  })
-);
+router.post(`/compra/new/:userId`, passport.authenticate('jwt', { session: false }), carritoController.compra);
 
-router.post('/compra/new', carritoController.compra);
+router.get('/:userId', carritoController.findById);
 
-router.get('/:idProducto?', auth, carritoController.findById);
+router.post('/:idProd/:userId', passport.authenticate('jwt', { session: false }), carritoController.agregar);
 
-router.post('/:idProd', auth, carritoController.agregar);
-
-router.delete('/:idProducto', auth, carritoController.delete);
+router.delete('/:idProducto/:userId', passport.authenticate('jwt', { session: false }), carritoController.delete);
 
 export default router;
