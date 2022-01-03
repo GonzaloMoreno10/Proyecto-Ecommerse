@@ -12,7 +12,6 @@ class OrderController {
     orders.map(order => {
       let orderPrice = 0;
       order.items.map(item => {
-        console.log(item.precioTotal);
         orderPrice += item.precioTotal;
       });
       order.precioOrden = orderPrice;

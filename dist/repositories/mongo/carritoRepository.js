@@ -82,7 +82,6 @@ class CarritoRepository {
                 cantidad: cantidad,
                 precioTotal: producto.precio * cantidad,
             };
-            console.log(productOnCart);
             productos.push(productOnCart);
             carrito.productos = productos;
             return yield this.carritos.findByIdAndUpdate(carrito._id, carrito);

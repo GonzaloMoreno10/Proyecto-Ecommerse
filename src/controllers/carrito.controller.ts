@@ -28,11 +28,9 @@ class CarritoController {
             cantidad++;
           }
           let total = conteo.toFixed(2);
-          console.log(productos);
           res.json({ productos, total });
         }
       } else {
-        console.log(null);
         return null;
       }
     } catch (err) {
@@ -44,8 +42,6 @@ class CarritoController {
     try {
       let { userId } = req.params;
       let { cantidad } = req.body;
-      console.log(cantidad);
-      console.log(userId);
       let existeCarrito = await mongoCarritoRepository.findCartByUser(userId);
       if (!existeCarrito) {
         await mongoCarritoRepository.createCart(userId);

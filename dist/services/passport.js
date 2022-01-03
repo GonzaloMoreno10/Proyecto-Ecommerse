@@ -37,7 +37,6 @@ passport_1.default.use('login', new localStrategy({
 }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield user_model_1.default.findOne({ email });
-        console.log(user);
         if (!user) {
             return done(null, false, { message: 'User not found' });
         }
@@ -55,7 +54,6 @@ passport_1.default.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromHeader('bearer'),
 }, (token, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(token);
         return done(null, token.user);
     }
     catch (e) {

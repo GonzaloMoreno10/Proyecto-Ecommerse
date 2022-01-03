@@ -3,12 +3,9 @@ import { MONGO_ATLAS_PASSWORD, MONGO_ATLAS_USER } from '../constantes/venv';
 import minimist from 'minimist';
 import log4js from 'log4js';
 export default function connect() {
-  console.log('Entre aca');
   const consoleLogger = log4js.getLogger('consoleLogger');
   const argumentos = minimist(process.argv.slice(2));
-  console.log(argumentos);
   if (argumentos.local) {
-    console.log('entre en local');
     mongoose.connect('mongodb://localhost/ecommerce');
     consoleLogger.info('Conectado a base de datos mongo local');
   } else {

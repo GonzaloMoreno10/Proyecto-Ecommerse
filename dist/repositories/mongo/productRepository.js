@@ -47,7 +47,6 @@ class ProductRepository {
             if (!data.nombre || !data.precio)
                 throw new Error('invalid data');
             const newProduct = new this.productos(data);
-            console.log(newProduct);
             let res = yield newProduct.save();
             return res;
         });
@@ -80,7 +79,6 @@ class ProductRepository {
                 query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
             if (options.codigo)
                 query.codigo = options.codigo;
-            //console.log(query);
             return this.productos.find(query);
         });
     }

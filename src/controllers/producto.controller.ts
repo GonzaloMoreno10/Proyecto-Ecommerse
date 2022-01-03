@@ -17,7 +17,6 @@ export class ProductoController {
   async get(req: Request, res: Response) {
     try {
       let data = await mongoProductRepository.findAll();
-      console.log(data);
       res.json(data);
     } catch (err) {
       console.log(err);

@@ -6,7 +6,6 @@ class UsersRepository {
 
   constructor() {
     this.users = userModel;
-    // console.log(this.srv);
   }
   async findAll(): Promise<UserInterface[]> {
     let output: UserInterface[] = [];
@@ -30,7 +29,6 @@ class UsersRepository {
   async findById(id: string): Promise<UserInterface | undefined> {
     try {
       let usuarios = await this.users.findById(id.toString());
-      //console.log(productos);
       return usuarios;
     } catch (err) {
       console.log(err);

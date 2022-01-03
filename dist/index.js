@@ -24,17 +24,5 @@ if (clusterMode && cluster_1.default.isMaster) {
     });
 }
 else {
-    const server = server_1.default.listen(server_1.default.get('port'), () => consoleLogger.info(`Servidor express escuchando en el puerto ${server_1.default.get('port')} - PID WORKER ${process.pid}`));
-    const io = require('socket.io')(server, {
-        cors: {
-            origin: '*',
-        },
-    });
-    io.on('connection', socket => {
-        console.log('connection made successfully');
-        socket.on('msg', payload => {
-            console.log('Message received on server: ', payload);
-            io.emit('msg', payload);
-        });
-    });
+    server_1.default.listen(3000, () => consoleLogger.info(`Servidor express escuchando en el puerto 3000} - PID WORKER ${process.pid}`));
 }

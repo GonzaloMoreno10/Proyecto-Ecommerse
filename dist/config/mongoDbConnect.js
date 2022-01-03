@@ -8,12 +8,9 @@ const venv_1 = require("../constantes/venv");
 const minimist_1 = __importDefault(require("minimist"));
 const log4js_1 = __importDefault(require("log4js"));
 function connect() {
-    console.log('Entre aca');
     const consoleLogger = log4js_1.default.getLogger('consoleLogger');
     const argumentos = (0, minimist_1.default)(process.argv.slice(2));
-    console.log(argumentos);
     if (argumentos.local) {
-        console.log('entre en local');
         mongoose_1.default.connect('mongodb://localhost/ecommerce');
         consoleLogger.info('Conectado a base de datos mongo local');
     }

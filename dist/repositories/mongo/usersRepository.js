@@ -17,7 +17,6 @@ const user_model_1 = __importDefault(require("../../models/user.model"));
 class UsersRepository {
     constructor() {
         this.users = user_model_1.default;
-        // console.log(this.srv);
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -46,7 +45,6 @@ class UsersRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let usuarios = yield this.users.findById(id.toString());
-                //console.log(productos);
                 return usuarios;
             }
             catch (err) {

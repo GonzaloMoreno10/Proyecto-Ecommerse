@@ -43,7 +43,6 @@ usersSchema.methods.matchPassword = function (password) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
         const compare = yield bcrypt_1.default.compare(password, user.password);
-        console.log(compare);
         return compare;
     });
 };

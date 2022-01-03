@@ -23,6 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const http_1 = __importDefault(require("http"));
 const path = __importStar(require("path"));
 const main_route_1 = __importDefault(require("../routes/main.route"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -30,6 +31,7 @@ const passport_1 = __importDefault(require("passport"));
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const log4js_1 = __importDefault(require("log4js"));
 const log4js_2 = require("../config/log4js");
+const socketIo_1 = require("./socketIo");
 const cors_1 = __importDefault(require("cors"));
 const mongoDbConnect_1 = __importDefault(require("../config/mongoDbConnect"));
 const errors_controller_1 = require("../controllers/errors.controller");
@@ -54,4 +56,6 @@ app.get('/', (req, res) => {
     res.redirect('/api/productos');
 });
 app.use('/api', main_route_1.default);
-exports.default = app;
+const Server = http_1.default.createServer(app);
+(0, socketIo_1.initIo)(Server);
+exports.default = Server;

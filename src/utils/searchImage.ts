@@ -3,8 +3,6 @@ import * as path from 'path';
 
 let dir = path.resolve(__dirname, '../../src/storage/imgs');
 
-//console.log(dir);
-
 export const buscarImagen = async (userId: string) => {
   let images = await fs.readdir(dir);
 

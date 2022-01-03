@@ -26,7 +26,6 @@ class UsersController {
             //let dir = '';
             let usuario = yield mongo_1.mongoUserRepository.findById(userId);
             let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
-            console.log(dir);
             usuario.avatar = dir;
             try {
                 const updateUser = yield mongo_1.mongoUserRepository.update(usuario, userId);
@@ -40,9 +39,7 @@ class UsersController {
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { userId } = req.params;
-            console.log(userId);
             const user = yield mongo_1.mongoUserRepository.findById(userId);
-            console.log(user);
             return res.json(user);
         });
     }
@@ -57,7 +54,6 @@ class UsersController {
                 edad,
                 telefono,
             };
-            //console.log(user);
             try {
                 let result = yield mongo_1.mongoUserRepository.update(user, id);
                 return res.status(200).json(result);

@@ -44,7 +44,7 @@ usersSchema.methods.encryptPassword = async password => {
 usersSchema.methods.matchPassword = async function (password) {
   const user = this;
   const compare = await bcrypt.compare(password, user.password);
-  console.log(compare);
+
   return compare;
 };
 export default model<IUser>('users', usersSchema);

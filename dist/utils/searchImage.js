@@ -35,7 +35,6 @@ exports.buscarImagen = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const path = __importStar(require("path"));
 let dir = path.resolve(__dirname, '../../src/storage/imgs');
-//console.log(dir);
 const buscarImagen = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     let images = yield promises_1.default.readdir(dir);
     for (let i in images) {

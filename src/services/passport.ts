@@ -34,7 +34,7 @@ passport.use(
     async (email, password, done) => {
       try {
         const user: IUser = await userSchema.findOne({ email });
-        console.log(user);
+
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }
@@ -59,7 +59,6 @@ passport.use(
     },
     async (token, done) => {
       try {
-        console.log(token);
         return done(null, token.user);
       } catch (e) {
         done(e);

@@ -1,58 +1,71 @@
-// import Server from 'socket.io';
-// import { normalize, schema } from 'normalizr';
-// import { IAutor, IMensaje } from '../interface/mensaje.interface';
-// import { mensajeRepository } from '../repositories/mongo/mensajeRepository';
-// export const initIo = async server => {
-//   // let mensajes = await getMensajes(archMessg);
-//   const io = new Server(server);
-//   io.on('connection', async socket => {
-//     console.log(socket.id);
-//     const author = new schema.Entity('author', {}, { idAttribute: 'id' });
-//     const msg = new schema.Entity(
-//       'mensajes',
-//       {
-//         author: author,
-//       },
-//       {
-//         idAttribute: '_id',
-//       }
-//     );
-//     const msgSchema = new schema.Array(msg);
-//     socket.on('mensajes', async data => {
-//       console.log(data);
-//       // let frase = mensaje.texto.split(' ');
-//       // if (frase.includes('stock')) {
-//       //   socket.emit('mensajes', 'Tenemos stock');
-//       // }
-//       // if (frase.includes('envio')) {
-//       //   socket.emit('mensajes', 'Gratis');
-//       // }
-//       // if (frase.includes('metodo de pago')) {
-//       //   socket.emit('mensajes', 'Credito, debito,efectivo');
-//       // }
-//       //await mensajeRepository.createMensaje(mensaje);
-//       let mensajes = (await mensajeRepository.getAllMensajes()).map(data => ({
-//         _id: data._id,
-//         author: data.author,
-//         text: data.texto,
-//         avatar: data.author.avatar,
-//         date: data.fecha,
-//       }));
-//       let msjNormalize = normalize(mensajes, msgSchema);
-//       //console.log (util.inspect (msjNormalize, true, 7, true));
-//       io.emit('mensajes', msjNormalize);
-//     });
-//     socket.on('askMensajes', async data => {
-//       let mensajes = (await mensajeRepository.getAllMensajes()).map(data => ({
-//         _id: data._id,
-//         author: data.author,
-//         text: data.texto,
-//         avatar: data.author.avatar,
-//         date: data.fecha,
-//       }));
-//       let msjNormalize = normalize(mensajes, msgSchema);
-//       //console.log (util.inspect (msjNormalize, true, 7, true));
-//       socket.emit('mensajes', msjNormalize);
-//     });
-//   });
-// };
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initIo = void 0;
+const normalizr_1 = require("normalizr");
+const mensajeRepository_1 = require("../repositories/mongo/mensajeRepository");
+const initIo = (server) => __awaiter(void 0, void 0, void 0, function* () {
+    // let mensajes = await getMensajes(archMessg);
+    const io = require('socket.io')(server, {
+        cors: true,
+        transports: ['polling'],
+    });
+    io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
+        const author = new normalizr_1.schema.Entity('author', {}, { idAttribute: 'id' });
+        const msg = new normalizr_1.schema.Entity('mensajes', {
+            author: author,
+        }, {
+            idAttribute: '_id',
+        });
+        const msgSchema = new normalizr_1.schema.Array(msg);
+        socket.on('mensajes', (data) => __awaiter(void 0, void 0, void 0, function* () {
+            const author = {
+                id: data.author.id,
+                nombre: data.author.nombre,
+                edad: data.author.edad,
+                avatar: data.author.avatar,
+                email: data.author.email,
+            };
+            let mensaje = {
+                author,
+                texto: data.message,
+                fecha: new Date(),
+            };
+            let res = undefined;
+            if (mensaje.texto) {
+                let frase = mensaje.texto.split(' ');
+                if (frase.includes('stock')) {
+                    socket.emit('mensajes', { author: { nombre: 'admin' }, texto: 'Tenemos stock' });
+                    res = { author: { nombre: 'admin' }, texto: 'Tenemos stock' };
+                }
+                if (frase.includes('envio')) {
+                    socket.emit('mensajes', { author: { nombre: 'admin' }, texto: 'Gratis' });
+                    res = { author: { nombre: 'admin' }, texto: 'Gratis' };
+                }
+                if (frase.includes('metodo de pago')) {
+                    socket.emit('mensajes', { author: { nombre: 'admin' }, texto: 'Credito, debito,efectivo' });
+                    res = { author: { nombre: 'admin' }, texto: 'Credito, debito,efectivo' };
+                }
+                yield mensajeRepository_1.mensajeRepository.createMensaje(mensaje);
+                if (res) {
+                    yield mensajeRepository_1.mensajeRepository.createMensaje(res);
+                }
+            }
+            let mensajes = yield mensajeRepository_1.mensajeRepository.getAllMensajes();
+            io.emit('mensajes', mensajes);
+        }));
+        socket.on('askMensajes', (data) => __awaiter(void 0, void 0, void 0, function* () {
+            let mensajes = yield mensajeRepository_1.mensajeRepository.getAllMensajes();
+            socket.emit('mensajes', mensajes);
+        }));
+    }));
+});
+exports.initIo = initIo;

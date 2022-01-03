@@ -28,7 +28,6 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let data = yield mongo_1.mongoProductRepository.findAll();
-                console.log(data);
                 res.json(data);
             }
             catch (err) {

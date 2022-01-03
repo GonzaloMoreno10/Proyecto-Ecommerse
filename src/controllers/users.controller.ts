@@ -13,7 +13,7 @@ class UsersController {
     let usuario = await mongoUserRepository.findById(userId);
 
     let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
-    console.log(dir);
+
     usuario.avatar = dir;
     try {
       const updateUser = await mongoUserRepository.update(usuario, userId);
@@ -25,9 +25,9 @@ class UsersController {
 
   async findById(req: Request, res: Response) {
     let { userId } = req.params;
-    console.log(userId);
+
     const user = await mongoUserRepository.findById(userId);
-    console.log(user);
+
     return res.json(user);
   }
 
@@ -43,7 +43,6 @@ class UsersController {
       telefono,
     };
 
-    //console.log(user);
     try {
       let result = await mongoUserRepository.update(user, id);
       return res.status(200).json(result);

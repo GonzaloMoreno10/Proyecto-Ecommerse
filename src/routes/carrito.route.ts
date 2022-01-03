@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import { carritoController } from '../controllers/carrito.controller';
-import { auth } from '../middlewares/auth';
-import cors from 'cors';
 import passport from 'passport';
 const router = Router();
 

@@ -11,7 +11,6 @@ export const initIo = async (server: http.Server) => {
     transports: ['polling'],
   });
   io.on('connection', async socket => {
-    console.log(socket.id);
     const author = new schema.Entity('author', {}, { idAttribute: 'id' });
 
     const msg = new schema.Entity(
@@ -40,12 +39,10 @@ export const initIo = async (server: http.Server) => {
         fecha: new Date(),
       };
 
-      console.log(mensaje);
       let res = undefined;
       if (mensaje.texto) {
         let frase = mensaje.texto.split(' ');
         if (frase.includes('stock')) {
-          console.log('emito stock');
           socket.emit('mensajes', { author: { nombre: 'admin' }, texto: 'Tenemos stock' });
           res = { author: { nombre: 'admin' }, texto: 'Tenemos stock' };
         }
@@ -58,22 +55,20 @@ export const initIo = async (server: http.Server) => {
           res = { author: { nombre: 'admin' }, texto: 'Credito, debito,efectivo' };
         }
         await mensajeRepository.createMensaje(mensaje);
-        console.log(res);
+
         if (res) {
           await mensajeRepository.createMensaje(res);
         }
       }
 
       let mensajes = await mensajeRepository.getAllMensajes();
-      //console.log (util.inspect (msjNormalize, true, 7, true));
+
       io.emit('mensajes', mensajes);
     });
 
     socket.on('askMensajes', async data => {
       let mensajes = await mensajeRepository.getAllMensajes();
-      console.log('askMensajes');
 
-      //console.log (util.inspect (msjNormalize, true, 7, true));
       socket.emit('mensajes', mensajes);
     });
   });

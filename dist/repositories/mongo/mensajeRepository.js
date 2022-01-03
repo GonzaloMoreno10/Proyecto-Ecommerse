@@ -33,6 +33,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const mensajesSchema = new mongoose_1.Schema({
     author: {
         id: String,
+        email: String,
         nombre: String,
         edad: Number,
         avatar: String,
@@ -49,9 +50,16 @@ class MensajeRepository {
             return yield this.mensajes.find();
         });
     }
+    getMensajesByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.mensajes.find({ 'author.email': email });
+        });
+    }
     createMensaje(mensaje) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.mensajes.save();
+            let newMensaje = new this.mensajes(mensaje);
+            let res = yield newMensaje.save();
+            return res;
         });
     }
 }
