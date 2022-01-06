@@ -14,7 +14,7 @@ export class CarritoRepository {
   }
   async findProductsOnCartById(id: any, userId: string): Promise<ProductOnCart> {
     let carrito = await this.findCartByUser(userId);
-
+    console.log(carrito);
     let productos = carrito.productos;
     for (let i in productos) {
       if (productos[i] !== null) {
@@ -32,7 +32,9 @@ export class CarritoRepository {
   }
 
   async deleteProductsOnCart(id: any, userId: string): Promise<ProductOnCart> {
+    console.log(userId);
     let cart = await this.findCartByUser(userId);
+    console.log(cart);
     let productos = cart.productos;
     for (let i = 0; i < productos.length; i++) {
       if (productos[i] !== null) {
@@ -49,8 +51,9 @@ export class CarritoRepository {
     }
     return await this.carritos.findByIdAndUpdate(cart._id, cart);
   }
-  async addProductsToCart(idProducto: any, cantidad: number, userId: string): Promise<any> {
+  async addProductsToCart(idProducto: any, userId: string): Promise<any> {
     let carrito = await this.findCartByUser(userId);
+    console.log(carrito);
     let producto = await mongoProductRepository.findById(idProducto);
     let productos = carrito.productos;
 
@@ -63,8 +66,8 @@ export class CarritoRepository {
       precio: producto.precio,
       stock: producto.stock,
       categoria: producto.categoria,
-      cantidad: cantidad,
-      precioTotal: producto.precio * cantidad,
+      cantidad: 1,
+      precioTotal: producto.precio * 1,
     };
 
     productos.push(productOnCart);
@@ -74,7 +77,7 @@ export class CarritoRepository {
     return await this.carritos.findByIdAndUpdate(carrito._id, carrito);
   }
 
-  async findCartByUser(userId) {
+  async findCartByUser(userId: string) {
     let carrito = await this.carritos.findOne({ userId: userId });
     return carrito ? carrito : null;
   }

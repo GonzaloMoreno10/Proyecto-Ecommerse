@@ -7,16 +7,17 @@ class CategoriaController {
   async get(req: Request, res: Response) {
     let categorias = await categoriaRepository.getAllCategorias();
 
-    return res.json(categorias);
+    return res.status(200).json(categorias);
   }
 
   async create(req: Request, res: Response) {
     let { nombre } = req.body;
+    console.log(nombre);
     let categoria: INewCategoria = {
       nombre: nombre,
     };
     let result = await categoriaRepository.createCategoria(categoria);
-    return res.json(categoria);
+    return res.status(201).json(result);
   }
 }
 

@@ -6,29 +6,33 @@ import { SmsService } from '../services/twilio';
 class CarritoController {
   async findById(req: Request, res: Response) {
     try {
-      let user = req.params.userId;
-
-      if (user !== 'null') {
+      let { userId } = req.params;
+      if (userId !== 'null') {
         if (req.params.idProducto) {
-          let idProducto = req.params.idProducto;
-          let data = await mongoCarritoRepository.findProductsOnCartById(idProducto, user);
+          let { idProducto } = req.params;
+          let data = await mongoCarritoRepository.findProductsOnCartById(idProducto, userId);
           if (data) {
-            res.json(data);
+            res.status(200).json(data);
           } else {
-            res.json('nada');
+            res.status(404).json('Producto no existente en el carrito');
           }
         } else {
-          let cart = await mongoCarritoRepository.findCartByUser(user);
-          if (!cart) await mongoCarritoRepository.createCart(cart._id);
-          let productos = await mongoCarritoRepository.findProductsOnCart(user);
-          let conteo = 0;
-          let cantidad = 0;
-          for (let i in productos) {
-            conteo += productos[i].precioTotal ? productos[i].precioTotal : productos[i].precio;
-            cantidad++;
+          let existUser = await mongoUserRepository.findById(userId);
+          if (existUser) {
+            let cart = await mongoCarritoRepository.findCartByUser(userId);
+            if (!cart) await mongoCarritoRepository.createCart(cart._id);
+            let productos = await mongoCarritoRepository.findProductsOnCart(userId);
+            let conteo = 0;
+            let cantidad = 0;
+            for (let i in productos) {
+              conteo += productos[i].precioTotal ? productos[i].precioTotal : productos[i].precio;
+              cantidad++;
+            }
+            let total = conteo.toFixed(2);
+            res.status(200).json({ productos, total });
+          } else {
+            res.status(404).json('Usuario no encontrado');
           }
-          let total = conteo.toFixed(2);
-          res.json({ productos, total });
         }
       } else {
         return null;
@@ -41,20 +45,24 @@ class CarritoController {
   async agregar(req: Request, res: Response) {
     try {
       let { userId } = req.params;
-      let { cantidad } = req.body;
+      let { idProducto } = req.params;
       let existeCarrito = await mongoCarritoRepository.findCartByUser(userId);
+      let existProd = await mongoProductRepository.findById(idProducto);
+      if (!existProd) {
+        return res.status(404).json('Producto no existente');
+      }
       if (!existeCarrito) {
         await mongoCarritoRepository.createCart(userId);
       }
-      let idProd = req.params.idProd;
-      let existInCart = await mongoCarritoRepository.findProductsOnCartById(idProd, userId);
+
+      let existInCart = await mongoCarritoRepository.findProductsOnCartById(idProducto, userId);
       if (existInCart) {
-        return res.status(409).json('Producto existente en el carrito');
+        return res.status(404).json('Producto existente en el carrito');
       }
 
-      const product = await mongoCarritoRepository.addProductsToCart(idProd, cantidad, userId);
+      await mongoCarritoRepository.addProductsToCart(idProducto, userId);
 
-      return res.status(201).json(product);
+      return res.status(201).json('Producto agregado al carrito');
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -74,14 +82,15 @@ class CarritoController {
     let total = suma.toFixed(3);
 
     try {
-      await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
+      //Comentado por que alcance la cuota limite de email
+      //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
       carrito.productos = [];
       await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
 
       await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(products, usuario, total));
 
       await mongoCarritoRepository.vaciarCarrito(userId);
-      return res.status(200).json('ok');
+      return res.status(201).json('ok');
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -89,16 +98,19 @@ class CarritoController {
 
   async delete(req: Request, res: Response) {
     let { userId } = req.params;
-
-    let idProducto = req.params.idProducto;
-
+    let { idProducto } = req.params;
     try {
       let prod = await mongoProductRepository.findById(idProducto);
       if (prod) {
-        const productDelete = await mongoCarritoRepository.deleteProductsOnCart(idProducto, userId);
-        return res.status(202).json(productDelete);
+        let product = await mongoCarritoRepository.findProductsOnCartById(idProducto, userId);
+        if (product) {
+          await mongoCarritoRepository.deleteProductsOnCart(idProducto, userId);
+          return res.status(202).json('Producto eliminado');
+        } else {
+          return res.status(404).json('El producto no se encuentra en el carrito');
+        }
       } else {
-        return res.status(400).json('Producto no existente');
+        return res.status(404).json('Producto no existente');
       }
     } catch (err) {
       return res.status(500).json(err);

@@ -11,6 +11,8 @@ import { initIo } from './socketIo';
 import cors from 'cors';
 import conexion from '../config/mongoDbConnect';
 import { errorHandler } from '../controllers/errors.controller';
+import swaggerUI from 'swagger-ui-express';
+import docs from '../docs';
 
 log4js.configure(log4jsConfig);
 require('../services/passport');
@@ -21,6 +23,8 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
+
+app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(docs));
 
 //Configuracion
 app.set('port', process.env.PORT);

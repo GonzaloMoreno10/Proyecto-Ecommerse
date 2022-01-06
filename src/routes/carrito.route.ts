@@ -5,9 +5,9 @@ const router = Router();
 
 router.post(`/compra/new/:userId`, passport.authenticate('jwt', { session: false }), carritoController.compra);
 
-router.get('/:userId', carritoController.findById);
+router.get('/:idProducto?/:userId', passport.authenticate('jwt', { session: false }), carritoController.findById);
 
-router.post('/:idProd/:userId', passport.authenticate('jwt', { session: false }), carritoController.agregar);
+router.post('/:idProducto/:userId', passport.authenticate('jwt', { session: false }), carritoController.agregar);
 
 router.delete('/:idProducto/:userId', passport.authenticate('jwt', { session: false }), carritoController.delete);
 

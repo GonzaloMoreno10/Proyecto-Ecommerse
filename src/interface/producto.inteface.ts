@@ -31,6 +31,7 @@ export interface ProductQueryInterface {
   maxStock?: number;
   minPrice?: number;
   maxPrice?: number;
+  categoria?: string;
 }
 
 export interface PersistanceBaseClass {

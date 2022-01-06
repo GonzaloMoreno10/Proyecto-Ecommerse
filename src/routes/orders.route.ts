@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import { orderController } from '../controllers';
-import { auth } from '../middlewares/auth';
-import cors from 'cors';
 import passport from 'passport';
+import { orderController } from '../controllers';
 const router = Router();
 
-router.get('/:userId', orderController.getOrdersByUser);
+router.get('/:id?', passport.authenticate('jwt', { session: false }), orderController.getOrders);
 
-router.post('/', orderController.create);
+router.post('/create/:userId', passport.authenticate('jwt', { session: false }), orderController.create);
 
 export default router;

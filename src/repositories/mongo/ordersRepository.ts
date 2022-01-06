@@ -7,6 +7,11 @@ class OrderRepository {
     this.ordenes = ordenModel;
   }
 
+  async findOrdersById(id: string) {
+    let orden = await this.ordenes.findById(id);
+    return orden;
+  }
+
   async findOrdersByUser(userId: string): Promise<Orden[]> {
     let orders = await this.ordenes.find({ userId: userId });
     return orders;

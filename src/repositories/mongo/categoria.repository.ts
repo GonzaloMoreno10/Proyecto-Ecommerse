@@ -16,6 +16,10 @@ class CategoriaRepository {
     return await this.categorias.find();
   }
 
+  async getCategoriasById(id: string) {
+    return await this.categorias.findById(id);
+  }
+
   async createCategoria(categoria: INewCategoria) {
     const res = await this.categorias.create(categoria);
     return res;

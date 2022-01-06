@@ -1,40 +1,51 @@
 import { Request, Response } from 'express';
-import { orderRepository } from '../repositories/mongo';
-import { compra, compraWhatSapp } from '../utils/MailStructure';
-import { GmailService } from '../services/gmail';
-import { SmsService } from '../services/twilio';
+import { mongoCarritoRepository, mongoUserRepository, orderRepository } from '../repositories/mongo';
 import { Orden } from '../interface/orden.interface';
 class OrderController {
-  async getOrdersByUser(req: Request, res: Response) {
-    let { userId } = req.params;
-    let orders = await orderRepository.findOrdersByUser(userId);
-
-    orders.map(order => {
-      let orderPrice = 0;
-      order.items.map(item => {
-        orderPrice += item.precioTotal;
+  async getOrders(req: Request, res: Response) {
+    let { id } = req.params;
+    if (id) {
+      let order = await orderRepository.findOrdersById(id);
+      if (order) {
+        let orderPrice = 0;
+        order.items.map(item => {
+          orderPrice += item.precioTotal;
+        });
+        order.precioOrden = orderPrice;
+        return res.json(order);
+      }
+    } else {
+      let ordenes = await orderRepository.findAll();
+      ordenes.map(order => {
+        let orderPrice = 0;
+        order.items.map(item => {
+          orderPrice += item.precioTotal;
+        });
+        order.precioOrden = orderPrice;
       });
-      order.precioOrden = orderPrice;
-    });
-    return res.json(orders);
+      return res.json(ordenes);
+    }
   }
 
   async create(req: Request, res: Response) {
-    let { items, userId, email } = req.body;
+    let { userId } = req.params;
+    const productos = await mongoCarritoRepository.findProductsOnCart(userId);
+    const user = await mongoUserRepository.findById(userId);
+    console.log(user);
     const orders = await orderRepository.findAll();
     let nroOrden = orders.length + 1;
     let precioOrden = 0;
     const timestamp = new Date();
     const estado = 1;
-    items.map(item => {
+    productos.map(item => {
       precioOrden += item.precioTotal;
     });
     let order: Orden = {
-      items,
+      items: productos,
       nroOrden,
       timestamp,
       estado,
-      email,
+      email: user.email,
       userId,
       precioOrden,
     };

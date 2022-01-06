@@ -15,8 +15,9 @@ class ProductRepository {
     return products;
   }
 
-  async findByCategory(categoryId) {
+  async findByCategory(categoryId: string) {
     let productos: ProductInterface = await this.productos.find({ categoria: categoryId });
+    return productos;
   }
 
   async findById(id: string): Promise<ProductInterface | undefined> {
@@ -61,6 +62,8 @@ class ProductRepository {
     if (options.minStock && options.maxStock) query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
 
     if (options.codigo) query.codigo = options.codigo;
+
+    if (options.categoria) query.categoria = options.categoria;
 
     return this.productos.find(query);
   }

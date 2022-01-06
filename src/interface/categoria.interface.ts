@@ -1,5 +1,5 @@
 export interface ICategoria {
-  _id: Object;
+  _id: string;
   nombre: string;
 }
 

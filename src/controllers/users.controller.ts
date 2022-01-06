@@ -7,8 +7,18 @@ import User from '../models/user.model';
 import passport from 'passport';
 import { ADMIN_MAIL } from '../constantes/venv';
 class UsersController {
+  async getUsersById(req: Request, res: Response) {
+    const { id } = req.params;
+    return res.json(await mongoUserRepository.findById(id));
+  }
+  async getUsers(req: Request, res: Response) {
+    console.log('Entre aca');
+    const data = await mongoUserRepository.findAll();
+    return res.json(data);
+  }
   async editPicture(req: Request, res: Response) {
     let { userId } = req.params;
+    console.log(userId);
     //let dir = '';
     let usuario = await mongoUserRepository.findById(userId);
 
@@ -16,7 +26,8 @@ class UsersController {
 
     usuario.avatar = dir;
     try {
-      const updateUser = await mongoUserRepository.update(usuario, userId);
+      await mongoUserRepository.update(usuario, userId);
+      const updateUser = await mongoUserRepository.findById(userId);
       return res.status(200).json(updateUser);
     } catch (err) {
       return res.json(err);
@@ -24,9 +35,9 @@ class UsersController {
   }
 
   async findById(req: Request, res: Response) {
-    let { userId } = req.params;
-
-    const user = await mongoUserRepository.findById(userId);
+    let { id } = req.params;
+    console.log(id);
+    const user = await mongoUserRepository.findById(id);
 
     return res.json(user);
   }
@@ -44,7 +55,8 @@ class UsersController {
     };
 
     try {
-      let result = await mongoUserRepository.update(user, id);
+      await mongoUserRepository.update(user, id);
+      let result = await mongoUserRepository.findById(id);
       return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json(err);
@@ -64,16 +76,11 @@ class UsersController {
     })(req, res, next);
   }
 
-  info(req: Request, res: Response) {
-    res.send({
-      session: req.session,
-      sessionid: req.sessionID,
-      cookies: req.cookies,
-    });
-  }
-
   async createUser(req: Request, res: Response) {
-    let { email, password, nombre, direccion, edad, telefono } = req.body;
+    let { email, password, nombre, direccion, edad, telefono, admin } = req.body;
+    if (!email || !password) {
+      return res.status(400).json('Invalid Body');
+    }
     let data = await User.findOne({ email: email });
     if (!data) {
       let user: NewUserInterface = {
@@ -84,11 +91,15 @@ class UsersController {
         edad,
         telefono,
         avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
+        admin,
       };
+      console.log(user);
       try {
         let result = await mongoUserRepository.create(user);
+        console.log(result);
         if (result._id) {
-          await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
+          //Comentado por que alcance la cuota limite de emails
+          // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
           return res.status(201).json(result);
         } else {
           res.status(400).json('Bad Request');

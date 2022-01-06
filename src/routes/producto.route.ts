@@ -2,8 +2,6 @@ import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { productoController } from '../controllers';
 import { Request, Response } from 'express';
-import cors from 'cors';
-import { auth } from '../middlewares/auth';
 import passport from 'passport';
 const router = Router();
 
@@ -14,6 +12,8 @@ router.get('/new/product', (req: Request, res: Response) => {
 router.get('/', asyncHandler(productoController.get));
 
 router.get('/:id', asyncHandler(productoController.getById));
+
+router.get('/categoria/:categoriaId', productoController.findByCategoria);
 
 router.put('/:id', passport.authenticate('jwt', { session: false }), productoController.actualizar);
 

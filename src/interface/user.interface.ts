@@ -18,4 +18,5 @@ export interface NewUserInterface {
   edad: number;
   telefono: string;
   avatar: string;
+  admin: number;
 }
