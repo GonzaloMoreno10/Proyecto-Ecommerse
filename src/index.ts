@@ -22,7 +22,7 @@ if (clusterMode && cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  app.listen(3000, () =>
-    consoleLogger.info(`Servidor express escuchando en el puerto 3000} - PID WORKER ${process.pid}`)
+  app.listen(process.env.PORT || 3000, () =>
+    consoleLogger.info(`Servidor express escuchando en el puerto 3000 - PID WORKER ${process.pid}`)
   );
 }
