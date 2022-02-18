@@ -36,15 +36,14 @@ const cors_1 = __importDefault(require("cors"));
 const mongoDbConnect_1 = __importDefault(require("../config/mongoDbConnect"));
 const errors_controller_1 = require("../controllers/errors.controller");
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
-const swagger_1 = require("../config/swagger");
+const docs_1 = __importDefault(require("../docs"));
 log4js_1.default.configure(log4js_2.log4jsConfig);
 require('../services/passport');
 (0, mongoDbConnect_1.default)();
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use('/api-doc', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup((0, swagger_jsdoc_1.default)(swagger_1.swaggerSpec)));
+app.use('/api-doc', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(docs_1.default));
 //Configuracion
 app.set('port', process.env.PORT);
 app.use(errors_controller_1.errorHandler);

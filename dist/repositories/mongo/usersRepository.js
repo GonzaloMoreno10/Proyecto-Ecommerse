@@ -23,6 +23,7 @@ class UsersRepository {
             let output = [];
             try {
                 output = yield this.users.find();
+                console.log(output);
                 return output;
             }
             catch (err) {
@@ -44,7 +45,8 @@ class UsersRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let usuarios = yield this.users.findById(id.toString());
+                console.log(id);
+                let usuarios = yield this.users.findById(id);
                 return usuarios;
             }
             catch (err) {
@@ -63,6 +65,7 @@ class UsersRepository {
             if (!data.email || !data.password)
                 throw new Error('invalid data');
             const newUser = new this.users(data);
+            console.log(newUser);
             let res = yield newUser.save();
             return res;
         });

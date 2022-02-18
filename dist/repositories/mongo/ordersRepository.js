@@ -18,6 +18,12 @@ class OrderRepository {
     constructor() {
         this.ordenes = orders_model_1.default;
     }
+    findOrdersById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let orden = yield this.ordenes.findById(id);
+            return orden;
+        });
+    }
     findOrdersByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let orders = yield this.ordenes.find({ userId: userId });

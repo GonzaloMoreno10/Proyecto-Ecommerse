@@ -10,19 +10,19 @@ import authRouter from './auth.route';
 
 const router = Router();
 
-router.use('/productos', productoRoute);
+router.use('/products', productoRoute);
 
-router.use('/carrito', carritoRoute);
+router.use('/cart', carritoRoute);
 
-router.use('/usuarios', userRoute);
+router.use('/users', userRoute);
 
-router.use('/ordenes', orderRoute);
+router.use('/orders', orderRoute);
 
-router.use('/categorias', categoriaRoute);
+router.use('/categories', categoriaRoute);
 
 router.use('/server', serverConfigRoute);
 
-router.use('/mensajes', mensajeRouter);
+router.use('/messages', mensajeRouter);
 
 router.use('/auth', authRouter);
 

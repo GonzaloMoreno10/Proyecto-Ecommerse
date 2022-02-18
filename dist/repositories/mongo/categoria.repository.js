@@ -42,6 +42,11 @@ class CategoriaRepository {
             return yield this.categorias.find();
         });
     }
+    getCategoriasById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.categorias.findById(id);
+        });
+    }
     createCategoria(categoria) {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield this.categorias.create(categoria);

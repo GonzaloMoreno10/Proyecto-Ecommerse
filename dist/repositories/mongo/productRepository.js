@@ -29,6 +29,7 @@ class ProductRepository {
     findByCategory(categoryId) {
         return __awaiter(this, void 0, void 0, function* () {
             let productos = yield this.productos.find({ categoria: categoryId });
+            return productos;
         });
     }
     findById(id) {
@@ -79,6 +80,8 @@ class ProductRepository {
                 query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
             if (options.codigo)
                 query.codigo = options.codigo;
+            if (options.categoria)
+                query.categoria = options.categoria;
             return this.productos.find(query);
         });
     }

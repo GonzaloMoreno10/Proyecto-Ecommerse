@@ -28,6 +28,7 @@ class CarritoRepository {
     findProductsOnCartById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let carrito = yield this.findCartByUser(userId);
+            console.log(carrito);
             let productos = carrito.productos;
             for (let i in productos) {
                 if (productos[i] !== null) {
@@ -47,7 +48,9 @@ class CarritoRepository {
     }
     deleteProductsOnCart(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(userId);
             let cart = yield this.findCartByUser(userId);
+            console.log(cart);
             let productos = cart.productos;
             for (let i = 0; i < productos.length; i++) {
                 if (productos[i] !== null) {
@@ -65,9 +68,10 @@ class CarritoRepository {
             return yield this.carritos.findByIdAndUpdate(cart._id, cart);
         });
     }
-    addProductsToCart(idProducto, cantidad, userId) {
+    addProductsToCart(idProducto, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let carrito = yield this.findCartByUser(userId);
+            console.log(carrito);
             let producto = yield productRepository_1.mongoProductRepository.findById(idProducto);
             let productos = carrito.productos;
             const productOnCart = {
@@ -79,8 +83,8 @@ class CarritoRepository {
                 precio: producto.precio,
                 stock: producto.stock,
                 categoria: producto.categoria,
-                cantidad: cantidad,
-                precioTotal: producto.precio * cantidad,
+                cantidad: 1,
+                precioTotal: producto.precio * 1,
             };
             productos.push(productOnCart);
             carrito.productos = productos;

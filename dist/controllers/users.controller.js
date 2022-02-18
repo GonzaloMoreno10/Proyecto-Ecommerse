@@ -14,21 +14,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
 const mongo_1 = require("../repositories/mongo");
-const gmail_1 = require("../services/gmail");
-const MailStructure_1 = require("../utils/MailStructure");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const passport_1 = __importDefault(require("passport"));
-const venv_1 = require("../constantes/venv");
 class UsersController {
+    getUsersById(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            return res.json(yield mongo_1.mongoUserRepository.findById(id));
+        });
+    }
+    getUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('Entre aca');
+            const data = yield mongo_1.mongoUserRepository.findAll();
+            return res.json(data);
+        });
+    }
     editPicture(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { userId } = req.params;
+            console.log(userId);
             //let dir = '';
             let usuario = yield mongo_1.mongoUserRepository.findById(userId);
             let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
             usuario.avatar = dir;
             try {
-                const updateUser = yield mongo_1.mongoUserRepository.update(usuario, userId);
+                yield mongo_1.mongoUserRepository.update(usuario, userId);
+                const updateUser = yield mongo_1.mongoUserRepository.findById(userId);
                 return res.status(200).json(updateUser);
             }
             catch (err) {
@@ -38,8 +50,9 @@ class UsersController {
     }
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { userId } = req.params;
-            const user = yield mongo_1.mongoUserRepository.findById(userId);
+            let { id } = req.params;
+            console.log(id);
+            const user = yield mongo_1.mongoUserRepository.findById(id);
             return res.json(user);
         });
     }
@@ -55,7 +68,8 @@ class UsersController {
                 telefono,
             };
             try {
-                let result = yield mongo_1.mongoUserRepository.update(user, id);
+                yield mongo_1.mongoUserRepository.update(user, id);
+                let result = yield mongo_1.mongoUserRepository.findById(id);
                 return res.status(200).json(result);
             }
             catch (err) {
@@ -81,16 +95,12 @@ class UsersController {
             })(req, res, next);
         });
     }
-    info(req, res) {
-        res.send({
-            session: req.session,
-            sessionid: req.sessionID,
-            cookies: req.cookies,
-        });
-    }
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { email, password, nombre, direccion, edad, telefono } = req.body;
+            let { email, password, nombre, direccion, edad, telefono, admin } = req.body;
+            if (!email || !password) {
+                return res.status(400).json('Invalid Body');
+            }
             let data = yield user_model_1.default.findOne({ email: email });
             if (!data) {
                 let user = {
@@ -101,11 +111,15 @@ class UsersController {
                     edad,
                     telefono,
                     avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
+                    admin,
                 };
+                console.log(user);
                 try {
                     let result = yield mongo_1.mongoUserRepository.create(user);
+                    console.log(result);
                     if (result._id) {
-                        yield gmail_1.GmailService.sendEmail(venv_1.ADMIN_MAIL, 'Nuevo Registro', (0, MailStructure_1.cadena)(user));
+                        //Comentado por que alcance la cuota limite de emails
+                        // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
                         return res.status(201).json(result);
                     }
                     else {

@@ -13,6 +13,7 @@ router.get('/new/product', (req, res) => {
 });
 router.get('/', (0, express_async_handler_1.default)(controllers_1.productoController.get));
 router.get('/:id', (0, express_async_handler_1.default)(controllers_1.productoController.getById));
+router.get('/categoria/:categoriaId', controllers_1.productoController.findByCategoria);
 router.put('/:id', passport_1.default.authenticate('jwt', { session: false }), controllers_1.productoController.actualizar);
 router.post('/', passport_1.default.authenticate('jwt', { session: false }), controllers_1.productoController.agregar);
 router.delete('/:id', passport_1.default.authenticate('jwt', { session: false }), (0, express_async_handler_1.default)(controllers_1.productoController.borrar));

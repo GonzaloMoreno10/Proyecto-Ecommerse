@@ -11,23 +11,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productoController = exports.ProductoController = void 0;
 const mongo_1 = require("../repositories/mongo");
+const categoria_repository_1 = require("../repositories/mongo/categoria.repository");
 class ProductoController {
     getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let id = req.params.id;
-                let product = yield mongo_1.mongoProductRepository.findById(id);
-                res.json(product);
+                let { id } = req.params;
+                if (id) {
+                    let product = yield mongo_1.mongoProductRepository.findById(id);
+                    product ? res.json(product) : res.status(404).json('Product not found');
+                }
+                else {
+                    console.log('Entro por el ese');
+                    res.status(400).json('Invalid Field: ID');
+                }
             }
             catch (err) {
                 console.log(err);
             }
         });
     }
+    findByCategoria(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { categoriaId } = req.params;
+            try {
+                if (categoriaId) {
+                    console.log(categoriaId);
+                    const productos = yield mongo_1.mongoProductRepository.findByCategory(categoriaId);
+                    console.log(productos);
+                    return res.status(200).json(productos);
+                }
+                else {
+                    return res.status(400).json('Invalid params');
+                }
+            }
+            catch (err) {
+                return res.status(500).json(err);
+            }
+        });
+    }
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let data = yield mongo_1.mongoProductRepository.findAll();
+                const { categoria, nombre, minPrice, maxPrice, codigo, minStock, maxStock } = req.query;
+                const query = {};
+                if (nombre)
+                    query.nombre = nombre.toString();
+                if (codigo)
+                    query.codigo = Number(codigo);
+                if (minPrice)
+                    query.minPrice = Number(minPrice);
+                if (maxPrice)
+                    query.maxPrice = Number(maxPrice);
+                if (minStock)
+                    query.minStock = Number(minStock);
+                if (maxStock)
+                    query.maxStock = Number(maxStock);
+                if (categoria)
+                    query.categoria = categoria.toString();
+                let data = yield mongo_1.mongoProductRepository.query(query);
                 res.json(data);
             }
             catch (err) {
@@ -48,11 +90,19 @@ class ProductoController {
                     stock,
                     categoria,
                 };
-                let result = yield mongo_1.mongoProductRepository.create(producto);
-                return res.status(200).json(result);
+                console.log(categoria);
+                let cat = yield categoria_repository_1.categoriaRepository.getCategoriasById(categoria.toString());
+                if (cat) {
+                    let result = yield mongo_1.mongoProductRepository.create(producto);
+                    return res.status(200).json(result);
+                }
+                else {
+                    res.status(400).json('Categoria no existente');
+                }
             }
             catch (err) {
                 console.log(err);
+                return res.status(500).json(err);
             }
         });
     }
@@ -70,10 +120,14 @@ class ProductoController {
                     stock,
                     categoria,
                 };
-                if (producto) {
-                    let prod = yield mongo_1.mongoProductRepository.findById(id);
+                let prod = yield mongo_1.mongoProductRepository.findById(id);
+                if (prod) {
                     let data = yield mongo_1.mongoProductRepository.update(id, producto);
-                    res.status(200).json({ producto: 'Producto Actualizado', data });
+                    let productToRes = yield mongo_1.mongoProductRepository.findById(id);
+                    res.status(200).json({ result: 'Producto Actualizado', productToRes });
+                }
+                else {
+                    res.status(400).json('Producto no encontrado');
                 }
             }
             catch (err) {
@@ -85,10 +139,16 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let id = req.params.id;
-                yield mongo_1.mongoProductRepository.delete(id);
-                res.status(202).json({
-                    msg: 'producto borrado',
-                });
+                let prod = yield mongo_1.mongoProductRepository.findById(id);
+                if (prod) {
+                    yield mongo_1.mongoProductRepository.delete(id);
+                    res.status(202).json({
+                        msg: 'producto borrado',
+                    });
+                }
+                else {
+                    res.status(400).json('Producto no encontrado');
+                }
             }
             catch (err) {
                 console.log(err);

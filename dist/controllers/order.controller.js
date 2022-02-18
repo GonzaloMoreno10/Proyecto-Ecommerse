@@ -12,37 +12,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderController = void 0;
 const mongo_1 = require("../repositories/mongo");
 class OrderController {
-    getOrdersByUser(req, res) {
+    getOrders(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { userId } = req.params;
-            let orders = yield mongo_1.orderRepository.findOrdersByUser(userId);
-            orders.map(order => {
-                let orderPrice = 0;
-                order.items.map(item => {
-                    orderPrice += item.precioTotal;
+            let { id } = req.params;
+            if (id) {
+                let order = yield mongo_1.orderRepository.findOrdersById(id);
+                if (order) {
+                    let orderPrice = 0;
+                    order.items.map(item => {
+                        orderPrice += item.precioTotal;
+                    });
+                    order.precioOrden = orderPrice;
+                    return res.json(order);
+                }
+            }
+            else {
+                let ordenes = yield mongo_1.orderRepository.findAll();
+                ordenes.map(order => {
+                    let orderPrice = 0;
+                    order.items.map(item => {
+                        orderPrice += item.precioTotal;
+                    });
+                    order.precioOrden = orderPrice;
                 });
-                order.precioOrden = orderPrice;
-            });
-            return res.json(orders);
+                return res.json(ordenes);
+            }
         });
     }
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { items, userId, email } = req.body;
+            let { userId } = req.params;
+            const productos = yield mongo_1.mongoCarritoRepository.findProductsOnCart(userId);
+            const user = yield mongo_1.mongoUserRepository.findById(userId);
+            console.log(user);
             const orders = yield mongo_1.orderRepository.findAll();
             let nroOrden = orders.length + 1;
             let precioOrden = 0;
             const timestamp = new Date();
             const estado = 1;
-            items.map(item => {
+            productos.map(item => {
                 precioOrden += item.precioTotal;
             });
             let order = {
-                items,
+                items: productos,
                 nroOrden,
                 timestamp,
                 estado,
-                email,
+                email: user.email,
                 userId,
                 precioOrden,
             };

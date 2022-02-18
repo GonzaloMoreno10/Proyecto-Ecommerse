@@ -15,17 +15,18 @@ class CategoriaController {
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let categorias = yield categoria_repository_1.categoriaRepository.getAllCategorias();
-            return res.json(categorias);
+            return res.status(200).json(categorias);
         });
     }
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { nombre } = req.body;
+            console.log(nombre);
             let categoria = {
                 nombre: nombre,
             };
             let result = yield categoria_repository_1.categoriaRepository.createCategoria(categoria);
-            return res.json(categoria);
+            return res.status(201).json(result);
         });
     }
 }
