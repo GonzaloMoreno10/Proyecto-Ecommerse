@@ -57,7 +57,7 @@ class UsersController {
     try {
       await mongoUserRepository.update(user, id);
       let result = await mongoUserRepository.findById(id);
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     } catch (err) {
       return res.status(500).json(err);
     }
