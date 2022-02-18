@@ -70,7 +70,7 @@ class UsersController {
             try {
                 yield mongo_1.mongoUserRepository.update(user, id);
                 let result = yield mongo_1.mongoUserRepository.findById(id);
-                return res.status(200).json(result);
+                return res.status(201).json(result);
             }
             catch (err) {
                 return res.status(500).json(err);
