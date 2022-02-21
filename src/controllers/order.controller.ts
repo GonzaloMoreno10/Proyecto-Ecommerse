@@ -26,32 +26,6 @@ class OrderController {
       return res.json(ordenes);
     }
   }
-
-  async create(req: Request, res: Response) {
-    let { userId } = req.params;
-    const productos = await mongoCarritoRepository.findProductsOnCart(userId);
-    const user = await mongoUserRepository.findById(userId);
-    console.log(user);
-    const orders = await orderRepository.findAll();
-    let nroOrden = orders.length + 1;
-    let precioOrden = 0;
-    const timestamp = new Date();
-    const estado = 1;
-    productos.map(item => {
-      precioOrden += item.precioTotal;
-    });
-    let order: Orden = {
-      items: productos,
-      nroOrden,
-      timestamp,
-      estado,
-      email: user.email,
-      userId,
-      precioOrden,
-    };
-    let orden = await orderRepository.createOrder(order);
-    return res.json(orden);
-  }
 }
 
 export const orderController = new OrderController();

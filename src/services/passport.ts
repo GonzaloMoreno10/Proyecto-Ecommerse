@@ -34,14 +34,13 @@ passport.use(
     async (email, password, done) => {
       try {
         const user: IUser = await userSchema.findOne({ email });
-        console.log(user);
 
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }
 
         if (!(await user.matchPassword(password))) {
-          return done(null, false, { message: 'Contraseña incorrecta.' });
+          return done(null, false, { message: 'Incorrect password' });
         }
 
         return done(null, user, { message: 'Login successfull' });

@@ -12,13 +12,12 @@ class UsersController {
     return res.json(await mongoUserRepository.findById(id));
   }
   async getUsers(req: Request, res: Response) {
-    console.log('Entre aca');
     const data = await mongoUserRepository.findAll();
     return res.json(data);
   }
   async editPicture(req: Request, res: Response) {
     let { userId } = req.params;
-    console.log(userId);
+
     //let dir = '';
     let usuario = await mongoUserRepository.findById(userId);
 
@@ -36,7 +35,7 @@ class UsersController {
 
   async findById(req: Request, res: Response) {
     let { id } = req.params;
-    console.log(id);
+
     const user = await mongoUserRepository.findById(id);
 
     return res.json(user);
@@ -93,10 +92,10 @@ class UsersController {
         avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
         admin,
       };
-      console.log(user);
+
       try {
         let result = await mongoUserRepository.create(user);
-        console.log(result);
+
         if (result._id) {
           //Comentado por que alcance la cuota limite de emails
           // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));

@@ -4,15 +4,14 @@ import { Orden } from '../interface/orden.interface';
 const orderSchema = new Schema({
   items: [
     {
-      prodId: Object,
-      nombre: String,
-      precio: Number,
+      id: Object,
+      title: String,
+      price: Number,
       stock: Number,
-      codigo: Number,
-      foto: String,
-      descripcion: String,
-      cantidad: Number,
+      image: String,
+      quantity: Number,
       precioTotal: Number,
+      originalStock: Number,
     },
   ],
   nroOrden: Number,

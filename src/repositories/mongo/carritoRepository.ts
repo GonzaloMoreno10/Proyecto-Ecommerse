@@ -14,7 +14,7 @@ export class CarritoRepository {
   }
   async findProductsOnCartById(id: any, userId: string): Promise<ProductOnCart> {
     let carrito = await this.findCartByUser(userId);
-    console.log(carrito);
+
     let productos = carrito.productos;
     for (let i in productos) {
       if (productos[i] !== null) {
@@ -32,9 +32,8 @@ export class CarritoRepository {
   }
 
   async deleteProductsOnCart(id: any, userId: string): Promise<ProductOnCart> {
-    console.log(userId);
     let cart = await this.findCartByUser(userId);
-    console.log(cart);
+
     let productos = cart.productos;
     for (let i = 0; i < productos.length; i++) {
       if (productos[i] !== null) {
@@ -53,7 +52,7 @@ export class CarritoRepository {
   }
   async addProductsToCart(idProducto: any, userId: string): Promise<any> {
     let carrito = await this.findCartByUser(userId);
-    console.log(carrito);
+
     let producto = await mongoProductRepository.findById(idProducto);
     let productos = carrito.productos;
 

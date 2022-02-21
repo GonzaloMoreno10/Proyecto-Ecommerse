@@ -7,6 +7,7 @@ import userRoute from './users.route';
 import serverConfigRoute from './serverConfig.route';
 import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
+import compraRoute from './compra.route';
 
 const router = Router();
 
@@ -17,6 +18,8 @@ router.use('/cart', carritoRoute);
 router.use('/users', userRoute);
 
 router.use('/orders', orderRoute);
+
+router.use('/compra', compraRoute);
 
 router.use('/categories', categoriaRoute);
 

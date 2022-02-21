@@ -12,7 +12,6 @@ class CategoriaController {
 
   async create(req: Request, res: Response) {
     let { nombre } = req.body;
-    console.log(nombre);
     let categoria: INewCategoria = {
       nombre: nombre,
     };

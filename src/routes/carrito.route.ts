@@ -3,7 +3,7 @@ import { carritoController } from '../controllers/carrito.controller';
 import passport from 'passport';
 const router = Router();
 
-router.post(`/compra/new/:userId`, passport.authenticate('jwt', { session: false }), carritoController.compra);
+router.post(`/compra/new/`, passport.authenticate('jwt', { session: false }), carritoController.compra);
 
 router.get('/:idProducto?/:userId', passport.authenticate('jwt', { session: false }), carritoController.findById);
 

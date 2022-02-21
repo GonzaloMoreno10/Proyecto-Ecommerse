@@ -9,6 +9,7 @@ class OrderRepository {
 
   async findOrdersById(id: string) {
     let orden = await this.ordenes.findById(id);
+    console.log(orden);
     return orden;
   }
 
@@ -25,6 +26,7 @@ class OrderRepository {
   async createOrder(orden: Orden): Promise<Orden> {
     let newOrden = new this.ordenes(orden);
     let res = await newOrden.save();
+    console.log(res);
     return res;
   }
 }

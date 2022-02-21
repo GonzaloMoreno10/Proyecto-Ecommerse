@@ -11,7 +11,7 @@ class UsersRepository {
     let output: UserInterface[] = [];
     try {
       output = await this.users.find();
-      console.log(output);
+
       return output;
     } catch (err) {
       return err;
@@ -29,7 +29,6 @@ class UsersRepository {
 
   async findById(id: string): Promise<UserInterface | undefined> {
     try {
-      console.log(id);
       let usuarios = await this.users.findById(id);
       return usuarios;
     } catch (err) {
@@ -45,7 +44,7 @@ class UsersRepository {
   async create(data: NewUserInterface): Promise<UserInterface> {
     if (!data.email || !data.password) throw new Error('invalid data');
     const newUser = new this.users(data);
-    console.log(newUser);
+
     let res = await newUser.save();
     return res;
   }

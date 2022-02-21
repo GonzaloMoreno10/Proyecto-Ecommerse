@@ -1,7 +1,7 @@
 import { ProductOnCart } from '.';
 
 export interface Orden {
-  items: ProductOnCart[];
+  items: any[];
   nroOrden: number;
   timestamp: Date;
   estado: number;

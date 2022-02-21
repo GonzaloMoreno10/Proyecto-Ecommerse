@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { userController } from '../controllers/users.controller';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
+import { RecordingSettingsContext } from 'twilio/lib/rest/video/v1/recordingSettings';
 
 const router = Router();
 
@@ -9,8 +10,8 @@ router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
     try {
       if (err || !user) {
-        console.log(err);
-        return next('Usuario erroneo');
+        res.status(200).json(info);
+        return next();
       }
 
       req.login(user, { session: false }, async err => {

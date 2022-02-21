@@ -1,8 +1,14 @@
 import { Request, Response } from 'express';
-import { mongoCarritoRepository, mongoProductRepository, mongoUserRepository } from '../repositories/mongo';
+import {
+  mongoCarritoRepository,
+  mongoProductRepository,
+  mongoUserRepository,
+  orderRepository,
+} from '../repositories/mongo';
 import { compra, compraWhatSapp } from '../utils/MailStructure';
 import { GmailService } from '../services/gmail';
 import { SmsService } from '../services/twilio';
+import { Orden } from '../interface/orden.interface';
 class CarritoController {
   async findById(req: Request, res: Response) {
     try {
@@ -69,29 +75,39 @@ class CarritoController {
   }
 
   async compra(req: Request, res: Response) {
-    //let user = Object.assign(req.user);
-    let { userId } = req.params;
-    let usuario = await mongoUserRepository.findById(userId);
-    let carrito = await mongoCarritoRepository.findCartByUser(userId);
-    let products = await mongoCarritoRepository.findProductsOnCart(userId);
-
+    const { carrito, userId } = req.body;
     let suma = 0;
-    for (let i in products) {
-      suma += products[i].precio;
+    for (let i in carrito) {
+      suma += carrito[i].price;
     }
-    let total = suma.toFixed(3);
 
     try {
+      const user = await mongoUserRepository.findById(userId);
+      const orders = await orderRepository.findAll();
+      const timestamp = new Date();
+      let nroOrden = orders.length + 1;
+      let order: Orden = {
+        items: carrito,
+        nroOrden,
+        timestamp,
+        estado: 1,
+        email: user.email,
+        userId,
+        precioOrden: suma,
+      };
+      let orden = await orderRepository.createOrder(order);
+
       //Comentado por que alcance la cuota limite de email
       //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
-      carrito.productos = [];
-      await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
+      //carrito.productos = [];
+      // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
 
-      await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(products, usuario, total));
+      // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
 
-      await mongoCarritoRepository.vaciarCarrito(userId);
-      return res.status(201).json('ok');
+      // await mongoCarritoRepository.vaciarCarrito(userId);
+      return res.status(200).json(orden);
     } catch (err) {
+      console.log(err);
       return res.status(500).json(err);
     }
   }

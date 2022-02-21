@@ -12,7 +12,6 @@ export class ProductoController {
         let product = await mongoProductRepository.findById(id);
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
-        console.log('Entro por el ese');
         res.status(400).json('Invalid Field: ID');
       }
     } catch (err) {
@@ -24,9 +23,8 @@ export class ProductoController {
     let { categoriaId } = req.params;
     try {
       if (categoriaId) {
-        console.log(categoriaId);
         const productos = await mongoProductRepository.findByCategory(categoriaId);
-        console.log(productos);
+
         return res.status(200).json(productos);
       } else {
         return res.status(400).json('Invalid params');
@@ -66,7 +64,7 @@ export class ProductoController {
         stock,
         categoria,
       };
-      console.log(categoria);
+
       let cat = await categoriaRepository.getCategoriasById(categoria.toString());
       if (cat) {
         let result = await mongoProductRepository.create(producto);
@@ -93,6 +91,9 @@ export class ProductoController {
         stock,
         categoria,
       };
+
+      console.log('Entre en editar');
+      console.log(producto);
 
       let prod = await mongoProductRepository.findById(id);
       if (prod) {
