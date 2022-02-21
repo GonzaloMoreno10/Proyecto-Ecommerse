@@ -93,7 +93,6 @@ export class ProductoController {
       };
 
       console.log('Entre en editar');
-      console.log(producto);
 
       let prod = await mongoProductRepository.findById(id);
       if (prod) {

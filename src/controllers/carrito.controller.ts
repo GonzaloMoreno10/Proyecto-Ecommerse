@@ -89,19 +89,25 @@ class CarritoController {
       let nroOrden = orders.length + 1;
       const aproved = [];
       const disaproved = [];
-      if (carrito.some((prod: any) => prod.stock < prod.quantity)) {
-        for (let i in carrito) {
-          if (carrito[i].stock >= carrito[i].quantity) {
-            aproved.push(carrito[i]);
+
+      const prods = [];
+      for (let i in carrito) {
+        prods.push(await mongoProductRepository.findById(carrito[i].id));
+      }
+
+      console.log(prods);
+      if (prods.some((prod: any) => prod.stock < prod.quantity)) {
+        for (let i in prods) {
+          if (prods[i].stock >= prods[i].quantity) {
+            aproved.push(prods[i]);
           } else {
-            disaproved.push(carrito[i]);
+            disaproved.push(prods[i]);
           }
         }
         return res.status(200).json({ disaproved: disaproved, aproved: aproved });
       } else {
         //Descuento stock
-        const promises = carrito.map(async prod => {
-          console.log(prod);
+        carrito.map(async prod => {
           prod.stock = prod.originalStock - prod.quantity;
           await mongoProductRepository.update(prod.id, prod);
         });
