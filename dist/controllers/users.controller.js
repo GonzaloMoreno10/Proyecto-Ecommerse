@@ -25,7 +25,6 @@ class UsersController {
     }
     getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Entre aca');
             const data = yield mongo_1.mongoUserRepository.findAll();
             return res.json(data);
         });
@@ -33,7 +32,6 @@ class UsersController {
     editPicture(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { userId } = req.params;
-            console.log(userId);
             //let dir = '';
             let usuario = yield mongo_1.mongoUserRepository.findById(userId);
             let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
@@ -51,7 +49,6 @@ class UsersController {
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { id } = req.params;
-            console.log(id);
             const user = yield mongo_1.mongoUserRepository.findById(id);
             return res.json(user);
         });
@@ -113,10 +110,8 @@ class UsersController {
                     avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
                     admin,
                 };
-                console.log(user);
                 try {
                     let result = yield mongo_1.mongoUserRepository.create(user);
-                    console.log(result);
                     if (result._id) {
                         //Comentado por que alcance la cuota limite de emails
                         // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));

@@ -22,7 +22,6 @@ class ProductoController {
                     product ? res.json(product) : res.status(404).json('Product not found');
                 }
                 else {
-                    console.log('Entro por el ese');
                     res.status(400).json('Invalid Field: ID');
                 }
             }
@@ -36,9 +35,7 @@ class ProductoController {
             let { categoriaId } = req.params;
             try {
                 if (categoriaId) {
-                    console.log(categoriaId);
                     const productos = yield mongo_1.mongoProductRepository.findByCategory(categoriaId);
-                    console.log(productos);
                     return res.status(200).json(productos);
                 }
                 else {
@@ -90,7 +87,6 @@ class ProductoController {
                     stock,
                     categoria,
                 };
-                console.log(categoria);
                 let cat = yield categoria_repository_1.categoriaRepository.getCategoriasById(categoria.toString());
                 if (cat) {
                     let result = yield mongo_1.mongoProductRepository.create(producto);
@@ -120,6 +116,8 @@ class ProductoController {
                     stock,
                     categoria,
                 };
+                console.log('Entre en editar');
+                console.log(producto);
                 let prod = yield mongo_1.mongoProductRepository.findById(id);
                 if (prod) {
                     let data = yield mongo_1.mongoProductRepository.update(id, producto);

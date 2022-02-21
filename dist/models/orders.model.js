@@ -4,15 +4,14 @@ const mongoose_1 = require("mongoose");
 const orderSchema = new mongoose_1.Schema({
     items: [
         {
-            prodId: Object,
-            nombre: String,
-            precio: Number,
+            id: Object,
+            title: String,
+            price: Number,
             stock: Number,
-            codigo: Number,
-            foto: String,
-            descripcion: String,
-            cantidad: Number,
+            image: String,
+            quantity: Number,
             precioTotal: Number,
+            originalStock: Number,
         },
     ],
     nroOrden: Number,

@@ -11,8 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.carritoController = void 0;
 const mongo_1 = require("../repositories/mongo");
-const MailStructure_1 = require("../utils/MailStructure");
-const twilio_1 = require("../services/twilio");
 class CarritoController {
     findById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -86,26 +84,50 @@ class CarritoController {
     }
     compra(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            //let user = Object.assign(req.user);
-            let { userId } = req.params;
-            let usuario = yield mongo_1.mongoUserRepository.findById(userId);
-            let carrito = yield mongo_1.mongoCarritoRepository.findCartByUser(userId);
-            let products = yield mongo_1.mongoCarritoRepository.findProductsOnCart(userId);
+            const { carrito, userId } = req.body;
             let suma = 0;
-            for (let i in products) {
-                suma += products[i].precio;
+            for (let i in carrito) {
+                suma += carrito[i].price;
             }
-            let total = suma.toFixed(3);
             try {
+                const user = yield mongo_1.mongoUserRepository.findById(userId);
+                const orders = yield mongo_1.orderRepository.findAll();
+                const timestamp = new Date();
+                let nroOrden = orders.length + 1;
+                const aproved = [];
+                const disaproved = [];
+                if (carrito.some((prod) => prod.stock < prod.quantity)) {
+                    for (let i in carrito) {
+                        if (carrito[i].stock >= carrito[i].quantity) {
+                            aproved.push(carrito[i]);
+                        }
+                        else {
+                            disaproved.push(carrito[i]);
+                        }
+                    }
+                    return res.status(200).json({ disaproved: disaproved, aproved: aproved });
+                }
+                let order = {
+                    aproved,
+                    nroOrden,
+                    timestamp,
+                    estado: 1,
+                    email: user.email,
+                    userId,
+                    precioOrden: suma,
+                    disaproved,
+                };
+                let orden = yield mongo_1.orderRepository.createOrder(order);
                 //Comentado por que alcance la cuota limite de email
                 //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
-                carrito.productos = [];
-                yield twilio_1.SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
-                yield twilio_1.SmsService.sendWhatSapp('+5493548574529', (0, MailStructure_1.compraWhatSapp)(products, usuario, total));
-                yield mongo_1.mongoCarritoRepository.vaciarCarrito(userId);
-                return res.status(201).json('ok');
+                //carrito.productos = [];
+                // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
+                // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
+                // await mongoCarritoRepository.vaciarCarrito(userId);
+                return res.status(200).json(orden);
             }
             catch (err) {
+                console.log(err);
                 return res.status(500).json(err);
             }
         });

@@ -21,7 +21,6 @@ class CategoriaController {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { nombre } = req.body;
-            console.log(nombre);
             let categoria = {
                 nombre: nombre,
             };

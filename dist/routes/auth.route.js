@@ -15,13 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const passport_1 = __importDefault(require("passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const cors_1 = __importDefault(require("cors"));
 const router = (0, express_1.Router)();
+const corsOptions = {
+    origin: 'https://suspicious-allen-156444.netlify.app',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+router.use((0, cors_1.default)(corsOptions));
 router.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     passport_1.default.authenticate('login', (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             if (err || !user) {
-                console.log(err);
-                return next('Usuario erroneo');
+                res.status(200).json(info);
+                return next();
             }
             req.login(user, { session: false }, (err) => __awaiter(void 0, void 0, void 0, function* () {
                 if (err)

@@ -37,6 +37,7 @@ class Twilio {
                 from: `whatsapp:${venv_1.TWILIO_ADMIN_WHATSAPP}`,
                 to: `whatsapp:${cellphoneNumber}`,
             };
+            //asdasdasd
             if (picture)
                 params.mediaUrl = [picture];
             const response = yield this.twilio.messages.create(params);

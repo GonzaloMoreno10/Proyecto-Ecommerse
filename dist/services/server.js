@@ -42,7 +42,11 @@ require('../services/passport');
 (0, mongoDbConnect_1.default)();
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: 'https://suspicious-allen-156444.netlify.app',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use('/api-doc', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(docs_1.default));
 //Configuracion
 app.set('port', process.env.PORT);

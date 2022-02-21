@@ -101,14 +101,13 @@ class CarritoController {
       }
 
       let order: Orden = {
-        aproved,
+        items: carrito,
         nroOrden,
         timestamp,
         estado: 1,
         email: user.email,
         userId,
         precioOrden: suma,
-        disaproved,
       };
 
       let orden = await orderRepository.createOrder(order);

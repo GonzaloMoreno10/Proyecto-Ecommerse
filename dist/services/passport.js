@@ -37,12 +37,11 @@ passport_1.default.use('login', new localStrategy({
 }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield user_model_1.default.findOne({ email });
-        console.log(user);
         if (!user) {
             return done(null, false, { message: 'User not found' });
         }
         if (!(yield user.matchPassword(password))) {
-            return done(null, false, { message: 'Contraseña incorrecta.' });
+            return done(null, false, { message: 'Incorrect password' });
         }
         return done(null, user, { message: 'Login successfull' });
     }
