@@ -22,7 +22,12 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://suspicious-allen-156444.netlify.app',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(docs));
 
