@@ -96,9 +96,9 @@ class CarritoController {
       }
 
       console.log(prods);
-      if (prods.some((prod: any) => prod.stock < prod.quantity)) {
+      if (prods.some((prod: any) => prod.stock == 0)) {
         for (let i in prods) {
-          if (prods[i].stock >= prods[i].quantity) {
+          if (prods[i].stock >= carrito[i].quantity) {
             aproved.push(prods[i]);
           } else {
             disaproved.push(prods[i]);

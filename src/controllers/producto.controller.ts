@@ -92,8 +92,6 @@ export class ProductoController {
         categoria,
       };
 
-      console.log('Entre en editar');
-
       let prod = await mongoProductRepository.findById(id);
       if (prod) {
         let data = await mongoProductRepository.update(id, producto);
