@@ -18,7 +18,7 @@ class OrderController {
       let ordenes = await orderRepository.findAll();
       ordenes.map(order => {
         let orderPrice = 0;
-        order.items.map(item => {
+        order.aproved.map(item => {
           orderPrice += item.precioTotal;
         });
         order.precioOrden = orderPrice;

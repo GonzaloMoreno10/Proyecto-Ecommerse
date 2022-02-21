@@ -9,6 +9,7 @@ import { compra, compraWhatSapp } from '../utils/MailStructure';
 import { GmailService } from '../services/gmail';
 import { SmsService } from '../services/twilio';
 import { Orden } from '../interface/orden.interface';
+import productoModel from '../models/producto.model';
 class CarritoController {
   async findById(req: Request, res: Response) {
     try {
@@ -86,15 +87,30 @@ class CarritoController {
       const orders = await orderRepository.findAll();
       const timestamp = new Date();
       let nroOrden = orders.length + 1;
+      const aproved = [];
+      const disaproved = [];
+      if (carrito.some((prod: any) => prod.stock < prod.quantity)) {
+        for (let i in carrito) {
+          if (carrito[i].stock >= carrito[i].quantity) {
+            aproved.push(carrito[i]);
+          } else {
+            disaproved.push(carrito[i]);
+          }
+        }
+        return res.status(200).json({ disaproved: disaproved, aproved: aproved });
+      }
+
       let order: Orden = {
-        items: carrito,
+        aproved,
         nroOrden,
         timestamp,
         estado: 1,
         email: user.email,
         userId,
         precioOrden: suma,
+        disaproved,
       };
+
       let orden = await orderRepository.createOrder(order);
 
       //Comentado por que alcance la cuota limite de email
