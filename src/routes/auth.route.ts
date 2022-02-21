@@ -3,8 +3,15 @@ import { userController } from '../controllers/users.controller';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { RecordingSettingsContext } from 'twilio/lib/rest/video/v1/recordingSettings';
+import cors from 'cors';
 
 const router = Router();
+
+const corsOptions = {
+  origin: 'https://suspicious-allen-156444.netlify.app',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+router.use(cors(corsOptions));
 
 router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
