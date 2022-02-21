@@ -98,6 +98,13 @@ class CarritoController {
           }
         }
         return res.status(200).json({ disaproved: disaproved, aproved: aproved });
+      } else {
+        //Descuento stock
+        const promises = carrito.map(async prod => {
+          console.log(prod);
+          prod.stock = prod.originalStock - prod.quantity;
+          await mongoProductRepository.update(prod.id, prod);
+        });
       }
 
       let order: Orden = {

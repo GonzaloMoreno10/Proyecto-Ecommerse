@@ -7,11 +7,11 @@ import cors from 'cors';
 
 const router = Router();
 
-const corsOptions = {
-  origin: 'https://suspicious-allen-156444.netlify.app',
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-router.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: 'https://suspicious-allen-156444.netlify.app',
+//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+// };
+router.use(cors());
 
 router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
