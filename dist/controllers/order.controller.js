@@ -12,6 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderController = void 0;
 const mongo_1 = require("../repositories/mongo");
 class OrderController {
+    getOrdersByUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { userId } = req.params;
+            try {
+                const result = yield mongo_1.orderRepository.findOrdersByUser(userId);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                console.log(err);
+                return err;
+            }
+        });
+    }
     getOrders(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let { id } = req.params;
