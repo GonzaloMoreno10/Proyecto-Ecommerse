@@ -164,7 +164,7 @@ export class MemoriaRepository implements PersistanceBaseClass {
       let producto = await this.findById(idProducto);
       console.log(producto);
       if (producto) {
-        console.log(producto);
+        c
         this.carrito.productos.push(producto);
         return producto;
       }
