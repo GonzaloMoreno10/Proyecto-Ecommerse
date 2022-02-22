@@ -116,8 +116,6 @@ class ProductoController {
                     stock,
                     categoria,
                 };
-                console.log('Entre en editar');
-                console.log(producto);
                 let prod = yield mongo_1.mongoProductRepository.findById(id);
                 if (prod) {
                     let data = yield mongo_1.mongoProductRepository.update(id, producto);

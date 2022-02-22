@@ -12,6 +12,7 @@ const orderSchema = new mongoose_1.Schema({
             quantity: Number,
             precioTotal: Number,
             originalStock: Number,
+            disaproved: Boolean,
         },
     ],
     nroOrden: Number,

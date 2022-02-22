@@ -102,7 +102,6 @@ class CarritoController {
         prods[i] = carrito[i];
         prods[i].disaproved = true;
         prods[i].stock = stock;
-        console.log('Entre por aca');
       }
     }
 

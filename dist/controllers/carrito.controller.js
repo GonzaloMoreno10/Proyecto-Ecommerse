@@ -89,47 +89,57 @@ class CarritoController {
             for (let i in carrito) {
                 suma += carrito[i].price;
             }
-            try {
-                const user = yield mongo_1.mongoUserRepository.findById(userId);
-                const orders = yield mongo_1.orderRepository.findAll();
-                const timestamp = new Date();
-                let nroOrden = orders.length + 1;
-                const aproved = [];
-                const disaproved = [];
-                if (carrito.some((prod) => prod.stock < prod.quantity)) {
-                    for (let i in carrito) {
-                        if (carrito[i].stock >= carrito[i].quantity) {
-                            aproved.push(carrito[i]);
-                        }
-                        else {
-                            disaproved.push(carrito[i]);
-                        }
-                    }
-                    return res.status(200).json({ disaproved: disaproved, aproved: aproved });
+            const user = yield mongo_1.mongoUserRepository.findById(userId);
+            const orders = yield mongo_1.orderRepository.findAll();
+            const timestamp = new Date();
+            let nroOrden = orders.length + 1;
+            const prods = [];
+            for (let i in carrito) {
+                prods.push(yield mongo_1.mongoProductRepository.findById(carrito[i].id));
+            }
+            for (let i in prods) {
+                if (prods[i].stock >= carrito[i].quantity) {
+                    prods[i] = carrito[i];
+                    prods[i].stock = carrito[i].originalStock - carrito[i].quantity;
+                    yield mongo_1.mongoProductRepository.update(prods[i].id, prods[i]);
                 }
-                let order = {
-                    aproved,
-                    nroOrden,
-                    timestamp,
-                    estado: 1,
-                    email: user.email,
-                    userId,
-                    precioOrden: suma,
-                    disaproved,
-                };
-                let orden = yield mongo_1.orderRepository.createOrder(order);
-                //Comentado por que alcance la cuota limite de email
-                //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
-                //carrito.productos = [];
-                // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
-                // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
-                // await mongoCarritoRepository.vaciarCarrito(userId);
-                return res.status(200).json(orden);
+                else {
+                    const stock = prods[i].stock;
+                    prods[i] = carrito[i];
+                    prods[i].disaproved = true;
+                    prods[i].stock = stock;
+                }
             }
-            catch (err) {
-                console.log(err);
-                return res.status(500).json(err);
-            }
+            // const toReturn = prods.map(item => {
+            //   return {
+            //     title: item.nombre,
+            //     price: item.precio,
+            //     image: item.foto,
+            //     precioTotal: suma,
+            //     originalStock: item.stock,
+            //     disaproved: item.disaproved,
+            //     quantity: item.quantity,
+            //   };
+            // });
+            console.log(prods);
+            let order = {
+                items: prods,
+                nroOrden,
+                timestamp,
+                estado: 1,
+                email: user.email,
+                userId,
+                precioOrden: suma,
+            };
+            let orden = yield mongo_1.orderRepository.createOrder(order);
+            //Comentado por que alcance la cuota limite de email
+            //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
+            //carrito.productos = [];
+            // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
+            // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
+            // await mongoCarritoRepository.vaciarCarrito(userId);
+            console.log(orden);
+            return res.status(200).json(orden);
         });
     }
     delete(req, res) {

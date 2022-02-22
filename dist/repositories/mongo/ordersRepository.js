@@ -21,7 +21,6 @@ class OrderRepository {
     findOrdersById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let orden = yield this.ordenes.findById(id);
-            console.log(orden);
             return orden;
         });
     }
@@ -41,7 +40,6 @@ class OrderRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let newOrden = new this.ordenes(orden);
             let res = yield newOrden.save();
-            console.log(res);
             return res;
         });
     }
