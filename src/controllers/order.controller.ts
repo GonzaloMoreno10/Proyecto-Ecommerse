@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { mongoCarritoRepository, mongoUserRepository, orderRepository } from '../repositories/mongo';
-import { Orden } from '../interface/orden.interface';
 class OrderController {
   async getOrdersByUser(req: Request, res: Response) {
     let { userId } = req.params;
