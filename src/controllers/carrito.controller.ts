@@ -78,6 +78,7 @@ class CarritoController {
 
   async compra(req: Request, res: Response) {
     const { carrito, userId } = req.body;
+    let hasError = false;
     let suma = 0;
     for (let i in carrito) {
       suma += carrito[i].price;
@@ -98,6 +99,7 @@ class CarritoController {
         prods[i].stock = carrito[i].originalStock - carrito[i].quantity;
         await mongoProductRepository.update(prods[i].id, prods[i]);
       } else {
+        hasError = true;
         const stock = prods[i].stock;
         prods[i] = carrito[i];
         prods[i].disaproved = true;
@@ -105,19 +107,6 @@ class CarritoController {
       }
     }
 
-    // const toReturn = prods.map(item => {
-    //   return {
-    //     title: item.nombre,
-    //     price: item.precio,
-    //     image: item.foto,
-    //     precioTotal: suma,
-    //     originalStock: item.stock,
-    //     disaproved: item.disaproved,
-    //     quantity: item.quantity,
-    //   };
-    // });
-
-    console.log(prods);
     let order: Orden = {
       items: prods,
       nroOrden,
@@ -128,7 +117,12 @@ class CarritoController {
       precioOrden: suma,
     };
 
-    let orden = await orderRepository.createOrder(order);
+    if (!hasError) {
+      let orden = await orderRepository.createOrder(order);
+      return res.status(200).json(orden);
+    } else {
+      res.json(order);
+    }
 
     //Comentado por que alcance la cuota limite de email
     //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
@@ -138,8 +132,6 @@ class CarritoController {
     // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
 
     // await mongoCarritoRepository.vaciarCarrito(userId);
-    console.log(orden);
-    return res.status(200).json(orden);
   }
 
   async delete(req: Request, res: Response) {

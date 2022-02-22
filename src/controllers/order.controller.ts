@@ -2,6 +2,17 @@ import { Request, Response } from 'express';
 import { mongoCarritoRepository, mongoUserRepository, orderRepository } from '../repositories/mongo';
 import { Orden } from '../interface/orden.interface';
 class OrderController {
+  async getOrdersByUser(req: Request, res: Response) {
+    let { userId } = req.params;
+    try {
+      const result = await orderRepository.findOrdersByUser(userId);
+      res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
   async getOrders(req: Request, res: Response) {
     let { id } = req.params;
     if (id) {
