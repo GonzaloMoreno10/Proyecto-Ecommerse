@@ -22,10 +22,10 @@ dotenv.config();
 
 const app = express();
 
-// const corsOptions = {
-//   origin: 'https://suspicious-allen-156444.netlify.app',
-//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-// };
+const corsOptions = {
+  origin: 'https://suspicious-allen-156444.netlify.app',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 app.use(cors());
 

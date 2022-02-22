@@ -12,6 +12,7 @@ const orderSchema = new Schema({
       quantity: Number,
       precioTotal: Number,
       originalStock: Number,
+      disaproved: Boolean,
     },
   ],
   nroOrden: Number,

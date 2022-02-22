@@ -10,6 +10,7 @@ import { GmailService } from '../services/gmail';
 import { SmsService } from '../services/twilio';
 import { Orden } from '../interface/orden.interface';
 import productoModel from '../models/producto.model';
+import { setTokenSourceMapRange } from 'typescript';
 class CarritoController {
   async findById(req: Request, res: Response) {
     try {
@@ -82,62 +83,64 @@ class CarritoController {
       suma += carrito[i].price;
     }
 
-    try {
-      const user = await mongoUserRepository.findById(userId);
-      const orders = await orderRepository.findAll();
-      const timestamp = new Date();
-      let nroOrden = orders.length + 1;
-      const aproved = [];
-      const disaproved = [];
+    const user = await mongoUserRepository.findById(userId);
+    const orders = await orderRepository.findAll();
+    const timestamp = new Date();
+    let nroOrden = orders.length + 1;
 
-      const prods = [];
-      for (let i in carrito) {
-        prods.push(await mongoProductRepository.findById(carrito[i].id));
-      }
-
-      console.log(prods);
-      if (prods.some((prod: any) => prod.stock == 0)) {
-        for (let i in prods) {
-          if (prods[i].stock >= carrito[i].quantity) {
-            aproved.push(prods[i]);
-          } else {
-            disaproved.push(prods[i]);
-          }
-        }
-        return res.status(200).json({ disaproved: disaproved, aproved: aproved });
-      } else {
-        //Descuento stock
-        carrito.map(async prod => {
-          prod.stock = prod.originalStock - prod.quantity;
-          await mongoProductRepository.update(prod.id, prod);
-        });
-      }
-
-      let order: Orden = {
-        items: carrito,
-        nroOrden,
-        timestamp,
-        estado: 1,
-        email: user.email,
-        userId,
-        precioOrden: suma,
-      };
-
-      let orden = await orderRepository.createOrder(order);
-
-      //Comentado por que alcance la cuota limite de email
-      //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
-      //carrito.productos = [];
-      // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
-
-      // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
-
-      // await mongoCarritoRepository.vaciarCarrito(userId);
-      return res.status(200).json(orden);
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(err);
+    const prods = [];
+    for (let i in carrito) {
+      prods.push(await mongoProductRepository.findById(carrito[i].id));
     }
+    for (let i in prods) {
+      if (prods[i].stock >= carrito[i].quantity) {
+        prods[i] = carrito[i];
+        prods[i].stock = carrito[i].originalStock - carrito[i].quantity;
+        await mongoProductRepository.update(prods[i].id, prods[i]);
+      } else {
+        const stock = prods[i].stock;
+        prods[i] = carrito[i];
+        prods[i].disaproved = true;
+        prods[i].stock = stock;
+        console.log('Entre por aca');
+      }
+    }
+
+    // const toReturn = prods.map(item => {
+    //   return {
+    //     title: item.nombre,
+    //     price: item.precio,
+    //     image: item.foto,
+    //     precioTotal: suma,
+    //     originalStock: item.stock,
+    //     disaproved: item.disaproved,
+    //     quantity: item.quantity,
+    //   };
+    // });
+
+    console.log(prods);
+    let order: Orden = {
+      items: prods,
+      nroOrden,
+      timestamp,
+      estado: 1,
+      email: user.email,
+      userId,
+      precioOrden: suma,
+    };
+
+    let orden = await orderRepository.createOrder(order);
+
+    //Comentado por que alcance la cuota limite de email
+    //await GmailService.sendEmail(usuario.email, 'Nueva compra', compra(products, usuario, total));
+    //carrito.productos = [];
+    // await SmsService.sendMessage('+543548574529', 'Se recibio tu pedido y lo estamos procesando');
+
+    // await SmsService.sendWhatSapp('+5493548574529', compraWhatSapp(carrito, userId, suma.toString()));
+
+    // await mongoCarritoRepository.vaciarCarrito(userId);
+    console.log(orden);
+    return res.status(200).json(orden);
   }
 
   async delete(req: Request, res: Response) {
