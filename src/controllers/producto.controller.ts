@@ -27,6 +27,7 @@ export class ProductoController {
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
         res.status(400).json('Invalid Field: ID');
+        console.log('id');
       }
     } catch (err) {
       console.log(err);
