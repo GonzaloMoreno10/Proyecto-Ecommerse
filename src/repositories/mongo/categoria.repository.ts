@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-import { ICategoria, INewCategoria } from '../../interface/categoria.interface';
+import { ICategoria } from '../../interface/categoria.interface';
 
 const categoriaSchema = new Schema({
   nombre: String,
@@ -20,7 +20,7 @@ class CategoriaRepository {
     return await this.categorias.findById(id);
   }
 
-  async createCategoria(categoria: INewCategoria) {
+  async createCategoria(categoria: ICategoria) {
     const res = await this.categorias.create(categoria);
     return res;
   }

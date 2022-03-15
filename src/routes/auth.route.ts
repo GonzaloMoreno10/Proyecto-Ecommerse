@@ -24,7 +24,7 @@ router.post('/login', async (req, res, next) => {
       req.login(user, { session: false }, async err => {
         if (err) return next(err);
         const body = {
-          _id: user._id,
+          id: user.id,
           email: user.email,
           nombre: user.nombre,
           direccion: user.direccion,

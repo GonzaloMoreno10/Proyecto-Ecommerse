@@ -1,15 +1,29 @@
 import { Request, Response } from 'express';
-import { newProductInterface } from '../interface/producto.inteface';
-import { mongoProductRepository } from '../repositories/mongo';
+import { IProduct } from '../interface/producto.inteface';
 import { categoriaRepository } from '../repositories/mongo/categoria.repository';
 import { ProductQueryInterface } from '../interface';
+import { mysqlProductRepository } from '../repositories/mysql/productRepository';
 
 export class ProductoController {
+  async getRelatedProduct(req: Request, res: Response) {
+    try {
+      const { id, categoria, marca, productType } = req.query;
+      const result = await mysqlProductRepository.getRelatedProducts(
+        Number(id),
+        Number(categoria),
+        Number(marca),
+        Number(productType)
+      );
+      res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async getById(req: Request, res: Response) {
     try {
       let { id } = req.params;
       if (id) {
-        let product = await mongoProductRepository.findById(id);
+        let product = await mysqlProductRepository.getProductsById(parseInt(id));
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
         res.status(400).json('Invalid Field: ID');
@@ -23,7 +37,7 @@ export class ProductoController {
     let { categoriaId } = req.params;
     try {
       if (categoriaId) {
-        const productos = await mongoProductRepository.findByCategory(categoriaId);
+        const productos = await mysqlProductRepository.getProductsQuery({ categoria: categoriaId });
 
         return res.status(200).json(productos);
       } else {
@@ -36,7 +50,7 @@ export class ProductoController {
 
   async get(req: Request, res: Response) {
     try {
-      const { categoria, nombre, minPrice, maxPrice, codigo, minStock, maxStock } = req.query;
+      const { categoria, nombre, minPrice, maxPrice, codigo, minStock, maxStock, marca, productType } = req.query;
       const query: ProductQueryInterface = {};
       if (nombre) query.nombre = nombre.toString();
       if (codigo) query.codigo = Number(codigo);
@@ -45,7 +59,9 @@ export class ProductoController {
       if (minStock) query.minStock = Number(minStock);
       if (maxStock) query.maxStock = Number(maxStock);
       if (categoria) query.categoria = categoria.toString();
-      let data = await mongoProductRepository.query(query);
+      if (marca) query.marca = Number(marca);
+      if (productType) query.productType = Number(marca);
+      let data = await mysqlProductRepository.getProductsQuery(query);
       res.json(data);
     } catch (err) {
       console.log(err);
@@ -54,8 +70,8 @@ export class ProductoController {
 
   async agregar(req: Request, res: Response) {
     try {
-      let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
-      let producto: newProductInterface = {
+      let { nombre, descripcion, codigo, foto, precio, stock, categoria, productType, marca } = req.body;
+      let producto: IProduct = {
         nombre,
         descripcion,
         codigo,
@@ -63,15 +79,21 @@ export class ProductoController {
         precio,
         stock,
         categoria,
+        productTypeId: productType,
+        marcaId: marca,
       };
 
-      let cat = await categoriaRepository.getCategoriasById(categoria.toString());
-      if (cat) {
-        let result = await mongoProductRepository.create(producto);
-        return res.status(200).json(result);
-      } else {
-        res.status(400).json('Categoria no existente');
+      //let cat = await categoriaRepository.getCategoriasById(categoria);
+      //if (cat) {
+      let result = await mysqlProductRepository.setProduct(producto);
+      if (result) {
+        const producto: IProduct = await mysqlProductRepository.getProductsById(result);
+        return res.status(200).json(producto);
       }
+
+      // } else {
+      //res.status(400).json('Categoria no existente');
+      //}
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -81,8 +103,8 @@ export class ProductoController {
   async actualizar(req: Request, res: Response) {
     try {
       let id = req.params.id;
-      let { nombre, descripcion, codigo, foto, precio, stock, categoria } = req.body;
-      let producto: newProductInterface = {
+      let { nombre, descripcion, codigo, foto, precio, stock, categoria, productType, marca } = req.body;
+      let producto: IProduct = {
         nombre,
         descripcion,
         codigo,
@@ -90,12 +112,14 @@ export class ProductoController {
         precio,
         stock,
         categoria,
+        productTypeId: productType,
+        marcaId: marca,
       };
 
-      let prod = await mongoProductRepository.findById(id);
+      let prod = await mysqlProductRepository.getProductsById(parseInt(id));
       if (prod) {
-        let data = await mongoProductRepository.update(id, producto);
-        let productToRes = await mongoProductRepository.findById(id);
+        let data = await mysqlProductRepository.updateProduct(producto, parseInt(id));
+        let productToRes = await mysqlProductRepository.getProductsById(parseInt(id));
         res.status(200).json({ result: 'Producto Actualizado', productToRes });
       } else {
         res.status(400).json('Producto no encontrado');
@@ -105,12 +129,22 @@ export class ProductoController {
     }
   }
 
+  async find(req: Request, res: Response) {
+    const { search } = req.params;
+    try {
+      const products = await mysqlProductRepository.findByKeyWord(search);
+      res.status(200).json(products);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async borrar(req: Request, res: Response) {
     try {
-      let id = req.params.id;
-      let prod = await mongoProductRepository.findById(id);
+      let id = parseInt(req.params.id);
+      let prod = await mysqlProductRepository.getProductsById(id);
       if (prod) {
-        await mongoProductRepository.delete(id);
+        await mysqlProductRepository.deleteProduct(id);
         res.status(202).json({
           msg: 'producto borrado',
         });

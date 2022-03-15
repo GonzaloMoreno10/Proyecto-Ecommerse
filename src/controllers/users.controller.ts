@@ -3,30 +3,31 @@ import { NextFunction, Request, Response } from 'express';
 import { NewUserInterface, UserInterface } from '../interface';
 import { GmailService } from '../services/gmail';
 import { cadena } from '../utils/MailStructure';
-import User from '../models/user.model';
+import User, { IUserMySql } from '../models/user.model';
+import { mysqlUserRepository } from '../repositories/mysql/usersRepository';
 import passport from 'passport';
 import { ADMIN_MAIL } from '../constantes/venv';
 class UsersController {
   async getUsersById(req: Request, res: Response) {
-    const { id } = req.params;
-    return res.json(await mongoUserRepository.findById(id));
+    const id = parseInt(req.params.id);
+    return res.json(await mysqlUserRepository.getUsersById(id));
   }
   async getUsers(req: Request, res: Response) {
-    const data = await mongoUserRepository.findAll();
+    const data = await mysqlUserRepository.getUsers();
     return res.json(data);
   }
   async editPicture(req: Request, res: Response) {
-    let { userId } = req.params;
+    let userId = parseInt(req.params.userId);
 
     //let dir = '';
-    let usuario = await mongoUserRepository.findById(userId);
+    let usuario = await mysqlUserRepository.getUsersById(userId);
 
     let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
 
     usuario.avatar = dir;
     try {
-      await mongoUserRepository.update(usuario, userId);
-      const updateUser = await mongoUserRepository.findById(userId);
+      await mysqlUserRepository.updateUser(usuario, userId);
+      const updateUser = await mysqlUserRepository.getUsersById(userId);
       return res.status(200).json(updateUser);
     } catch (err) {
       return res.json(err);
@@ -76,34 +77,36 @@ class UsersController {
   }
 
   async createUser(req: Request, res: Response) {
-    let { email, password, nombre, direccion, edad, telefono, admin } = req.body;
+    let { email, password, nombre, direccion, fecha_nacimiento, telefono, admin } = req.body;
     if (!email || !password) {
       return res.status(400).json('Invalid Body');
     }
-    let data = await User.findOne({ email: email });
+    let data = await mysqlUserRepository.getUsersByEmail(email);
+    console.log(data);
     if (!data) {
-      let user: NewUserInterface = {
+      let user: IUserMySql = {
         email,
         password,
         nombre,
         direccion,
-        edad,
+        fecha_nacimiento,
         telefono,
         avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
-        admin,
+        rol_id: 1,
       };
 
       try {
-        let result = await mongoUserRepository.create(user);
+        let result = await mysqlUserRepository.setUser(user);
 
-        if (result._id) {
+        if (result) {
           //Comentado por que alcance la cuota limite de emails
           // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
-          return res.status(201).json(result);
+          return res.status(201).json('Usuario creado');
         } else {
           res.status(400).json('Bad Request');
         }
       } catch (err) {
+        console.log(err);
         res.status(500).json(err);
       }
     } else {

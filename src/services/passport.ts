@@ -1,7 +1,9 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import passportJwt from 'passport-jwt';
-import userSchema, { IUser } from '../models/user.model';
+import userSchema, { IUser, IUserMySql } from '../models/user.model';
+import { mysqlUserRepository } from '../repositories/mysql/usersRepository';
+import bcrypt from 'bcrypt';
 const localStrategy = passportLocal.Strategy;
 const ExtractJWT = passportJwt.ExtractJwt;
 const JWTStrategy = passportJwt.Strategy;
@@ -33,13 +35,13 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const user: IUser = await userSchema.findOne({ email });
-
+        const user: IUserMySql = await mysqlUserRepository.getUsersByEmail(email);
+        console.log(user);
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }
 
-        if (!(await user.matchPassword(password))) {
+        if (!(await bcrypt.compare(password, user.password))) {
           return done(null, false, { message: 'Incorrect password' });
         }
 

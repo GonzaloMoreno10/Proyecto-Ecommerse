@@ -8,4 +8,6 @@ router.get('/:id?', passport.authenticate('jwt', { session: false }), orderContr
 
 router.get('/user/:userId', passport.authenticate('jwt', { session: false }), orderController.getOrdersByUser);
 
+router.post('/', orderController.setOrder);
+
 export default router;

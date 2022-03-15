@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
-  _id: string;
+  id: string;
   nombre: string;
   direccion: string;
   edad: number;
@@ -12,6 +12,18 @@ export interface IUser extends Document {
   password: string;
   matchPassword: Function;
   admin: Number;
+}
+
+export interface IUserMySql {
+  id?: string;
+  nombre: string;
+  direccion: string;
+  fecha_nacimiento: number;
+  telefono: string;
+  avatar: string;
+  email: string;
+  password: string;
+  rol_id: Number;
 }
 
 const usersSchema = new Schema({

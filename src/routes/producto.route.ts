@@ -13,6 +13,10 @@ router.get('/', asyncHandler(productoController.get));
 
 router.get('/:id', asyncHandler(productoController.getById));
 
+router.get('/product/related', asyncHandler(productoController.getRelatedProduct));
+
+router.get('/find/product/:search', productoController.find);
+
 router.get('/categoria/:categoriaId', productoController.findByCategoria);
 
 router.put('/:id', passport.authenticate('jwt', { session: false }), productoController.actualizar);

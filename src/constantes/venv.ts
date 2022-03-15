@@ -6,6 +6,7 @@ export const PORT = process.env.PORT;
 export const MYSQL_USER = process.env.MYSQL_USER;
 export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
 export const MYSQL_DBNAME = process.env.MYSQL_DBNAME;
+export const MYSQL_HOST = process.env.MYSQL_HOST;
 export const MONGO_USER = process.env.MONGO_USER;
 export const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 export const MONGO_DB = process.env.MONGO_DB;

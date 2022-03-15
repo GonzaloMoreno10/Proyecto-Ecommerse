@@ -1,21 +1,18 @@
 import { Request, Response } from 'express';
-import { orderRepository } from '../repositories/mongo';
-import { Orden } from '../interface/orden.interface';
-import { categoriaRepository } from '../repositories/mongo/categoria.repository';
-import { INewCategoria } from '../interface/categoria.interface';
+import { mysqlCategoriaRepository } from '../repositories/mysql/categoriaRepository';
+import { ICategoria } from '../interface/categoria.interface';
 class CategoriaController {
   async get(req: Request, res: Response) {
-    let categorias = await categoriaRepository.getAllCategorias();
-
+    let categorias = await mysqlCategoriaRepository.getCategorias();
     return res.status(200).json(categorias);
   }
 
   async create(req: Request, res: Response) {
     let { nombre } = req.body;
-    let categoria: INewCategoria = {
+    let categoria: ICategoria = {
       nombre: nombre,
     };
-    let result = await categoriaRepository.createCategoria(categoria);
+    let result = await mysqlCategoriaRepository.setCategoria(categoria);
     return res.status(201).json(result);
   }
 }

@@ -21,6 +21,7 @@ class UsersRepository {
   async findByEmail(email: string) {
     try {
       let data = await this.users.findOne({ email: email });
+      console.log(data);
       return data;
     } catch (err) {
       throw new Error(err);

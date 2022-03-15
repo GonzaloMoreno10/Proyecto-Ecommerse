@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { newProductInterface, ProductInterface, ProductOnCart, ProductQueryInterface } from '../../interface';
+import { IProduct, ProductInterface, ProductOnCart, ProductQueryInterface } from '../../interface';
 import productoModel from '../../models/producto.model';
 
 class ProductRepository {
@@ -29,7 +29,7 @@ class ProductRepository {
     }
   }
 
-  async create(data: newProductInterface): Promise<ProductInterface> {
+  async create(data: IProduct): Promise<ProductInterface> {
     if (!data.nombre || !data.precio) throw new Error('invalid data');
 
     const newProduct = new this.productos(data);
@@ -38,7 +38,7 @@ class ProductRepository {
     return res;
   }
 
-  async update(id: string, newProductData: newProductInterface): Promise<ProductInterface> {
+  async update(id: string, newProductData: IProduct): Promise<ProductInterface> {
     try {
       let productos = await this.productos.findByIdAndUpdate(id.toString(), newProductData);
       return productos;
@@ -54,7 +54,7 @@ class ProductRepository {
 
   async query(options: ProductQueryInterface): Promise<ProductInterface[]> {
     let query: ProductQueryInterface = {};
-
+    console.log(options);
     if (options.nombre) query.nombre = options.nombre;
 
     if (options.minPrice && options.maxPrice) query.minPrice > options.minPrice && query.maxPrice < options.maxPrice;
@@ -64,7 +64,7 @@ class ProductRepository {
     if (options.codigo) query.codigo = options.codigo;
 
     if (options.categoria) query.categoria = options.categoria;
-
+    console.log(query);
     return this.productos.find(query);
   }
 }
