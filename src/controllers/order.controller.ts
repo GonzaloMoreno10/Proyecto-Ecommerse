@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IOrder } from '../interface/orden.interface';
 import { mongoCarritoRepository, mongoUserRepository, orderRepository } from '../repositories/mongo';
 import { mysqlOrderRepository } from '../repositories/mysql/ordersRepository';
+import { mysqlProductRepository } from '../repositories/mysql/productRepository';
 class OrderController {
   async setOrder(req: Request, res: Response) {
     const { products, userId } = req.body;
@@ -10,11 +11,38 @@ class OrderController {
       return res.status(400).json('Bad request');
     }
     try {
-      const order = await mysqlOrderRepository.createOrder(userId);
+      const ids = [];
+      for (let i in products) {
+        ids.push(products[i].productId);
+      }
+      const prods = await mysqlProductRepository.findByIds(ids);
+      const errors = [];
+      for (const i in products) {
+        for (const j in prods) {
+          if (products[i].productId === prods[j].id) {
+            const stock = prods[j].stock - products[i].quantity;
+            if (stock >= 0) {
+              prods[j].stock = prods[j].stock - products[i].quantity;
+            } else {
+              errors.push({ code: 'stock', error: 'Sin stock suficiente', product: prods[i] });
+            }
+          }
+        }
+      }
 
-      const orderProducts = await mysqlOrderRepository.createOrderProducts(Object.assign(order).insertId, products);
+      if (!errors.length) {
+        const order = await mysqlOrderRepository.createOrder(userId);
+        await mysqlOrderRepository.createOrderProducts(Object.assign(order).insertId, products);
 
-      return res.status(200).json({ id: Object.assign(order).insertId });
+        for (let i in prods) {
+          if (prods[i].stock >= 0) {
+            await mysqlProductRepository.updateProduct(prods[i], prods[i].id);
+          }
+        }
+        return res.status(200).json({ id: Object.assign(order).insertId });
+      }
+      console.log(errors);
+      return res.status(errors.length ? 400 : 200).json({ errors: errors });
     } catch (err) {
       console.log(err);
     }

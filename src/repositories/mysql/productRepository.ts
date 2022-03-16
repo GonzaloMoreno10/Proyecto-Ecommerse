@@ -31,6 +31,24 @@ class ProductRepository {
     return <IProduct[]>(<unknown>result[0]);
   }
 
+  async findByIds(ids: number[]) {
+    try {
+      const query = 'select * from products where id in (';
+      let id = '';
+      for (let i in ids) {
+        if (parseInt(i) < ids.length - 1) {
+          id += `${ids[i].toString()},`;
+        } else {
+          id += `${ids[i].toString()})`;
+        }
+      }
+      const result = await this.connection.query(query + id);
+      return <any[]>result[0];
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async getProductsQuery(options: ProductQueryInterface): Promise<IProduct[]> {
     const query = `select * from products`;
     let where = ' where 1 = 1 ';
