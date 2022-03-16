@@ -26,7 +26,7 @@ export class ProductoController {
         let product = await mysqlProductRepository.getProductsById(parseInt(id));
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
-        res.status(400).json('Invalid Field: ID');
+        res.status(400).json('Invalid Field: id');
         console.log('id');
       }
     } catch (err) {
