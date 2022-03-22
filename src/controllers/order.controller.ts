@@ -16,11 +16,15 @@ class OrderController {
         ids.push(products[i].productId);
       }
       const prods = await mysqlProductRepository.findByIds(ids);
+
       const errors = [];
       for (const i in products) {
         for (const j in prods) {
           if (products[i].productId === prods[j].id) {
             const stock = prods[j].stock - products[i].quantity;
+            products[i].price = prods[i].isOferta
+              ? prods[i].precio - Math.floor((prods[i].descuento * prods[i].precio) / 100)
+              : prods[i].precio;
             if (stock >= 0) {
               prods[j].stock = prods[j].stock - products[i].quantity;
             } else {
@@ -32,6 +36,7 @@ class OrderController {
 
       if (!errors.length) {
         const order = await mysqlOrderRepository.createOrder(userId);
+        console.log(products);
         await mysqlOrderRepository.createOrderProducts(Object.assign(order).insertId, products);
 
         for (let i in prods) {
@@ -63,7 +68,7 @@ class OrderController {
       for (let i in orders) {
         let total = 0;
         orders[i].forEach(element => {
-          total += element.precio;
+          total += element.price * element.quantity;
         });
         const orden: IOrder = {
           id: orders[i][0].id,
@@ -80,7 +85,7 @@ class OrderController {
             quantity: orders[i][j].quantity,
             productid: orders[i][j].productId,
             title: orders[i][j].nombre,
-            price: orders[i][j].precio,
+            price: orders[i][j].price,
             stock: orders[i][j].stock,
             codigo: orders[i][j].codigo,
             image: orders[i][j].foto,
@@ -110,10 +115,11 @@ class OrderController {
         let total = 0;
 
         order.map(or => {
-          total += or.precio;
+          total += or.price * or.quantity;
           return total;
         });
 
+        console.log(total);
         const orderConvert = Object.assign(order);
         const op = orderConvert.map(order => {
           const opr = {
@@ -122,7 +128,7 @@ class OrderController {
             quantity: order.quantity,
             productid: order.productId,
             title: order.nombre,
-            price: order.precio,
+            price: order.price,
             stock: order.stock,
             codigo: order.codigo,
             image: order.foto,
