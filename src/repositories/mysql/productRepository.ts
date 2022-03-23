@@ -1,5 +1,6 @@
-import { IProduct, ProductQueryInterface } from '../../interface';
+import { IProduct, IProperty, ProductQueryInterface } from '../../interface';
 import { mysqlDataSource } from '../../services/mysql';
+var nl2br = require('nl2br');
 
 class ProductRepository {
   async findByKeyWord(search: string): Promise<IProduct[]> {
@@ -20,15 +21,29 @@ class ProductRepository {
   }
 
   async getProductsById(id: number): Promise<IProduct> {
-    const query = `select * from products where id = ${id}`;
+    const query = `select p.*,m.nombre as marcaNombre from products p, marcas m where p.id = ${id} and m.id = p.marca_id`;
     const result = await this.connection.query(query);
     return <IProduct>(<unknown>result[0]);
   }
 
   async getRelatedProducts(id: number, categoria: number, marca: number, productType: number): Promise<IProduct[]> {
-    const query = `select * from products where (categoria = ${categoria} or product_type_id = ${productType} or marca_id = ${marca}) and id <> ${id}`;
+    if (categoria && marca && productType && id) {
+      const query = `select * from products where (categoria = ${categoria} or product_type_id = ${productType} or marca_id = ${marca}) and id <> ${id}`;
+      const result = await this.connection.query(query);
+      return <IProduct[]>(<unknown>result[0]);
+    }
+  }
+
+  async findProductProperties(productId: number): Promise<IProperty[]> {
+    console.log(productId);
+    const query = `select pp.propertyName ,ppsi.subPropertyName ,ppv.value from productPresentationPropertie ppp 
+    join productPropertieValues ppv on ppv.id = ppp.productPropertieValueId 
+    join productPropertiesSubItems ppsi on ppsi.id = ppv.productPropertieSubItemId 
+    join productProperties pp on pp.id = ppsi.productPropertyId 
+    where productId = ${productId}
+    order by pp.id desc`;
     const result = await this.connection.query(query);
-    return <IProduct[]>(<unknown>result[0]);
+    return <IProperty[]>(<unknown>result[0]);
   }
 
   async findByIds(ids: number[]) {

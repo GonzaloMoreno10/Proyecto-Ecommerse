@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IProduct } from '../interface/producto.inteface';
+import { IProduct, IProperty } from '../interface/producto.inteface';
 import { categoriaRepository } from '../repositories/mongo/categoria.repository';
 import { ProductQueryInterface } from '../interface';
 import { mysqlProductRepository } from '../repositories/mysql/productRepository';
@@ -23,7 +23,31 @@ export class ProductoController {
     try {
       let { id } = req.params;
       if (id) {
+        const finalArray = [];
         let product = await mysqlProductRepository.getProductsById(parseInt(id));
+        if (product[0]) {
+          let prop: any = {};
+          let properties = await mysqlProductRepository.findProductProperties(parseInt(id));
+          properties.forEach(property => {
+            const propertyName = property.propertyName;
+            if (!prop[propertyName]) prop[propertyName] = [];
+            prop[propertyName].push(property);
+          });
+          for (let i in prop) {
+            const subProperties = [];
+
+            for (const j in prop[i]) {
+              subProperties.push({ subPropertyName: prop[i][j].subPropertyName, value: prop[i][j].value });
+            }
+            const properties: IProperty = {
+              propertyName: prop[i][0].propertyName,
+              subProperties,
+            };
+            finalArray.push(properties);
+          }
+          product[0].properties = finalArray;
+        }
+
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
         res.status(400).json('Invalid Field: id');

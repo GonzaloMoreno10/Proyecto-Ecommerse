@@ -23,6 +23,7 @@ router.post('/login', async (req, res, next) => {
 
       req.login(user, { session: false }, async err => {
         if (err) return next(err);
+        console.log(user);
         const body = {
           id: user.id,
           email: user.email,
@@ -30,7 +31,7 @@ router.post('/login', async (req, res, next) => {
           direccion: user.direccion,
           telefono: user.telefono,
           avatar: user.avatar,
-          edad: user.edad,
+          edad: user.fecha_nacimiento.toISOString().slice(0, 10).replace('T', ' ').replace('-', '/').replace('-', '/'),
           admin: user.admin,
         };
 

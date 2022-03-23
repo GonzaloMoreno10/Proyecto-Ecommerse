@@ -60,6 +60,7 @@
     "mongoose": "^6.0.6",
     "multer": "^1.4.3",
     "mysql2": "^2.3.3",
+    "nl2br": "^0.0.3",
     "nodemailer": "^6.7.0",
     "nodemon": "^2.0.12",
     "normalizr": "^3.6.1",

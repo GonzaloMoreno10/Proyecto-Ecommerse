@@ -1,4 +1,6 @@
 export interface IProduct {
+  properties?: IProperty[];
+  value?: string;
   id?: number;
   nombre: string;
   descripcion: string;
@@ -9,6 +11,16 @@ export interface IProduct {
   categoria: string;
   productTypeId: number;
   marcaId: number;
+}
+
+export interface ISubProperty {
+  subProperty: string;
+  value: string;
+}
+
+export interface IProperty {
+  propertyName: string;
+  subProperties: ISubProperty[];
 }
 
 export interface ProductInterface {
