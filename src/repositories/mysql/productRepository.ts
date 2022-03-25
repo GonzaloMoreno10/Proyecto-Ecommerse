@@ -36,7 +36,7 @@ class ProductRepository {
 
   async findProductProperties(productId: number): Promise<IProperty[]> {
     console.log(productId);
-    const query = `select pp.propertyName ,ppsi.subPropertyName ,ppv.value from productPresentationPropertie ppp 
+    const query = `select pp.id as ppId,pp.propertyName ,ppsi.id as ppsiId, ppsi.subPropertyName ,ppv.id as ppvId, ppv.value from productPresentationPropertie ppp 
     join productPropertieValues ppv on ppv.id = ppp.productPropertieValueId 
     join productPropertiesSubItems ppsi on ppsi.id = ppv.productPropertieSubItemId 
     join productProperties pp on pp.id = ppsi.productPropertyId 
@@ -44,6 +44,40 @@ class ProductRepository {
     order by pp.id desc`;
     const result = await this.connection.query(query);
     return <IProperty[]>(<unknown>result[0]);
+  }
+
+  async getProductPresentationById(productId: number) {
+    const finalArray = [];
+    let product = await mysqlProductRepository.getProductsById(productId);
+    if (product[0]) {
+      let prop: any = {};
+      let properties = await mysqlProductRepository.findProductProperties(productId);
+      properties.forEach(property => {
+        const propertyName = property.propertyName;
+        if (!prop[propertyName]) prop[propertyName] = [];
+        prop[propertyName].push(property);
+      });
+      for (let i in prop) {
+        const subProperties = [];
+
+        for (const j in prop[i]) {
+          subProperties.push({
+            subPropertyId: prop[i][j].ppsiId,
+            subPropertyName: prop[i][j].subPropertyName,
+            ppvId: prop[i][j].ppvId,
+            value: prop[i][j].value,
+          });
+        }
+        const properties: IProperty = {
+          propertyId: prop[i][0].ppId,
+          propertyName: prop[i][0].propertyName,
+          subProperties,
+        };
+        finalArray.push(properties);
+      }
+      product[0].properties = finalArray;
+    }
+    return product[0];
   }
 
   async findByIds(ids: number[]) {

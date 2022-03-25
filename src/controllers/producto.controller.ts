@@ -3,6 +3,8 @@ import { IProduct, IProperty } from '../interface/producto.inteface';
 import { categoriaRepository } from '../repositories/mongo/categoria.repository';
 import { ProductQueryInterface } from '../interface';
 import { mysqlProductRepository } from '../repositories/mysql/productRepository';
+import { propertiesRepository } from '../repositories/mysql/propertiesRepository';
+import { IProductPresentationProperty } from '../interface/properties';
 
 export class ProductoController {
   async getRelatedProduct(req: Request, res: Response) {
@@ -37,9 +39,15 @@ export class ProductoController {
             const subProperties = [];
 
             for (const j in prop[i]) {
-              subProperties.push({ subPropertyName: prop[i][j].subPropertyName, value: prop[i][j].value });
+              subProperties.push({
+                subPropertyId: prop[i][j].ppsiId,
+                subPropertyName: prop[i][j].subPropertyName,
+                ppvId: prop[i][j].ppvId,
+                value: prop[i][j].value,
+              });
             }
             const properties: IProperty = {
+              propertyId: prop[i][0].ppId,
               propertyName: prop[i][0].propertyName,
               subProperties,
             };
@@ -95,7 +103,7 @@ export class ProductoController {
 
   async agregar(req: Request, res: Response) {
     try {
-      let { nombre, descripcion, codigo, foto, precio, stock, categoria, productType, marca } = req.body;
+      let { nombre, descripcion, codigo, foto, precio, stock, categoria, productType, marca, properties } = req.body;
       let producto: IProduct = {
         nombre,
         descripcion,
@@ -106,13 +114,24 @@ export class ProductoController {
         categoria,
         productTypeId: productType,
         marcaId: marca,
+        properties,
       };
 
       //let cat = await categoriaRepository.getCategoriasById(categoria);
       //if (cat) {
       let result = await mysqlProductRepository.setProduct(producto);
+
       if (result) {
-        const producto: IProduct = await mysqlProductRepository.getProductsById(result);
+        if (properties) {
+          for (const i in properties) {
+            const propertie: IProductPresentationProperty = {
+              productId: result,
+              productPropertieValueId: properties[i],
+            };
+            await propertiesRepository.setProductPresentationProperty(propertie);
+          }
+        }
+        const producto: IProduct = await mysqlProductRepository.getProductPresentationById(result);
         return res.status(200).json(producto);
       }
 

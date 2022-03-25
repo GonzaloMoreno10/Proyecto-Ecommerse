@@ -1,7 +1,6 @@
 export interface IProduct {
-  properties?: IProperty[];
-  value?: string;
   id?: number;
+  properties?: IProperty[];
   nombre: string;
   descripcion: string;
   codigo: number;
@@ -19,6 +18,7 @@ export interface ISubProperty {
 }
 
 export interface IProperty {
+  propertyId: number;
   propertyName: string;
   subProperties: ISubProperty[];
 }
