@@ -12,6 +12,35 @@ class PropertiesRepository {
   async setPropertie(propertie: IPropertyMySql) {
     const sql = `insert into properties (productTypeId,categoryId,propertyName) values(${propertie.productTypeId},${propertie.categoryId},${propertie.propertyName} )`;
     const result = await this.connection.query(sql);
+
+    return <any[]>result[0];
+  }
+
+  async getPropertiesByProductType(productTypeId: number) {
+    const sql = `select id,propertyName from productProperties where productTypeid = ${productTypeId}`;
+    const result = await this.connection.query(sql);
+
+    return <any[]>result[0];
+  }
+
+  async deletePropertiesByProduct(productId: number) {
+    const sql = `delete from productPresentationPropertie where productId = ${productId}`;
+    const result = await this.connection.query(sql);
+
+    return <any[]>result[0];
+  }
+
+  async getSubProperties(propertyId: number) {
+    const sql = `select id, subPropertyName from productPropertiesSubItems where productPropertyId = ${propertyId}`;
+    const result = await this.connection.query(sql);
+
+    return <any[]>result[0];
+  }
+
+  async getProductPropertieValues(subPropId: number) {
+    const sql = `select id,value from productPropertieValues where productPropertieSubItemId = ${subPropId}`;
+    const result = await this.connection.query(sql);
+
     return <any[]>result[0];
   }
 

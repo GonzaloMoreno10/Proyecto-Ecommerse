@@ -8,6 +8,9 @@ import serverConfigRoute from './serverConfig.route';
 import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
 import compraRoute from './compra.route';
+import marcasRoute from './marcas';
+import productTypeRoute from './productType';
+import propertiesRoute from './propertiesRoute';
 
 const router = Router();
 
@@ -20,6 +23,12 @@ router.use('/users', userRoute);
 router.use('/orders', orderRoute);
 
 router.use('/compra', compraRoute);
+
+router.use('/marcas', marcasRoute);
+
+router.use('/productTypes', productTypeRoute);
+
+router.use('/properties', propertiesRoute);
 
 router.use('/categories', categoriaRoute);
 

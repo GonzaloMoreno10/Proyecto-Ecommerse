@@ -126,7 +126,7 @@ class ProductRepository {
   }
 
   async deleteProduct(id: number) {
-    let query = `delete products where id = ${id}`;
+    let query = `delete from products where id = ${id}`;
     let data = await this.connection.query(query);
     console.log(data[0]);
     return Object.assign(data[0]);

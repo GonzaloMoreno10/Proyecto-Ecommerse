@@ -188,6 +188,7 @@ export class ProductoController {
       let id = parseInt(req.params.id);
       let prod = await mysqlProductRepository.getProductsById(id);
       if (prod) {
+        await propertiesRepository.deletePropertiesByProduct(id);
         await mysqlProductRepository.deleteProduct(id);
         res.status(202).json({
           msg: 'producto borrado',
