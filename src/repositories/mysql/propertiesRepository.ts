@@ -17,7 +17,7 @@ class PropertiesRepository {
   }
 
   async getPropertiesByProductType(productTypeId: number) {
-    const sql = `select id,propertyName from productProperties where productTypeid = ${productTypeId}`;
+    const sql = `select id,propertyName from productProperties where (productTypeid = ${productTypeId} or id = 0)`;
     const result = await this.connection.query(sql);
 
     return <any[]>result[0];
