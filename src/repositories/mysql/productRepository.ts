@@ -36,12 +36,12 @@ class ProductRepository {
 
   async findProductProperties(productId: number): Promise<IProperty[]> {
     console.log(productId);
-    const query = `select pp.id as ppId,pp.propertyName ,ppsi.id as ppsiId, ppsi.subPropertyName ,ppv.id as ppvId, ppv.value from productPresentationPropertie ppp 
+    const query = `select pp.isGeneric, pp.id as ppId,pp.propertyName ,ppsi.id as ppsiId, ppsi.subPropertyName ,ppv.id as ppvId, ppv.value from productPresentationPropertie ppp 
     join productPropertieValues ppv on ppv.id = ppp.productPropertieValueId 
     join productPropertiesSubItems ppsi on ppsi.id = ppv.productPropertieSubItemId 
     join productProperties pp on pp.id = ppsi.productPropertyId 
     where productId = ${productId}
-    order by pp.id desc`;
+    order by pp.isGeneric desc`;
     const result = await this.connection.query(query);
     return <IProperty[]>(<unknown>result[0]);
   }
@@ -69,6 +69,7 @@ class ProductRepository {
           });
         }
         const properties: IProperty = {
+          isGeneric: prop[i][0].isGeneric,
           propertyId: prop[i][0].ppId,
           propertyName: prop[i][0].propertyName,
           subProperties,
@@ -114,7 +115,7 @@ class ProductRepository {
   }
 
   async setProduct(product: IProduct) {
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id) values('${product.nombre}','${product.descripcion}',${product.codigo},'${product.foto}',${product.precio},${product.stock},${product.categoria},${product.productTypeId},${product.marcaId})`;
+    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id) values('${product.nombre}','${product.descripcion}',123,'${product.foto}',${product.precio},${product.stock},${product.categoria},${product.productTypeId},${product.marcaId})`;
     let data = await this.connection.query(query);
     return Object.assign(data[0]).insertId;
   }
@@ -122,6 +123,13 @@ class ProductRepository {
   async updateProduct(product: IProduct, id: number) {
     let query = `update products set nombre = '${product.nombre}',descripcion='${product.descripcion}',foto ='${product.foto}',precio = ${product.precio},stock = ${product.stock} where id = ${id}`;
     let data = await this.connection.query(query);
+    return Object.assign(data[0]);
+  }
+
+  async updatePicture(id: number, dir: string) {
+    let query = `update products set foto = '${dir}' where id = ${id}`;
+    let data = await this.connection.query(query);
+    console.log(data[0]);
     return Object.assign(data[0]);
   }
 

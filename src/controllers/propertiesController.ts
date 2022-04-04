@@ -1,6 +1,34 @@
 import { propertiesRepository } from '../repositories/mysql/propertiesRepository';
 import { Request, Response } from 'express';
 class PropertyController {
+  async setPropertyValue(req: Request, res: Response) {
+    try {
+      const { value, id } = req.body;
+      console.log(req.body);
+      console.log(id);
+      if (!value || !id) {
+        return res.status(400).json({ message: 'invalid body' });
+      }
+      const result = await propertiesRepository.setPropertyValue({ value, id });
+      console.log(result);
+      return res.status(200).json({ message: 'ok', id: Object.assign(result).insertId });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  }
+
+  async setProperties(req: Request, res: Response) {
+    const { categoryId, productTypeId, propertyName, subProperties } = req.body;
+
+    try {
+      const result = await propertiesRepository.setProperty({ categoryId, productTypeId, propertyName, subProperties });
+      console.log(result);
+      return res.status(200).json('ok');
+    } catch (err) {
+      return res.status(400).json(err);
+    }
+  }
   async getPropertiesByProductType(req: Request, res: Response) {
     try {
       const { productTypeId } = req.params;

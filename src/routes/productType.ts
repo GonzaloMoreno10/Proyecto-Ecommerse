@@ -6,4 +6,6 @@ router.get('/', productTypeController.getProductTypes);
 
 router.get('/:categoryId', productTypeController.getproductTypeByCategory);
 
+router.get('/category/:name', productTypeController.getProductTypeByName);
+
 export default router;

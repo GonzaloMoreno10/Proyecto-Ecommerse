@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const PORT = process.env.PORT;
+export const HEROKU = process.env.HEROKU;
 export const MYSQL_USER = process.env.MYSQL_USER;
 export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
 export const MYSQL_DBNAME = process.env.MYSQL_DBNAME;
@@ -22,4 +23,3 @@ export const TWILIO_SID = process.env.TWILIO_SID;
 export const TWILIO_TOKEN = process.env.TWILIO_TOKEN;
 export const ADMIN_CELPHONE = process.env.ADMIN_CELPHONE;
 export const TWILIO_ADMIN_WHATSAPP = process.env.TWILIO_ADMIN_WHATSAPP;
-export const HEROKU = process.env.HEROKU;

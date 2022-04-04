@@ -9,12 +9,23 @@ class MarcaRepository {
     return result[0];
   }
 
-  async getMarcasByProductType(productType: number, categoriaId: number) {
+  async getMarcasById(id: number) {
+    const sql = `select * from marcas where id = ${id}`;
+    const result = await this.connection.execute(sql);
+    return result[0];
+  }
+
+  async createMarca(marca: any) {
+    const sql = `insert into marcas (productTypeId,nombre) values(${marca.productTypeId},'${marca.nombre}')`;
+    const result = await this.connection.execute(sql);
+    return result[0];
+  }
+
+  async getMarcasByProductType(productType: number) {
     const sql = `select m.* from marcas m 
-    join product_types pt on pt.id  = m.productTypeId 
-    join categorias c on c.id = pt.categoryId 
-    where pt.id = ${productType}
-    and c.id = ${categoriaId}`;
+    left join product_types pt on pt.id  = m.productTypeId 
+    left join categorias c on c.id = pt.categoryId 
+    where (pt.id = ${productType} or m.productTypeId = 0)`;
     const result = await this.connection.execute(sql);
     return result[0];
   }

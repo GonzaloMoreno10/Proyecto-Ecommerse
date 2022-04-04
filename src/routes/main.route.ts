@@ -11,6 +11,8 @@ import compraRoute from './compra.route';
 import marcasRoute from './marcas';
 import productTypeRoute from './productType';
 import propertiesRoute from './propertiesRoute';
+import modelosRoute from './modelos.route';
+import lineasRoute from './lineas.route';
 
 const router = Router();
 
@@ -31,6 +33,10 @@ router.use('/productTypes', productTypeRoute);
 router.use('/properties', propertiesRoute);
 
 router.use('/categories', categoriaRoute);
+
+router.use('/modelos', modelosRoute);
+
+router.use('/lineas', lineasRoute);
 
 router.use('/server', serverConfigRoute);
 

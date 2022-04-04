@@ -1,4 +1,5 @@
 import multer from 'multer';
+import { Request, Response } from 'express';
 
 export const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -6,8 +7,7 @@ export const storage = multer.diskStorage({
   },
 
   filename: function (req: any, file: any, cb: any) {
-    let { userId } = req.params;
-    cb(null, userId + '.jpg');
+    cb(null, file.originalname + '.jpg');
   },
 });
 

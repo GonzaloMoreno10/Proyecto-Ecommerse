@@ -4,6 +4,8 @@ const router = Router();
 
 router.get('/', marcasController.getMarcas);
 
-router.get('/:productType/:categoryId', marcasController.getMarcasByProductType);
+router.get('/:productType', marcasController.getMarcasByProductType);
+
+router.post('/', marcasController.setMarca);
 
 export default router;

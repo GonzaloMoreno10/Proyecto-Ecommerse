@@ -5,6 +5,7 @@ import { ProductQueryInterface } from '../interface';
 import { mysqlProductRepository } from '../repositories/mysql/productRepository';
 import { propertiesRepository } from '../repositories/mysql/propertiesRepository';
 import { IProductPresentationProperty } from '../interface/properties';
+import { HEROKU } from '../constantes/venv';
 
 export class ProductoController {
   async getRelatedProduct(req: Request, res: Response) {
@@ -48,6 +49,7 @@ export class ProductoController {
             }
             const properties: IProperty = {
               propertyId: prop[i][0].ppId,
+              isGeneric: prop[i][0].isGeneric,
               propertyName: prop[i][0].propertyName,
               subProperties,
             };
@@ -198,6 +200,32 @@ export class ProductoController {
       }
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  async setImage(req: Request, res: Response) {
+    //const { fileName } = req.params;
+    const { file } = req;
+    console.log(file.originalname);
+    //const { productId } = req.params;
+    //console.log(productId);
+    let dir = '';
+    if (HEROKU) {
+      dir = `http://localhost:3000/storage/imgs/${file.originalname}.jpg`;
+    } else {
+      dir = `https://ecommerce-be-01.herokuapp.com/storage/imgs/${file.originalname}.jpg`;
+    }
+
+    console.log(dir);
+
+    //console.log(product);
+    //product.foto = dir;
+    try {
+      //await mysqlProductRepository.updatePicture(parseInt(productId), dir);
+      //const updateProduct = await mysqlProductRepository.getProductsById(parseInt(productId));
+      return res.status(200).json(dir);
+    } catch (err) {
+      return res.json(err);
     }
   }
 }

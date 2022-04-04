@@ -19,6 +19,7 @@ export interface ISubProperty {
 
 export interface IProperty {
   propertyId: number;
+  isGeneric: number;
   propertyName: string;
   subProperties: ISubProperty[];
 }
