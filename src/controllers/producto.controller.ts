@@ -211,9 +211,9 @@ export class ProductoController {
     //console.log(productId);
     let dir = '';
     if (HEROKU) {
-      dir = `http://localhost:3000/storage/imgs/${file.originalname}.jpg`;
-    } else {
       dir = `https://ecommerce-be-01.herokuapp.com/storage/imgs/${file.originalname}.jpg`;
+    } else {
+      dir = `http://localhost:3000/storage/imgs/${file.originalname}.jpg`;
     }
 
     console.log(dir);
