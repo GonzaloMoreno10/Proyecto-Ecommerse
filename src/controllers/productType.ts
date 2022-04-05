@@ -40,6 +40,18 @@ class ProductTypeController {
       console.log(err);
     }
   }
+
+  async setProductType(req: Request, res: Response) {
+    try {
+      const { categoryId, nombre } = req.body;
+      const result = await productTypeRepository.setProductType({ categoryId, nombre });
+      res.status(200).json({ id: Object.assign(result).insertId });
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json(err);
+    }
+  }
+
   async getProductTypes(req: Request, res: Response) {
     try {
       const result = await productTypeRepository.getProductTypes();
