@@ -12,9 +12,14 @@ class ProductRepository {
   }
 
   async getCategoriasById(id: number): Promise<ICategoria> {
-    const query = `select * from categorias where id = ${id}`;
-    const result = await this.connection.query(query);
-    return <ICategoria>(<unknown>result[0]);
+    try {
+      const query = `select * from categorias where id = ${id}`;
+      const result = await this.connection.query(query);
+      return <ICategoria>(<unknown>result[0]);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 
   async setCategoria(categoria: ICategoria) {

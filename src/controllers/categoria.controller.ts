@@ -4,12 +4,16 @@ import { ICategoria } from '../interface/categoria.interface';
 class CategoriaController {
   async get(req: Request, res: Response) {
     const { id } = req.params;
-    if (!id) {
-      let categorias = await mysqlCategoriaRepository.getCategorias();
-      return res.status(200).json(categorias);
-    } else {
-      let categoria = await mysqlCategoriaRepository.getCategoriasById(parseInt(id));
-      return res.status(200).json(categoria);
+    try {
+      if (!id) {
+        let categorias = await mysqlCategoriaRepository.getCategorias();
+        return res.status(200).json(categorias);
+      } else {
+        let categoria = await mysqlCategoriaRepository.getCategoriasById(parseInt(id));
+        return res.status(200).json(categoria);
+      }
+    } catch (err) {
+      return res.status(400).json(err);
     }
   }
 
