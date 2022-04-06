@@ -17,6 +17,19 @@ class CategoriaController {
     }
   }
 
+  async getCategoriesByName(req: Request, res: Response) {
+    let { nombre } = req.params;
+    if (!nombre) {
+      return res.status(400).json({ msg: 'Invalid body' });
+    }
+    try {
+      let result = await mysqlCategoriaRepository.getCategoriaByNombre(nombre);
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
+  }
+
   async create(req: Request, res: Response) {
     let { nombre } = req.body;
     let categoria: ICategoria = {

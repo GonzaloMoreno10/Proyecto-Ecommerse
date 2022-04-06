@@ -18,6 +18,7 @@ class ModeloController {
 
   async setModelo(req: Request, res: Response) {
     const { marcaId, nombre } = req.body;
+
     if (!marcaId || !nombre) {
       return res.status(400).json('Invalid body');
     }

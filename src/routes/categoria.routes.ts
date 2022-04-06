@@ -7,4 +7,6 @@ router.get('/:id?', categoriaController.get);
 
 router.post('/', categoriaController.create);
 
+router.get('/nombre/:nombre', categoriaController.getCategoriesByName);
+
 export default router;

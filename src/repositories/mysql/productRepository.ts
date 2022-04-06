@@ -20,8 +20,51 @@ class ProductRepository {
     return <IProduct[]>result[0];
   }
 
+  async getProductsByProductType(productType: number) {
+    try {
+      const query = `select
+      p.*,
+      m.nombre as marcaNombre,
+      pt.id as ptId,
+      pt.nombre as ptNombre,
+      c.id as categoryId,
+      c.nombre as categoryName
+    from
+      products p,
+      marcas m,
+      categorias c,
+      product_types pt 
+    where
+      pt.id = ${productType}
+      and m.id = p.marca_id
+      and pt.id = p.product_type_id 
+      and c.id = p.categoria ;`;
+      const result = await this.connection.query(query);
+      return <IProduct[]>result[0];
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
   async getProductsById(id: number): Promise<IProduct> {
-    const query = `select p.*,m.nombre as marcaNombre from products p, marcas m where p.id = ${id} and m.id = p.marca_id`;
+    const query = `select
+    p.*,
+    m.nombre as marcaNombre,
+    pt.id as ptId,
+    pt.nombre as ptNombre,
+    c.id as categoryId,
+    c.nombre as categoryName
+  from
+    products p,
+    marcas m,
+    categorias c,
+    product_types pt 
+  where
+    p.id = ${id}
+    and m.id = p.marca_id
+    and pt.id = p.product_type_id 
+    and c.id = p.categoria `;
     const result = await this.connection.query(query);
     return <IProduct>(<unknown>result[0]);
   }
@@ -100,8 +143,21 @@ class ProductRepository {
   }
 
   async getProductsQuery(options: ProductQueryInterface): Promise<IProduct[]> {
-    const query = `select * from products`;
-    let where = ' where 1 = 1 ';
+    const query = `select
+    p.*,
+    m.nombre as marcaNombre,
+    pt.id as ptId,
+    pt.nombre as ptNombre,
+    c.id as categoryId,
+    c.nombre as categoryName
+  from
+    products p,
+    marcas m,
+    categorias c,
+    product_types pt `;
+    let where = ` where m.id = p.marca_id
+    and pt.id = p.product_type_id 
+    and c.id = p.categoria  `;
     if (options.categoria) where += ` and categoria = ${options.categoria}`;
     if (options.codigo) where += ` and codigo = ${options.codigo}`;
     if (options.maxPrice) where += ` and precio <= ${options.maxPrice}`;
@@ -115,7 +171,11 @@ class ProductRepository {
   }
 
   async setProduct(product: IProduct) {
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id) values('${product.nombre}','${product.descripcion}',123,'${product.foto}',${product.precio},${product.stock},${product.categoria},${product.productTypeId},${product.marcaId})`;
+    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento) values('${
+      product.nombre
+    }','${product.descripcion}',123,'${product.foto}',${product.precio},${product.stock},${product.categoria},${
+      product.productTypeId
+    },${product.marcaId},${product.isOferta},${product.descuento ?? null})`;
     let data = await this.connection.query(query);
     return Object.assign(data[0]).insertId;
   }

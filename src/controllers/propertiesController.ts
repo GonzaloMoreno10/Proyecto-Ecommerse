@@ -23,8 +23,15 @@ class PropertyController {
 
     try {
       const result = await propertiesRepository.setProperty({ categoryId, productTypeId, propertyName, subProperties });
-      console.log(result);
-      return res.status(200).json('ok');
+      const property: any = await propertiesRepository.getPropertyByid(result);
+
+      const subProp = await propertiesRepository.getSubProperties(property[0].id);
+      const toReturn = {
+        property,
+        subProperties: subProp,
+      };
+      console.log(toReturn);
+      return res.status(200).json(toReturn);
     } catch (err) {
       return res.status(400).json(err);
     }

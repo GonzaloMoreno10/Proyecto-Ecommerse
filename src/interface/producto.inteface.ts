@@ -10,6 +10,8 @@ export interface IProduct {
   categoria: string;
   productTypeId: number;
   marcaId: number;
+  isOferta?: boolean;
+  descuento?: number;
 }
 
 export interface ISubProperty {

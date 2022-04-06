@@ -28,6 +28,16 @@ class ProductRepository {
     return Object.assign(data[0]).insertId;
   }
 
+  async getCategoriaByNombre(nombre: string) {
+    try {
+      let query = `select * from categorias where nombre like '%${nombre}%'`;
+      let result = await this.connection.query(query);
+      return <ICategoria>(<unknown>result[0]);
+    } catch (err) {
+      return err;
+    }
+  }
+
   async deleteCategoria(id: number) {
     let query = `delete categorias where id = ${id}`;
     let data = await this.connection.query(query);

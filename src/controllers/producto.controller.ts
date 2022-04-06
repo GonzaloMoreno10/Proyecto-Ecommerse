@@ -22,6 +22,16 @@ export class ProductoController {
       console.log(err);
     }
   }
+
+  async getProductsByProductType(req: Request, res: Response) {
+    try {
+      const { productType } = req.params;
+      let products = await mysqlProductRepository.getProductsByProductType(parseInt(productType));
+      return res.status(200).json(products);
+    } catch (err) {
+      return res.status(400).json(err);
+    }
+  }
   async getById(req: Request, res: Response) {
     try {
       let { id } = req.params;
@@ -105,7 +115,20 @@ export class ProductoController {
 
   async agregar(req: Request, res: Response) {
     try {
-      let { nombre, descripcion, codigo, foto, precio, stock, categoria, productType, marca, properties } = req.body;
+      let {
+        nombre,
+        descripcion,
+        codigo,
+        foto,
+        precio,
+        stock,
+        categoria,
+        productType,
+        marca,
+        properties,
+        isOferta,
+        descuento,
+      } = req.body;
       let producto: IProduct = {
         nombre,
         descripcion,
@@ -115,10 +138,13 @@ export class ProductoController {
         stock,
         categoria,
         productTypeId: productType,
+        isOferta,
+        descuento,
         marcaId: marca,
         properties,
       };
 
+      console.log(producto);
       //let cat = await categoriaRepository.getCategoriasById(categoria);
       //if (cat) {
       let result = await mysqlProductRepository.setProduct(producto);

@@ -9,6 +9,15 @@ import { mysqlDataSource } from '../../services/mysql';
 class PropertiesRepository {
   private connection = mysqlDataSource.connection();
 
+  async getPropertyByid(propertyId: number) {
+    try {
+      const sql = `select * from  productProperties where id = ${propertyId}`;
+      const result = await this.connection.query(sql);
+      return <any[]>result[0];
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async setPropertyValue(propertyValue: any) {
     try {
       const sql = `insert into productPropertieValues (value,productPropertieSubItemId) values('${propertyValue.value}',${propertyValue.id})`;
@@ -52,6 +61,7 @@ class PropertiesRepository {
           await this.connection.query(productPropertieValuesSql);
         }
       }
+      return Object.assign(productProperty[0]).insertId;
     }
   }
 
@@ -83,6 +93,7 @@ class PropertiesRepository {
   }
 
   async setProductPresentationProperty(ppp: IProductPresentationProperty) {
+    console.log(ppp);
     const sql = `insert into productPresentationPropertie (productId,productPropertieValueId) values(${ppp.productId},${ppp.productPropertieValueId} )`;
     const result = await this.connection.query(sql);
     return <any[]>result[0];

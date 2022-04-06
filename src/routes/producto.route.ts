@@ -10,6 +10,8 @@ router.get('/new/product', (req: Request, res: Response) => {
   res.render('productos/newProduct');
 });
 
+router.get('/productType/:productType', productoController.getProductsByProductType);
+
 router.get('/', asyncHandler(productoController.get));
 
 router.get('/:id', asyncHandler(productoController.getById));
