@@ -44,7 +44,17 @@ class ProductTypeRepository {
   }
 
   async getProductTypesByCategory(categoryId: number) {
-    const sql = 'select * from product_types where categoryId = ' + categoryId;
+    const sql =
+      'select pt.nombre ,pt.id,c.nombre as categoryNombre,c.id as categoryId from product_types pt, categorias c where c.id = pt.categoryId and categoryId = ' +
+      categoryId;
+    const result = await this.connection.execute(sql);
+    return result[0];
+  }
+
+  async getProductTypeById(id: number) {
+    const sql =
+      'select pt.*,c.nombre as categoryNombre,c.id as categoryId from product_types pt,categorias c  where c.id = pt.categoryId and pt.id = ' +
+      id;
     const result = await this.connection.execute(sql);
     return result[0];
   }

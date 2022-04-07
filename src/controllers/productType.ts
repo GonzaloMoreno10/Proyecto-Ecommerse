@@ -11,6 +11,17 @@ class ProductTypeController {
       console.log(err);
     }
   }
+
+  async getProductTypeByid(req: Request, res: Response) {
+    try {
+      const { productTypeId } = req.params;
+      const result = await productTypeRepository.getProductTypeById(parseInt(productTypeId));
+      console.log(result);
+      res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async getproductTypeByCategory(req: Request, res: Response) {
     try {
       const { categoryId } = req.params;
