@@ -13,6 +13,7 @@ import productTypeRoute from './productType';
 import propertiesRoute from './propertiesRoute';
 import modelosRoute from './modelos.route';
 import lineasRoute from './lineas.route';
+import statsRoute from './stats.route';
 
 const router = Router();
 
@@ -23,6 +24,8 @@ router.use('/cart', carritoRoute);
 router.use('/users', userRoute);
 
 router.use('/orders', orderRoute);
+
+router.use('/stats', statsRoute);
 
 router.use('/compra', compraRoute);
 
