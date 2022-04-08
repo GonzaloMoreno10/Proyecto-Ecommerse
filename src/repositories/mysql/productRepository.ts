@@ -8,7 +8,7 @@ class ProductRepository {
     join categorias c on c.id = p.categoria 
     join product_types pt on pt.id = p.product_type_id 
     join marcas m on m.id = p.marca_id 
-    where (p.nombre like '%${search}%' or c.nombre like '%${search}%' or pt.nombre like '%${search}%')`;
+    where (p.nombre like '%${search}%' or c.nombre like '%${search}%' or pt.nombre like '%${search}%') and p.activo = 1`;
     const result = await this.connection.query(query);
     return <IProduct[]>result[0];
   }
@@ -36,6 +36,7 @@ class ProductRepository {
       product_types pt 
     where
       pt.id = ${productType}
+      and p.activo = 1
       and m.id = p.marca_id
       and pt.id = p.product_type_id 
       and c.id = p.categoria ;`;
@@ -62,6 +63,7 @@ class ProductRepository {
     product_types pt 
   where
     p.id = ${id}
+    and p.activo = 1
     and m.id = p.marca_id
     and pt.id = p.product_type_id 
     and c.id = p.categoria `;
@@ -71,7 +73,7 @@ class ProductRepository {
 
   async getRelatedProducts(id: number, categoria: number, marca: number, productType: number): Promise<IProduct[]> {
     if (categoria && marca && productType && id) {
-      const query = `select * from products where (categoria = ${categoria} or product_type_id = ${productType} or marca_id = ${marca}) and id <> ${id}`;
+      const query = `select * from products where (categoria = ${categoria} or product_type_id = ${productType} or marca_id = ${marca}) and activo = 1 and id <> ${id}`;
       const result = await this.connection.query(query);
       return <IProduct[]>(<unknown>result[0]);
     }
@@ -126,7 +128,7 @@ class ProductRepository {
 
   async findByIds(ids: number[]) {
     try {
-      const query = 'select * from products where id in (';
+      const query = 'select * from products where activo = 1 and id in (';
       let id = '';
       for (let i in ids) {
         if (parseInt(i) < ids.length - 1) {
@@ -157,6 +159,7 @@ class ProductRepository {
     product_types pt `;
     let where = ` where m.id = p.marca_id
     and pt.id = p.product_type_id 
+    and p.activo = 1
     and c.id = p.categoria  `;
     if (options.categoria) where += ` and categoria = ${options.categoria}`;
     if (options.codigo) where += ` and codigo = ${options.codigo}`;
@@ -171,11 +174,14 @@ class ProductRepository {
   }
 
   async setProduct(product: IProduct) {
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento) values('${
+    console.log(product);
+    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos) values('${
       product.nombre
-    }','${product.descripcion}',123,'${product.foto}',${product.precio},${product.stock},${product.categoria},${
+    }','${product.descripcion}',123,'${product.foto ?? ''}',${product.precio},${product.stock},${product.categoria},${
       product.productTypeId
-    },${product.marcaId},${product.isOferta},${product.descuento ?? null})`;
+    },${product.marcaId},${product.isOferta},${product.descuento ?? null},1,'${
+      product.fotos ? JSON.stringify(product.fotos) : ''
+    }')`;
     let data = await this.connection.query(query);
     return Object.assign(data[0]).insertId;
   }

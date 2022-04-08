@@ -12,6 +12,7 @@ export interface IProduct {
   marcaId: number;
   isOferta?: boolean;
   descuento?: number;
+  fotos?: [{}];
 }
 
 export interface ISubProperty {

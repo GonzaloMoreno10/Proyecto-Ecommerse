@@ -128,6 +128,7 @@ export class ProductoController {
         properties,
         isOferta,
         descuento,
+        fotos,
       } = req.body;
       let producto: IProduct = {
         nombre,
@@ -142,6 +143,7 @@ export class ProductoController {
         descuento,
         marcaId: marca,
         properties,
+        fotos,
       };
 
       console.log(producto);
