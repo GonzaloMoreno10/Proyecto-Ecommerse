@@ -12,6 +12,7 @@ export interface IProduct {
   marcaId: number;
   isOferta?: boolean;
   descuento?: number;
+  marcaModeloLineaId?: number;
   fotos?: [{}];
 }
 

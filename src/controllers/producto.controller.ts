@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { IProduct, IProperty } from '../interface/producto.inteface';
-import { categoriaRepository } from '../repositories/mongo/categoria.repository';
 import { ProductQueryInterface } from '../interface';
 import { mysqlProductRepository } from '../repositories/mysql/productRepository';
 import { propertiesRepository } from '../repositories/mysql/propertiesRepository';
 import { IProductPresentationProperty } from '../interface/properties';
 import { HEROKU } from '../constantes/venv';
+import { ImarcaModeloLinea } from '../interface/marcaModeloLinea';
+import { marcaModeloLineaRepository } from '../repositories/mysql/marcaModeloLineaRepository';
 
 export class ProductoController {
   async getRelatedProduct(req: Request, res: Response) {
@@ -125,12 +126,19 @@ export class ProductoController {
         categoria,
         productType,
         marca,
+        modelo,
+        linea,
         properties,
         isOferta,
         descuento,
         fotos,
       } = req.body;
-      let producto: IProduct = {
+      const marcaModeloLinea: ImarcaModeloLinea = { marcaId: marca, modeloId: modelo, lineaId: linea };
+
+      //let cat = await categoriaRepository.getCategoriasById(categoria);
+      //if (cat) {
+      const marcaModeloLineaId = await marcaModeloLineaRepository.setMarcaModeloLinea(marcaModeloLinea);
+      const producto: IProduct = {
         nombre,
         descripcion,
         codigo,
@@ -142,14 +150,14 @@ export class ProductoController {
         isOferta,
         descuento,
         marcaId: marca,
+        marcaModeloLineaId,
         properties,
         fotos,
       };
 
       console.log(producto);
-      //let cat = await categoriaRepository.getCategoriasById(categoria);
-      //if (cat) {
-      let result = await mysqlProductRepository.setProduct(producto);
+
+      const result = await mysqlProductRepository.setProduct(producto);
 
       if (result) {
         if (properties) {
@@ -162,6 +170,7 @@ export class ProductoController {
           }
         }
         const producto: IProduct = await mysqlProductRepository.getProductPresentationById(result);
+
         return res.status(200).json(producto);
       }
 

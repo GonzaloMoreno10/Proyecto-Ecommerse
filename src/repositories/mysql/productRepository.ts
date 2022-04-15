@@ -51,22 +51,27 @@ class ProductRepository {
   async getProductsById(id: number): Promise<IProduct> {
     const query = `select
     p.*,
+    m.id as marcaId,
     m.nombre as marcaNombre,
+    mo.id as modeloId,
+    mo.nombre as modeloNombre,
+    li.id as lineaId,
+    li.nombre as lineaNombre,
     pt.id as ptId,
     pt.nombre as ptNombre,
     c.id as categoryId,
     c.nombre as categoryName
   from
-    products p,
-    marcas m,
-    categorias c,
-    product_types pt 
+    products p
+     join categorias c on c.id = p.categoria 
+     join product_types pt on pt.id = p.product_type_id 
+    left join marcaModeloLinea mml on mml.id = p.marcaModeloLineaId 
+    left join marcas m on m.id = mml.marcaId
+    left join modelos mo on mo.id = mml.modeloId
+    left join lineas li on li.id = mml.lineaId
   where
     p.id = ${id}
-    and p.activo = 1
-    and m.id = p.marca_id
-    and pt.id = p.product_type_id 
-    and c.id = p.categoria `;
+    and p.activo = 1 `;
     const result = await this.connection.query(query);
     return <IProduct>(<unknown>result[0]);
   }
@@ -175,13 +180,13 @@ class ProductRepository {
 
   async setProduct(product: IProduct) {
     console.log(product);
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos) values('${
+    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos,marcaModeloLineaId) values('${
       product.nombre
     }','${product.descripcion}',123,'${product.foto ?? ''}',${product.precio},${product.stock},${product.categoria},${
       product.productTypeId
     },${product.marcaId},${product.isOferta},${product.descuento ?? null},1,'${
       product.fotos ? JSON.stringify(product.fotos) : ''
-    }')`;
+    }',${product.marcaModeloLineaId})`;
     let data = await this.connection.query(query);
     return Object.assign(data[0]).insertId;
   }
