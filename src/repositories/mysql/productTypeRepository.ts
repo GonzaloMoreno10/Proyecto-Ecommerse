@@ -45,7 +45,7 @@ class ProductTypeRepository {
 
   async getProductTypesByCategory(categoryId: number) {
     const sql =
-      'select pt.nombre ,pt.id,c.nombre as categoryNombre,c.id as categoryId from product_types pt, categorias c where c.id = pt.categoryId and categoryId = ' +
+      'select pt.nombre ,pt.id,pt.image,c.nombre as categoryNombre,c.id as categoryId from product_types pt, categorias c where c.id = pt.categoryId and categoryId = ' +
       categoryId;
     const result = await this.connection.execute(sql);
     return result[0];
