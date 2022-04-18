@@ -34,8 +34,8 @@ class ProductTypeController {
 
   async setProductType(req: Request, res: Response) {
     try {
-      const { categoryId, nombre } = req.body;
-      const result = await productTypeRepository.setProductType({ categoryId, nombre });
+      const { categoryId, nombre, image } = req.body;
+      const result = await productTypeRepository.setProductType({ categoryId, nombre, image });
       res.status(200).json({ id: Object.assign(result).insertId });
     } catch (err) {
       console.log(err);

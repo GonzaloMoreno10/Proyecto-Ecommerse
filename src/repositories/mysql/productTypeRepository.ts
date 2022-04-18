@@ -9,8 +9,8 @@ class ProductTypeRepository {
     return result[0];
   }
 
-  async setProductType({ categoryId, nombre }) {
-    const sql = `insert into product_types (nombre,categoryId) values('${nombre}',${categoryId})`;
+  async setProductType({ categoryId, nombre, image }) {
+    const sql = `insert into product_types (nombre,categoryId,image) values('${nombre}',${categoryId},'${image}')`;
     const result = await this.connection.execute(sql);
     return result[0];
   }

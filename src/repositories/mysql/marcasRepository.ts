@@ -16,7 +16,18 @@ class MarcaRepository {
   }
 
   async createMarca(marca: any) {
-    const sql = `insert into marcas (productTypeId,nombre) values(${marca.productTypeId},'${marca.nombre}')`;
+    const sql = `insert into marcas (productTypeId,nombre,image) values(${marca.productTypeId},'${marca.nombre}','${marca.image}')`;
+    const result = await this.connection.execute(sql);
+    return result[0];
+  }
+
+  async getMarcasByCategory(categoryId: number) {
+    const sql = `select distinct m.nombre,m.id,m.image from marcaModeloLinea mml,marcas m,product_types pt ,categorias c 
+    where mml.marcaId = m.id
+    and pt.id  = m.productTypeId 
+    and c.id = pt.categoryId
+    and exists(select 1 from products p where p.marcaModeloLineaId = mml.id)
+    and c.id = ${categoryId}`;
     const result = await this.connection.execute(sql);
     return result[0];
   }
