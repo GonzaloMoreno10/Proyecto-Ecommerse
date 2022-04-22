@@ -1,14 +1,36 @@
 import { IProduct, IProperty, ProductQueryInterface } from '../../interface';
 import { mysqlDataSource } from '../../services/mysql';
-var nl2br = require('nl2br');
 
 class ProductRepository {
+  async findProductsByMarca(id: number) {
+    const sql = `select p.* from products p 
+    join marcaModeloLinea mml on p.marcaModeloLineaId = mml.id 
+    join marcas m on m.id = mml.marcaId 
+    where m.id = ${id}`;
+    try {
+      const result = await this.connection.query(sql);
+      return <IProduct[]>result[0];
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
   async findByKeyWord(search: string): Promise<IProduct[]> {
+    let where = '';
+    const array = search.split(' ');
+    console.log(array);
+    array.forEach((arr, index) => {
+      index < array.length - 1 ? (where += `${arr}|`) : (where += arr);
+    });
+    console.log(where);
     const query = `select distinct p.* from products p 
     join categorias c on c.id = p.categoria 
     join product_types pt on pt.id = p.product_type_id 
     join marcas m on m.id = p.marca_id 
-    where (p.nombre like '%${search}%' or c.nombre like '%${search}%' or pt.nombre like '%${search}%') and p.activo = 1`;
+    where (p.nombre REGEXP '${where}' or c.nombre REGEXP '${where}' or pt.nombre REGEXP '${where}') and p.activo = 1`;
+
+    console.log(query);
     const result = await this.connection.query(query);
     return <IProduct[]>result[0];
   }
@@ -36,6 +58,34 @@ class ProductRepository {
       product_types pt 
     where
       pt.id = ${productType}
+      and p.activo = 1
+      and m.id = p.marca_id
+      and pt.id = p.product_type_id 
+      and c.id = p.categoria ;`;
+      const result = await this.connection.query(query);
+      return <IProduct[]>result[0];
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
+  async getProductsBySellerUser(userId: number) {
+    try {
+      const query = `select
+      p.*,
+      m.nombre as marcaNombre,
+      pt.id as ptId,
+      pt.nombre as ptNombre,
+      c.id as categoryId,
+      c.nombre as categoryName
+    from
+      products p,
+      marcas m,
+      categorias c,
+      product_types pt 
+    where
+      p.sellerUser = ${userId}
       and p.activo = 1
       and m.id = p.marca_id
       and pt.id = p.product_type_id 
@@ -76,12 +126,38 @@ class ProductRepository {
     return <IProduct>(<unknown>result[0]);
   }
 
-  async getRelatedProducts(id: number, categoria: number, marca: number, productType: number): Promise<IProduct[]> {
-    if (categoria && marca && productType && id) {
-      const query = `select * from products where (categoria = ${categoria} or product_type_id = ${productType} or marca_id = ${marca}) and activo = 1 and id <> ${id}`;
+  async getRelatedProducts(id: number): Promise<IProduct[]> {
+    if (id) {
+      const query = `select * from products p where 
+      (categoria = (select categoria from products  where id = ${id} ) 
+      or product_type_id = (select product_type_id from products  where id = ${id} ) 
+      or marca_id = (select marca_id from products  where id = ${id} )) and activo = 1 
+      and id <> ${id}`;
       const result = await this.connection.query(query);
       return <IProduct[]>(<unknown>result[0]);
     }
+  }
+
+  async getProductsByLastOrdersUser(userId: number) {
+    const sql = `select * from products p1
+    where categoria in (
+    select categoria from products  p
+    where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId} ))
+    and p1.id not in (select id from products  p
+    where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId})) LIMIT 20`;
+    const result = await this.connection.query(sql);
+    return <IProduct[]>(<unknown>result[0]);
+  }
+
+  async getOffers() {
+    const sql = `select * from products 
+                  where isOferta = 1
+                  and descuento > 0
+                  and activo = 1
+                  and stock > 0
+                  order by descuento desc`;
+    const result = await this.connection.query(sql);
+    return <IProduct[]>(<unknown>result[0]);
   }
 
   async findProductProperties(productId: number): Promise<IProperty[]> {
@@ -180,13 +256,13 @@ class ProductRepository {
 
   async setProduct(product: IProduct) {
     console.log(product);
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos,marcaModeloLineaId) values('${
+    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos,marcaModeloLineaId,sellerUser) values('${
       product.nombre
     }','${product.descripcion}',123,'${product.foto ?? ''}',${product.precio},${product.stock},${product.categoria},${
       product.productTypeId
     },${product.marcaId},${product.isOferta},${product.descuento ?? null},1,'${
       product.fotos ? JSON.stringify(product.fotos) : ''
-    }',${product.marcaModeloLineaId})`;
+    }',${product.marcaModeloLineaId},${product.userId})`;
     let data = await this.connection.query(query);
     return Object.assign(data[0]).insertId;
   }

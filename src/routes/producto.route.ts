@@ -23,9 +23,15 @@ router.put(
   productoController.setImage
 );
 
+router.get('/offers/all', productoController.getOffers);
+
+router.get('/orders/user/:userId', productoController.getProductsByOrdersUser);
+
 router.get('/product/related', asyncHandler(productoController.getRelatedProduct));
 
 router.get('/find/product/:search', productoController.find);
+
+router.get('/userId/:userId', productoController.getBySellerUser);
 
 router.get('/categoria/:categoriaId', productoController.findByCategoria);
 
@@ -34,5 +40,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), productoCon
 router.post('/', passport.authenticate('jwt', { session: false }), productoController.agregar);
 
 router.delete('/:id', passport.authenticate('jwt', { session: false }), asyncHandler(productoController.borrar));
+
+router.get('/marca/:id', productoController.getProductsByMarca);
 
 export default router;

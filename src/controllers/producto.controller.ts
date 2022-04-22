@@ -11,16 +11,32 @@ import { marcaModeloLineaRepository } from '../repositories/mysql/marcaModeloLin
 export class ProductoController {
   async getRelatedProduct(req: Request, res: Response) {
     try {
-      const { id, categoria, marca, productType } = req.query;
-      const result = await mysqlProductRepository.getRelatedProducts(
-        Number(id),
-        Number(categoria),
-        Number(marca),
-        Number(productType)
-      );
+      const { id } = req.query;
+      const result = await mysqlProductRepository.getRelatedProducts(Number(id));
       res.status(200).json(result);
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  async getProductsByOrdersUser(req: Request, res: Response) {
+    try {
+      const { userId } = req.params;
+      const result = await mysqlProductRepository.getProductsByLastOrdersUser(parseInt(userId));
+      res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json(err);
+    }
+  }
+
+  async getOffers(req: Request, res: Response) {
+    try {
+      const result = await mysqlProductRepository.getOffers();
+      return res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json(err);
     }
   }
 
@@ -42,6 +58,65 @@ export class ProductoController {
         if (product[0]) {
           let prop: any = {};
           let properties = await mysqlProductRepository.findProductProperties(parseInt(id));
+          properties.forEach(property => {
+            const propertyName = property.propertyName;
+            if (!prop[propertyName]) prop[propertyName] = [];
+            prop[propertyName].push(property);
+          });
+          for (let i in prop) {
+            const subProperties = [];
+
+            for (const j in prop[i]) {
+              subProperties.push({
+                subPropertyId: prop[i][j].ppsiId,
+                subPropertyName: prop[i][j].subPropertyName,
+                ppvId: prop[i][j].ppvId,
+                value: prop[i][j].value,
+              });
+            }
+            const properties: IProperty = {
+              propertyId: prop[i][0].ppId,
+              isGeneric: prop[i][0].isGeneric,
+              propertyName: prop[i][0].propertyName,
+              subProperties,
+            };
+            finalArray.push(properties);
+          }
+          product[0].properties = finalArray;
+        }
+
+        product ? res.json(product) : res.status(404).json('Product not found');
+      } else {
+        res.status(400).json('Invalid Field: id');
+        console.log('id');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getProductsByMarca(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ message: 'Bad Request' });
+      }
+      const result = await mysqlProductRepository.findProductsByMarca(parseInt(id));
+      return res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+  async getBySellerUser(req: Request, res: Response) {
+    try {
+      let { userId } = req.params;
+      if (userId) {
+        const finalArray = [];
+        let product = await mysqlProductRepository.getProductsBySellerUser(parseInt(userId));
+        if (product[0]) {
+          let prop: any = {};
+          let properties = await mysqlProductRepository.findProductProperties(parseInt(product[0].id));
           properties.forEach(property => {
             const propertyName = property.propertyName;
             if (!prop[propertyName]) prop[propertyName] = [];
@@ -128,6 +203,7 @@ export class ProductoController {
         marca,
         modelo,
         linea,
+        userId,
         properties,
         isOferta,
         descuento,
@@ -144,6 +220,7 @@ export class ProductoController {
         codigo,
         foto,
         precio,
+        userId,
         stock,
         categoria,
         productTypeId: productType,
@@ -154,8 +231,6 @@ export class ProductoController {
         properties,
         fotos,
       };
-
-      console.log(producto);
 
       const result = await mysqlProductRepository.setProduct(producto);
 

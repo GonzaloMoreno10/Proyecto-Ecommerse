@@ -23,12 +23,17 @@ class ProductTypeRepository {
       index < array.length - 1 ? (where += `${arr}|`) : (where += arr);
     });
 
-    console.log(where);
-    const sql = `select  c.id as categoryId,c.nombre as categoryName,pt.id as productTypeId,pt.nombre as productTypeName from product_types pt,categorias c 
+    const sql = `select distinct  c.id as categoryId,c.nombre as categoryName,pt.id as productTypeId,pt.nombre as productTypeName from product_types pt,categorias c 
     where (c.nombre REGEXP '${where}' or pt.nombre REGEXP '${where}')
-    and c.id = pt.categoryId LIMIT 5`;
+    and c.id = pt.categoryId 
+    union
+    select distinct c.id as categoryId,c.nombre as categoryNombre,pt.id as productTypeId,pt.nombre as productTypeName from products p 
+    join categorias c on c.id = p.categoria 
+    join product_types pt on pt.id = p.product_type_id
+    where p.nombre REGEXP '${where}'
+    LIMIT 5`;
     const result: any = await this.connection.execute(sql);
-
+    console.log(sql);
     for (let i in result[0]) {
       const sql = `select * from marcas m 
       where m.productTypeId = ${result[0][i].productTypeId}

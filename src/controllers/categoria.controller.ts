@@ -31,7 +31,7 @@ class CategoriaController {
   }
 
   async create(req: Request, res: Response) {
-    let { nombre } = req.body;
+    let { nombre,image } = req.body;
     let categoria: ICategoria = {
       nombre: nombre,
     };
