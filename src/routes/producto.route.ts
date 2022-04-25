@@ -31,7 +31,7 @@ router.get('/product/related', asyncHandler(productoController.getRelatedProduct
 
 router.get('/find/product/:search', productoController.find);
 
-router.get('/userId/:userId', productoController.getBySellerUser);
+router.get('/userId/:userId/activo/:activo', productoController.getBySellerUser);
 
 router.get('/categoria/:categoriaId', productoController.findByCategoria);
 

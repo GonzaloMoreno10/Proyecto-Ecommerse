@@ -31,9 +31,15 @@ class ProductTypeRepository {
     join categorias c on c.id = p.categoria 
     join product_types pt on pt.id = p.product_type_id
     where p.nombre REGEXP '${where}'
+    union
+    select distinct p.categoria as categoryId,c.nombre as categoryNombre,pt.id as productTypeId,pt.nombre as productTypeName from products p
+    join marcaModeloLinea mml on mml.id = p.marcaModeloLineaId 
+    join marcas m on m.id = mml.marcaId 
+    join categorias c on c.id = p.categoria 
+    join product_types pt on pt.id = p.product_type_id 
+    where m.nombre REGEXP '${where}'
     LIMIT 5`;
     const result: any = await this.connection.execute(sql);
-    console.log(sql);
     for (let i in result[0]) {
       const sql = `select * from marcas m 
       where m.productTypeId = ${result[0][i].productTypeId}

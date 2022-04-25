@@ -110,10 +110,10 @@ export class ProductoController {
   }
   async getBySellerUser(req: Request, res: Response) {
     try {
-      let { userId } = req.params;
+      let { userId, activo } = req.params;
       if (userId) {
         const finalArray = [];
-        let product = await mysqlProductRepository.getProductsBySellerUser(parseInt(userId));
+        let product = await mysqlProductRepository.getProductsBySellerUser(parseInt(userId), parseInt(activo));
         if (product[0]) {
           let prop: any = {};
           let properties = await mysqlProductRepository.findProductProperties(parseInt(product[0].id));

@@ -6,7 +6,8 @@ class ProductRepository {
     const sql = `select p.* from products p 
     join marcaModeloLinea mml on p.marcaModeloLineaId = mml.id 
     join marcas m on m.id = mml.marcaId 
-    where m.id = ${id}`;
+    where m.id = ${id}
+    and p.activo = 1`;
     try {
       const result = await this.connection.query(sql);
       return <IProduct[]>result[0];
@@ -37,7 +38,7 @@ class ProductRepository {
   private connection = mysqlDataSource.connection();
 
   async getProducts(): Promise<IProduct[]> {
-    const query = 'select * from products';
+    const query = 'select * from products where activo = 1';
     const result = await this.connection.query(query);
     return <IProduct[]>result[0];
   }
@@ -70,7 +71,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsBySellerUser(userId: number) {
+  async getProductsBySellerUser(userId: number, activo: number) {
     try {
       const query = `select
       p.*,
@@ -85,11 +86,13 @@ class ProductRepository {
       categorias c,
       product_types pt 
     where
-      p.sellerUser = ${userId}
-      and p.activo = 1
+      p.sellerUser = ${userId} and 
+      ${activo === 1 ? 'activo = 1' : 'activo >= 0'}
       and m.id = p.marca_id
       and pt.id = p.product_type_id 
       and c.id = p.categoria ;`;
+
+      console.log(query);
       const result = await this.connection.query(query);
       return <IProduct[]>result[0];
     } catch (err) {
@@ -137,14 +140,14 @@ class ProductRepository {
       return <IProduct[]>(<unknown>result[0]);
     }
   }
-
   async getProductsByLastOrdersUser(userId: number) {
     const sql = `select * from products p1
     where categoria in (
     select categoria from products  p
     where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId} ))
     and p1.id not in (select id from products  p
-    where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId})) LIMIT 20`;
+    where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId})) 
+    and p1.activo = 1 LIMIT 20`;
     const result = await this.connection.query(sql);
     return <IProduct[]>(<unknown>result[0]);
   }
