@@ -15,9 +15,10 @@ import { productModel } from '../models/product.model';
 import { productPropertySubItemModel } from '../models/subProperties.model';
 import { userModel } from '../models/user.model';
 import { responseModel } from '../models/response.model';
+import { MYSQL_PORT } from '../constants/venv';
 export const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
   host: dbConfig.host,
-  port: 3306,
+  port: parseInt(MYSQL_PORT),
   dialect: 'mysql',
   pool: {
     min: 5,

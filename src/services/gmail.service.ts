@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { ADMIN_MAIL, GMAIL_SECRET, NODEMAILER_HOST, NODEMAILER_PORT } from '../constants/venv';
 
 class Gmail {
   private owner;
@@ -7,16 +8,16 @@ class Gmail {
   constructor() {
     this.owner = {
       name: 'Gonzalo Moreno',
-      address: 'gonzamoreno21@gmail.com',
+      address: ADMIN_MAIL,
     };
 
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
+      host: NODEMAILER_HOST,
+      port: NODEMAILER_PORT,
       secure: true,
       auth: {
-        user: 'gonzamoreno21@gmail.com',
-        pass: 'lqdpzavkdjqnihkq',
+        user: ADMIN_MAIL,
+        pass: GMAIL_SECRET,
       },
       tls: {
         rejectUnauthorized: false,

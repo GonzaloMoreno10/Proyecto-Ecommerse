@@ -17,6 +17,7 @@ class AuthController {
     const { userId } = req.params;
     const { hash } = req.query;
     const userFound = await mysqlUserRepository.getUsersById(parseInt(userId));
+    //comentario
     if (userFound && !userFound.UsrVerfied) {
       const user = Object.assign(userFound).dataValues;
       if (user.codValidacion === hash) {
