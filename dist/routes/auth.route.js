@@ -32,14 +32,15 @@ router.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0, func
             req.login(user, { session: false }, (err) => __awaiter(void 0, void 0, void 0, function* () {
                 if (err)
                     return next(err);
+                console.log(user);
                 const body = {
-                    _id: user._id,
+                    id: user.id,
                     email: user.email,
                     nombre: user.nombre,
                     direccion: user.direccion,
                     telefono: user.telefono,
                     avatar: user.avatar,
-                    edad: user.edad,
+                    edad: user.fecha_nacimiento.toISOString().slice(0, 10).replace('T', ' ').replace('-', '/').replace('-', '/'),
                     admin: user.admin,
                 };
                 const token = jsonwebtoken_1.default.sign({ user: body, expiresIn: '24h' }, 'top_secret');

@@ -1,0 +1,43 @@
+export type IProduct = {
+  ProId: number;
+  ProName: string;
+  ProPrice: string;
+  ProStock: number;
+  ProCod: number;
+  ProDesc: string;
+  ProCatId: number;
+  ProBraId: number;
+  ProTypId: number;
+  ProIsOffer: number;
+  ProDiscount: number;
+  ProImgs: string[];
+  ProBmlId: number;
+  ProUsrId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  createdUser: number;
+  updatedUser: number;
+  enabled: boolean;
+};
+
+export type INewProduct = {
+  ProId?: number;
+  ProName: string;
+  ProPrice: string;
+  ProStock: number;
+  ProCod: number;
+  ProDesc: string;
+  ProCatId: number;
+  ProBraId: number;
+  ProTypId: number;
+  ProIsOffer: number;
+  ProDiscount: number;
+  ProImgs: string[];
+  ProBmlId: number;
+  ProUsrId: number;
+  createdAt: Date;
+  updatedAt?: Date;
+  createdUser: number;
+  updatedUser?: number;
+  enabled: boolean;
+};

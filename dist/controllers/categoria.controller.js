@@ -10,21 +10,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.categoriaController = void 0;
-const categoria_repository_1 = require("../repositories/mongo/categoria.repository");
+const categoriaRepository_1 = require("../repositories/mysql/categoriaRepository");
 class CategoriaController {
     get(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let categorias = yield categoria_repository_1.categoriaRepository.getAllCategorias();
-            return res.status(200).json(categorias);
+            const { id } = req.params;
+            try {
+                if (!id) {
+                    let categorias = yield categoriaRepository_1.mysqlCategoriaRepository.getCategorias();
+                    return res.status(200).json(categorias);
+                }
+                else {
+                    let categoria = yield categoriaRepository_1.mysqlCategoriaRepository.getCategoriasById(parseInt(id));
+                    return res.status(200).json(categoria);
+                }
+            }
+            catch (err) {
+                return res.status(400).json(err);
+            }
+        });
+    }
+    getCategoriesByName(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { nombre } = req.params;
+            if (!nombre) {
+                return res.status(400).json({ msg: 'Invalid body' });
+            }
+            try {
+                let result = yield categoriaRepository_1.mysqlCategoriaRepository.getCategoriaByNombre(nombre);
+                return res.status(200).json(result);
+            }
+            catch (err) {
+                return res.status(400).json({ msg: err });
+            }
         });
     }
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { nombre } = req.body;
+            let { nombre, image } = req.body;
             let categoria = {
                 nombre: nombre,
             };
-            let result = yield categoria_repository_1.categoriaRepository.createCategoria(categoria);
+            let result = yield categoriaRepository_1.mysqlCategoriaRepository.setCategoria(categoria);
             return res.status(201).json(result);
         });
     }

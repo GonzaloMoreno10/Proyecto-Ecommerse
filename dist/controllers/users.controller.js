@@ -14,31 +14,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
 const mongo_1 = require("../repositories/mongo");
-const user_model_1 = __importDefault(require("../models/user.model"));
+const usersRepository_1 = require("../repositories/mysql/usersRepository");
 const passport_1 = __importDefault(require("passport"));
 class UsersController {
     getUsersById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            return res.json(yield mongo_1.mongoUserRepository.findById(id));
+            const id = parseInt(req.params.id);
+            return res.json(yield usersRepository_1.mysqlUserRepository.getUsersById(id));
         });
     }
     getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const data = yield mongo_1.mongoUserRepository.findAll();
+            const data = yield usersRepository_1.mysqlUserRepository.getUsers();
             return res.json(data);
         });
     }
     editPicture(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { userId } = req.params;
+            let userId = parseInt(req.params.userId);
             //let dir = '';
-            let usuario = yield mongo_1.mongoUserRepository.findById(userId);
+            let usuario = yield usersRepository_1.mysqlUserRepository.getUsersById(userId);
             let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
             usuario.avatar = dir;
             try {
-                yield mongo_1.mongoUserRepository.update(usuario, userId);
-                const updateUser = yield mongo_1.mongoUserRepository.findById(userId);
+                yield usersRepository_1.mysqlUserRepository.updateUser(usuario, userId);
+                const updateUser = yield usersRepository_1.mysqlUserRepository.getUsersById(userId);
                 return res.status(200).json(updateUser);
             }
             catch (err) {
@@ -94,34 +94,36 @@ class UsersController {
     }
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { email, password, nombre, direccion, edad, telefono, admin } = req.body;
+            let { email, password, nombre, direccion, fecha_nacimiento, telefono, admin } = req.body;
             if (!email || !password) {
                 return res.status(400).json('Invalid Body');
             }
-            let data = yield user_model_1.default.findOne({ email: email });
+            let data = yield usersRepository_1.mysqlUserRepository.getUsersByEmail(email);
+            console.log(data);
             if (!data) {
                 let user = {
                     email,
                     password,
                     nombre,
                     direccion,
-                    edad,
+                    fecha_nacimiento,
                     telefono,
                     avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
-                    admin,
+                    rol_id: 1,
                 };
                 try {
-                    let result = yield mongo_1.mongoUserRepository.create(user);
-                    if (result._id) {
+                    let result = yield usersRepository_1.mysqlUserRepository.setUser(user);
+                    if (result) {
                         //Comentado por que alcance la cuota limite de emails
                         // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
-                        return res.status(201).json(result);
+                        return res.status(201).json('Usuario creado');
                     }
                     else {
                         res.status(400).json('Bad Request');
                     }
                 }
                 catch (err) {
+                    console.log(err);
                     res.status(500).json(err);
                 }
             }

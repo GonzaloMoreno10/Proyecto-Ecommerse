@@ -10,8 +10,7 @@ exports.storage = multer_1.default.diskStorage({
         cb(null, './public/storage/imgs');
     },
     filename: function (req, file, cb) {
-        let { userId } = req.params;
-        cb(null, userId + '.jpg');
+        cb(null, file.originalname + '.jpg');
     },
 });
 exports.upload = (0, multer_1.default)({
