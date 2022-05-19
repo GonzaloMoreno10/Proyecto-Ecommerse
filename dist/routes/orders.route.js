@@ -1,13 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const passport_1 = __importDefault(require("passport"));
-const controllers_1 = require("../controllers");
+const index_controller_1 = require("../controllers/index.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
-router.get('/:id?', passport_1.default.authenticate('jwt', { session: false }), controllers_1.orderController.getOrders);
-router.get('/user/:userId', passport_1.default.authenticate('jwt', { session: false }), controllers_1.orderController.getOrdersByUser);
-router.post('/', controllers_1.orderController.setOrder);
+router.get('/:id?', auth_middleware_1.tokenOrApiKeyIsValid, index_controller_1.orderController.getOrders);
+router.post('/', auth_middleware_1.tokenOrApiKeyIsValid, index_controller_1.orderController.setOrder);
 exports.default = router;

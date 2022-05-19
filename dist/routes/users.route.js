@@ -1,16 +1,19 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const users_controller_1 = require("../controllers/users.controller");
-const passport_1 = __importDefault(require("passport"));
-const multer_1 = require("../middlewares/multer");
+const auth_controller_1 = require("../controllers/auth.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const account_validator_1 = require("../validators/account.validator");
 const router = (0, express_1.Router)();
-router.post('/editPicture/:userId', passport_1.default.authenticate('jwt', { session: false }), multer_1.upload.single('avatar'), users_controller_1.userController.editPicture);
-router.get('/:id', passport_1.default.authenticate('jwt', { session: false }), users_controller_1.userController.getUsersById);
-router.get('/', passport_1.default.authenticate('jwt', { session: false }), users_controller_1.userController.getUsers);
-router.post('/signup', users_controller_1.userController.createUser);
-router.put('/:id', passport_1.default.authenticate('jwt', { session: false }), users_controller_1.userController.editProfile);
+// router.post(
+//   '/editPicture/:userId',
+//   tokenOrApiKeyIsValid,
+//   upload.single('avatar'),
+//   userController.editPicture
+// );
+router.get('/mailValidation/:userId', auth_controller_1.authContrroller.accountVerification);
+router.get('/:id', auth_middleware_1.tokenOrApiKeyIsValid, users_controller_1.userController.getUsersById);
+router.get('/', auth_middleware_1.tokenOrApiKeyIsValid, users_controller_1.userController.getUsers);
+router.post('/signup', account_validator_1.validAccountData, users_controller_1.userController.createUser);
 exports.default = router;

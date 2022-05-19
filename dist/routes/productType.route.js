@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const productType_controller_1 = require("../controllers/productType.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const router = (0, express_1.Router)();
+router.get('/', auth_middleware_1.tokenOrApiKeyIsValid, productType_controller_1.productTypeController.getProductTypes);
+router.get('/byId/:productTypeId', auth_middleware_1.tokenOrApiKeyIsValid, productType_controller_1.productTypeController.getProductTypeByid);
+router.get('/:categoryId', auth_middleware_1.tokenOrApiKeyIsValid, productType_controller_1.productTypeController.getproductTypeByCategory);
+router.get('/category/:name', auth_middleware_1.tokenOrApiKeyIsValid, productType_controller_1.productTypeController.getProductTypeByName);
+router.post('/', auth_middleware_1.tokenOrApiKeyIsValid, productType_controller_1.productTypeController.setProductType);
+exports.default = router;

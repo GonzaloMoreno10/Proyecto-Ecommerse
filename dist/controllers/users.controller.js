@@ -13,67 +13,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
-const mongo_1 = require("../repositories/mongo");
-const usersRepository_1 = require("../repositories/mysql/usersRepository");
+const gmail_service_1 = require("../services/gmail.service");
+const users_repository_1 = require("../repositories/users.repository");
 const passport_1 = __importDefault(require("passport"));
+const emailTemplate_1 = require("../utils/emailTemplate");
+const constructResponse_1 = require("../utils/constructResponse");
 class UsersController {
     getUsersById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = parseInt(req.params.id);
-            return res.json(yield usersRepository_1.mysqlUserRepository.getUsersById(id));
+            return res.json(yield users_repository_1.mysqlUserRepository.getUsersById(id));
         });
     }
     getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const data = yield usersRepository_1.mysqlUserRepository.getUsers();
-            return res.json(data);
+            return yield users_repository_1.mysqlUserRepository.getUsers();
         });
     }
-    editPicture(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let userId = parseInt(req.params.userId);
-            //let dir = '';
-            let usuario = yield usersRepository_1.mysqlUserRepository.getUsersById(userId);
-            let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
-            usuario.avatar = dir;
-            try {
-                yield usersRepository_1.mysqlUserRepository.updateUser(usuario, userId);
-                const updateUser = yield usersRepository_1.mysqlUserRepository.getUsersById(userId);
-                return res.status(200).json(updateUser);
-            }
-            catch (err) {
-                return res.json(err);
-            }
-        });
-    }
-    findById(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let { id } = req.params;
-            const user = yield mongo_1.mongoUserRepository.findById(id);
-            return res.json(user);
-        });
-    }
-    editProfile(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let { id } = req.params;
-            let { email, nombre, direccion, edad, telefono } = req.body;
-            let user = {
-                email,
-                nombre,
-                direccion,
-                edad,
-                telefono,
-            };
-            try {
-                yield mongo_1.mongoUserRepository.update(user, id);
-                let result = yield mongo_1.mongoUserRepository.findById(id);
-                return res.status(201).json(result);
-            }
-            catch (err) {
-                return res.status(500).json(err);
-            }
-        });
-    }
+    // async editPicture(req: Request, res: Response) {
+    //   let userId = parseInt(req.params.userId);
+    //   //let dir = '';
+    //   let usuario = await mysqlUserRepository.getUsersById(userId);
+    //   let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
+    //   usuario.avatar = dir;
+    //   try {
+    //     await mysqlUserRepository.updateUser(usuario, userId);
+    //     const updateUser = await mysqlUserRepository.getUsersById(userId);
+    //     return res.status(200).json(updateUser);
+    //   } catch (err) {
+    //     return res.json(err);
+    //   }
+    // }
     login(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             yield passport_1.default.authenticate('login', function (err, user, info) {
@@ -92,43 +62,23 @@ class UsersController {
             })(req, res, next);
         });
     }
-    createUser(req, res) {
+    createUser(_, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { email, password, nombre, direccion, fecha_nacimiento, telefono, admin } = req.body;
-            if (!email || !password) {
-                return res.status(400).json('Invalid Body');
-            }
-            let data = yield usersRepository_1.mysqlUserRepository.getUsersByEmail(email);
-            console.log(data);
-            if (!data) {
-                let user = {
-                    email,
-                    password,
-                    nombre,
-                    direccion,
-                    fecha_nacimiento,
-                    telefono,
-                    avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
-                    rol_id: 1,
-                };
-                try {
-                    let result = yield usersRepository_1.mysqlUserRepository.setUser(user);
-                    if (result) {
-                        //Comentado por que alcance la cuota limite de emails
-                        // await GmailService.sendEmail(ADMIN_MAIL, 'Nuevo Registro', cadena(user));
-                        return res.status(201).json('Usuario creado');
-                    }
-                    else {
-                        res.status(400).json('Bad Request');
-                    }
+            const accountData = res.locals.accountData;
+            try {
+                yield users_repository_1.mysqlUserRepository.setUser(accountData);
+                const usuario = yield users_repository_1.mysqlUserRepository.getUsersByEmail(accountData.email);
+                if (usuario) {
+                    gmail_service_1.GmailService.sendEmail(accountData.email, 'Creacion de cuenta', (0, emailTemplate_1.verifyAccount)(usuario.UsrId, usuario.UsrValidCod));
+                    return (0, constructResponse_1.constructResponse)(122, res);
                 }
-                catch (err) {
-                    console.log(err);
-                    res.status(500).json(err);
+                else {
+                    return (0, constructResponse_1.constructResponse)(125, res);
                 }
             }
-            else {
-                return res.status(400).json('Email existente');
+            catch (err) {
+                console.log(err);
+                return (0, constructResponse_1.constructResponse)(125, res);
             }
         });
     }
