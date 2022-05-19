@@ -5,6 +5,7 @@ class Gmail {
   private owner;
   private transporter;
 
+  //gmail
   constructor() {
     this.owner = {
       name: 'Gonzalo Moreno',
