@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { jwt } from 'twilio';
-import { orderController } from '../controllers';
+import { orderController } from '../controllers/index.controller';
+import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
 const router = Router();
 
-router.get('/:id?', passport.authenticate('jwt', { session: false }), orderController.getOrders);
+router.get('/:id?', tokenOrApiKeyIsValid, orderController.getOrders);
 
-router.get('/user/:userId', passport.authenticate('jwt', { session: false }), orderController.getOrdersByUser);
-
-router.post('/', orderController.setOrder);
+router.post('/', tokenOrApiKeyIsValid, orderController.setOrder);
 
 export default router;

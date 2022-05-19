@@ -1,62 +1,117 @@
-import { Schema, model } from 'mongoose';
-import bcrypt from 'bcrypt';
+import { CreationOptional, DataTypes } from 'sequelize';
+import { Model } from 'sequelize';
+import { INewUser, IUser } from '../interface';
 
-export interface IUser extends Document {
-  id: string;
-  nombre: string;
-  direccion: string;
-  edad: number;
-  telefono: string;
-  avatar: string;
-  email: string;
-  password: string;
-  matchPassword: Function;
-  admin: Number;
+class User extends Model<IUser, INewUser> {
+  declare UsrId: CreationOptional<number>;
+  declare UsrEmail: string;
+  declare UsrPass: string;
+  declare UsrName: string;
+  declare UsrAddress: string;
+  declare UsrBirthDate: Date;
+  declare UsrPhone: string;
+  declare UsrAvatar: string;
+  declare UsrRolId: number;
+  declare UsrDoc: number;
+  declare UsrDocType: number;
+  declare UsrVerified: boolean;
+  declare UsrValidCod: boolean;
+  declare createdUser: number;
+  declare updatedUser: number;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare enabled: boolean;
 }
 
-export interface IUserMySql {
-  id?: string;
-  nombre: string;
-  direccion: string;
-  fecha_nacimiento: number;
-  telefono: string;
-  avatar: string;
-  email: string;
-  password: string;
-  rol_id: Number;
-}
-
-const usersSchema = new Schema({
-  email: String,
-  password: String,
-  nombre: String,
-  direccion: String,
-  edad: Number,
-  telefono: String,
-  avatar: String,
-  admin: Number,
-});
-
-usersSchema.pre<IUser>('save', async function (next) {
-  const user = this;
-  //if(!user.IsModified('password')) return next();
-
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(user.password, salt);
-  user.password = hash;
-  next();
-});
-
-usersSchema.methods.encryptPassword = async password => {
-  const salt = await bcrypt.genSalt(10);
-  const hash = bcrypt.hash(password, salt);
-  return hash;
+export const userModel = (sequelize: any) => {
+  const userModelToReturn = User.init(
+    {
+      UsrId: {
+        type: DataTypes.NUMBER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      UsrEmail: {
+        type: new DataTypes.STRING(),
+        allowNull: false,
+      },
+      UsrPass: {
+        type: new DataTypes.STRING(),
+        allowNull: false,
+      },
+      UsrName: {
+        type: new DataTypes.STRING(),
+        allowNull: false,
+      },
+      UsrAddress: {
+        type: new DataTypes.STRING(),
+        allowNull: false,
+      },
+      UsrBirthDate: {
+        type: new DataTypes.DATE(),
+        allowNull: false,
+      },
+      UsrAvatar: {
+        type: new DataTypes.STRING(),
+        allowNull: true,
+      },
+      UsrRolId: {
+        type: new DataTypes.NUMBER(),
+        allowNull: true,
+      },
+      UsrDoc: {
+        type: new DataTypes.NUMBER(),
+        allowNull: false,
+      },
+      UsrDocType: {
+        type: new DataTypes.NUMBER(),
+        allowNull: false,
+      },
+      UsrPhone: {
+        type: new DataTypes.STRING(),
+        allowNull: true,
+      },
+      UsrVerfied: {
+        type: new DataTypes.BOOLEAN(),
+        allowNull: false,
+      },
+      UsrValidCod: {
+        type: new DataTypes.STRING(),
+        allowNull: true,
+      },
+      updatedUser: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+      },
+      createdUser: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+        defaultValue: new Date(),
+      },
+      updatedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      enabled: {
+        type: DataTypes.BOOLEAN(),
+        allowNull: true,
+        defaultValue: true,
+      },
+    },
+    {
+      timestamps: false,
+      tableName: 'PEUSR',
+      sequelize, // passing the `sequelize` instance is required
+      defaultScope: {
+        attributes: {
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser'],
+        },
+      },
+    }
+  );
+  return userModelToReturn;
 };
-
-usersSchema.methods.matchPassword = async function (password) {
-  const user = this;
-  const compare = await bcrypt.compare(password, user.password);
-
-  return compare;
-};
-export default model<IUser>('users', usersSchema);

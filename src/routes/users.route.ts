@@ -1,23 +1,23 @@
 import { Router } from 'express';
 import { userController } from '../controllers/users.controller';
-import passport from 'passport';
-import { upload } from '../middlewares/multer';
-import jwt from 'jsonwebtoken';
+import { authContrroller } from '../controllers/auth.controller';
+import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
+import { validAccountData } from '../validators/account.validator';
 
 const router = Router();
 
-router.post(
-  '/editPicture/:userId',
-  passport.authenticate('jwt', { session: false }),
-  upload.single('avatar'),
-  userController.editPicture
-);
+// router.post(
+//   '/editPicture/:userId',
+//   tokenOrApiKeyIsValid,
+//   upload.single('avatar'),
+//   userController.editPicture
+// );
 
-router.get('/:id', passport.authenticate('jwt', { session: false }), userController.getUsersById);
-router.get('/', passport.authenticate('jwt', { session: false }), userController.getUsers);
+router.get('/mailValidation/:userId', authContrroller.accountVerification);
 
-router.post('/signup', userController.createUser);
+router.get('/:id', tokenOrApiKeyIsValid, userController.getUsersById);
+router.get('/', tokenOrApiKeyIsValid, userController.getUsers);
 
-router.put('/:id', passport.authenticate('jwt', { session: false }), userController.editProfile);
+router.post('/signup', validAccountData, userController.createUser);
 
 export default router;

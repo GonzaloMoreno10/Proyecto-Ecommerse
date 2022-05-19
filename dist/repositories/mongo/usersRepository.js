@@ -34,6 +34,7 @@ class UsersRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let data = yield this.users.findOne({ email: email });
+                console.log(data);
                 return data;
             }
             catch (err) {

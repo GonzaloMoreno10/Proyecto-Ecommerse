@@ -1,4 +1,4 @@
-import app from './services/server';
+import app from './services/server.service';
 import log4js from 'log4js';
 
 const consoleLogger = log4js.getLogger('consoleLogger');

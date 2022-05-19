@@ -5,6 +5,14 @@ export default {
     operationId: 'getProduct',
     parameters: [
       {
+        name: 'apikey',
+        in: 'header',
+        schema: {
+          type: 'string',
+        },
+        description: 'Apikey from product service',
+      },
+      {
         name: 'id',
         in: 'path',
         schema: {

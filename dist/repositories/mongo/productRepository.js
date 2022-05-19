@@ -72,6 +72,7 @@ class ProductRepository {
     query(options) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = {};
+            console.log(options);
             if (options.nombre)
                 query.nombre = options.nombre;
             if (options.minPrice && options.maxPrice)
@@ -82,6 +83,7 @@ class ProductRepository {
                 query.codigo = options.codigo;
             if (options.categoria)
                 query.categoria = options.categoria;
+            console.log(query);
             return this.productos.find(query);
         });
     }

@@ -1,33 +1,27 @@
 import { Router } from 'express';
 import orderRoute from './orders.route';
-import carritoRoute from './carrito.route';
-import productoRoute from './producto.route';
-import categoriaRoute from './categoria.routes';
+import productoRoute from './product.route';
+import categoriaRoute from './category.routes';
 import userRoute from './users.route';
 import serverConfigRoute from './serverConfig.route';
-import mensajeRouter from './mensajes.route';
+//import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
-import compraRoute from './compra.route';
-import marcasRoute from './marcas';
-import productTypeRoute from './productType';
-import propertiesRoute from './propertiesRoute';
-import modelosRoute from './modelos.route';
-import lineasRoute from './lineas.route';
+import marcasRoute from './brand.route';
+import productTypeRoute from './productType.route';
+import propertiesRoute from './properties.route';
+import modelosRoute from './model.route';
+import lineasRoute from './line.route';
 import statsRoute from './stats.route';
 
 const router = Router();
 
 router.use('/products', productoRoute);
 
-router.use('/cart', carritoRoute);
-
 router.use('/users', userRoute);
 
 router.use('/orders', orderRoute);
 
 router.use('/stats', statsRoute);
-
-router.use('/compra', compraRoute);
 
 router.use('/marcas', marcasRoute);
 
@@ -43,7 +37,7 @@ router.use('/lineas', lineasRoute);
 
 router.use('/server', serverConfigRoute);
 
-router.use('/messages', mensajeRouter);
+//router.use('/messages', mensajeRouter);
 
 router.use('/auth', authRouter);
 

@@ -16,6 +16,8 @@ const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const user_model_1 = __importDefault(require("../models/user.model"));
+const usersRepository_1 = require("../repositories/mysql/usersRepository");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const localStrategy = passport_local_1.default.Strategy;
 const ExtractJWT = passport_jwt_1.default.ExtractJwt;
 const JWTStrategy = passport_jwt_1.default.Strategy;
@@ -36,11 +38,12 @@ passport_1.default.use('login', new localStrategy({
     passwordField: 'password',
 }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield user_model_1.default.findOne({ email });
+        const user = yield usersRepository_1.mysqlUserRepository.getUsersByEmail(email);
+        console.log(user);
         if (!user) {
             return done(null, false, { message: 'User not found' });
         }
-        if (!(yield user.matchPassword(password))) {
+        if (!(yield bcrypt_1.default.compare(password, user.password))) {
             return done(null, false, { message: 'Incorrect password' });
         }
         return done(null, user, { message: 'Login successfull' });
