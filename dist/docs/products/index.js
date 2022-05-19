@@ -9,6 +9,6 @@ const getProducts_1 = __importDefault(require("./getProducts"));
 const saveProduct_1 = __importDefault(require("./saveProduct"));
 const updateProduct_1 = __importDefault(require("./updateProduct"));
 exports.default = {
-    '/productos': Object.assign(Object.assign({}, getProducts_1.default), saveProduct_1.default),
-    '/productos/{id}': Object.assign(Object.assign(Object.assign({}, getProduct_1.default), updateProduct_1.default), deleteProduct_1.default),
+    '/products': Object.assign(Object.assign({}, getProducts_1.default), saveProduct_1.default),
+    '/products/{id}': Object.assign(Object.assign(Object.assign({}, getProduct_1.default), updateProduct_1.default), deleteProduct_1.default),
 };

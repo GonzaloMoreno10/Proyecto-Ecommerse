@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const brands_controller_1 = require("../controllers/brands.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const router = (0, express_1.Router)();
+router.get('/', auth_middleware_1.tokenOrApiKeyIsValid, brands_controller_1.marcasController.getMarcas);
+router.get('/:productType', auth_middleware_1.tokenOrApiKeyIsValid, brands_controller_1.marcasController.getMarcasByProductType);
+router.post('/', auth_middleware_1.tokenOrApiKeyIsValid, brands_controller_1.marcasController.setMarca);
+router.get('/category/:categoryId', auth_middleware_1.tokenOrApiKeyIsValid, brands_controller_1.marcasController.getMarcasByCategory);
+exports.default = router;
