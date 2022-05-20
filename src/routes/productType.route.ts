@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { productTypeController } from '../controllers/productType.controller';
 import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
+import { emptyBodyValidator } from '../validators/emptyBody.validator';
 const router = Router();
 
 router.get('/', tokenOrApiKeyIsValid, productTypeController.getProductTypes);
@@ -11,6 +12,6 @@ router.get('/:categoryId', tokenOrApiKeyIsValid, productTypeController.getproduc
 
 router.get('/category/:name', tokenOrApiKeyIsValid, productTypeController.getProductTypeByName);
 
-router.post('/', tokenOrApiKeyIsValid, productTypeController.setProductType);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeController.setProductType);
 
 export default router;

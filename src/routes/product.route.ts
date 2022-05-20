@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { upload } from '../middlewares/multer.middleware';
 import passport from 'passport';
 import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
+import { emptyBodyValidator } from '../validators/emptyBody.validator';
 const router = Router();
 
 router.get('/new/product', (req: Request, res: Response) => {
@@ -33,7 +34,7 @@ router.get('/categoria/:categoriaId', tokenOrApiKeyIsValid, productoController.f
 
 router.put('/:id', tokenOrApiKeyIsValid, productoController.actualizar);
 
-router.post('/', tokenOrApiKeyIsValid, productoController.agregar);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productoController.agregar);
 
 router.delete('/:id', tokenOrApiKeyIsValid, asyncHandler(productoController.borrar));
 

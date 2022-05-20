@@ -120,7 +120,7 @@ export const productModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
         },
       },
     }

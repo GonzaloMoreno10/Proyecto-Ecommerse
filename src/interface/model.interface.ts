@@ -13,9 +13,9 @@ export interface INewModel {
   ModId?: number;
   ModName: string;
   ModBraId: number;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled: true;
+  enabled?: true;
 }

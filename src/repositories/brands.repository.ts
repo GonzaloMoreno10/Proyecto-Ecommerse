@@ -7,8 +7,8 @@ class MarcaRepository {
     return <IBrand[]>(<unknown>result);
   }
 
-  async getBrandsById(id: number): Promise<IBrand> {
-    const result = await BrandModel.findOne({ where: { BraId: id } });
+  async getBrandsById(BraId: number): Promise<IBrand> {
+    const result = await BrandModel.findOne({ where: { BraId } });
     return <IBrand>(<unknown>result);
   }
 
@@ -17,12 +17,12 @@ class MarcaRepository {
     return result;
   }
 
-  async getBrandsByCategoryId(categoryId: number): Promise<IBrand[]> {
+  async getBrandsByCategoryId(BraCatId: number): Promise<IBrand[]> {
     const result = BrandModel.findAll({
       include: [
         {
           model: ProductTypeModel,
-          where: { categoryId: categoryId },
+          where: { BraCatId },
           required: true,
           attributes: [],
         },
@@ -31,13 +31,13 @@ class MarcaRepository {
     return <IBrand[]>(<unknown>result);
   }
 
-  async getBrandsByProductType(productType: number): Promise<IBrand[]> {
+  async getBrandsByProductType(BraTypId: number): Promise<IBrand[]> {
     const result = await BrandModel.findAll({
       include: [
         {
           model: ProductTypeModel,
           required: true,
-          where: { id: productType },
+          where: { BraTypId },
           attributes: [],
         },
       ],

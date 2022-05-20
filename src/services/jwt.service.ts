@@ -10,7 +10,7 @@ export const verfiyToken = (token: string) => {
     return { code: 401, message: 'No token value' };
   }
   try {
-    const userData = jwt.verify(token, SECRET_TOKEN_PASSWORD);
+    const userData = jwt.verify(token.replace('Bearer ', ''), SECRET_TOKEN_PASSWORD);
     if (userData) {
       return { code: 200, userData };
     }
@@ -19,7 +19,7 @@ export const verfiyToken = (token: string) => {
     return { code: 401, message: err };
   }
 };
-export const generateToken = async (user: INewUser) => {
+export const generateToken = async (user: Partial<INewUser>) => {
   const { UsrPass, UsrEmail } = user;
   if (!UsrPass || !UsrEmail) {
     return { code: 130 };
@@ -28,11 +28,11 @@ export const generateToken = async (user: INewUser) => {
   if (!userFound) {
     return { code: 131 };
   }
-  if (!(await bcrypt.compare(UsrPass, userFound.password))) {
+  if (!(await bcrypt.compare(UsrPass, userFound.dataValues.UsrPass))) {
     return { code: 131 };
   }
 
-  if (!userFound.verificado) {
+  if (!userFound.dataValues.UsrPass) {
     return { code: 129 };
   }
 
@@ -40,8 +40,8 @@ export const generateToken = async (user: INewUser) => {
     .add({ minutes: parseInt(TOKEN_TIME) })
     .unix();
   const payload = {
-    userId: userFound.id,
-    userRol: userFound.rol_id,
+    userId: userFound.dataValues.UsrId,
+    userRol: userFound.dataValues.UsrRolId,
     iat: moment().unix(),
     exp: expiration,
   };

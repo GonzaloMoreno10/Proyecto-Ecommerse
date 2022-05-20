@@ -13,9 +13,9 @@ export interface INewLine {
   LinId?: number;
   LinName: string;
   LinModId: number;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled: boolean;
+  enabled?: boolean;
 }

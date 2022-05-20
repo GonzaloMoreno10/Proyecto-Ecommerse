@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { APIKEY } from '../constants/venv';
 import { verfiyToken } from '../services/jwt.service';
+import { constructResponse } from '../utils/constructResponse';
 
 export const auth = (req: Request, res: Response, next: NextFunction) => {
   if (req.user) {
@@ -17,17 +18,17 @@ export const tokenOrApiKeyIsValid = (req: Request, res: Response, next: NextFunc
     if (apikey === APIKEY) {
       return next();
     } else {
-      return res.status(401).json({ code: 401, message: 'Invalid apikey' });
+      return constructResponse(502, res);
     }
   }
   if (authorization) {
-    const result = verfiyToken(authorization.replace('Bearer ', ''));
+    const result = verfiyToken(authorization);
     if (result.code !== 200) {
-      return res.status(401).json({ code: result.code, message: result.message });
+      return constructResponse(503, res, undefined, result.message);
     } else {
       res.locals.userData = result.userData;
       return next();
     }
   }
-  return res.status(401).json({ code: 401, message: 'No headers values' });
+  constructResponse(501, res);
 };

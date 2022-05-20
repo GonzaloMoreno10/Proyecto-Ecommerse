@@ -14,6 +14,7 @@ export interface INewBrand {
   BraId?: number;
   BraName: string;
   BraTypId: number;
+  BraModId: number;
   BraImg?: string;
   createdAt?: Date;
   updatedAt?: Date;

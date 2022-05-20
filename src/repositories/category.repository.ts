@@ -1,10 +1,6 @@
 import { CategoryModel } from '../datasource/sequelize';
 import { ICategory, INewCategory } from '../interface/category.interface';
-import { mysqlDataSource } from '../services/mysql.service';
-
 class ProductRepository {
-  private connection = mysqlDataSource.connection();
-
   async getCategorias(): Promise<ICategory[]> {
     const result = CategoryModel.findAll();
     return result;
@@ -22,11 +18,12 @@ class ProductRepository {
 
   async setCategoria(categoria: INewCategory) {
     const result = CategoryModel.create(categoria);
+    return result;
   }
 
-  async getCategoriaByNombre(nombre: string): Promise<ICategory> {
+  async getCategoriaByNombre(CatName: string): Promise<ICategory> {
     try {
-      const result = await CategoryModel.findOne({ where: { CatName: nombre } });
+      const result = await CategoryModel.findOne({ where: { CatName } });
       return result;
     } catch (err) {
       return err;

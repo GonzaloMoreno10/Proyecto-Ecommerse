@@ -1,31 +1,25 @@
 import { model } from 'mongoose';
+import { ModelModel } from '../datasource/sequelize';
+import { INewModel } from '../interface/model.interface';
 import { mysqlDataSource } from '../services/mysql.service';
 
 class ModeloRepository {
   private connection = mysqlDataSource.connection();
 
   async getModelos() {
-    const sql = 'select * from modelos';
-    const result = await this.connection.execute(sql);
-    return result[0];
+    return await ModelModel.findAll({ where: { enabled: true } });
   }
 
-  async getModelosById(id) {
-    const sql = `select * from modelos where id = ${id}`;
-    const result = await this.connection.execute(sql);
-    return result[0];
+  async getModelosById(ModId: number) {
+    return await ModelModel.findOne({ where: { ModId, enabled: true } });
   }
 
-  async getModelosByMarca(marcaId: number) {
-    const sql = `select * from modelos where marcaId = ${marcaId}`;
-    const result = await this.connection.execute(sql);
-    return result[0];
+  async getModelosByMarca(ModBraId: number) {
+    return await ModelModel.findAll({ where: { ModBraId } });
   }
 
-  async createModel(modelo: any) {
-    const sql = `insert into modelos (marcaId,nombre) values(${modelo.marcaId},'${modelo.nombre}')`;
-    const result = await this.connection.execute(sql);
-    return result[0];
+  async createModel(modelo: INewModel) {
+    return await ModelModel.create(modelo);
   }
 }
 

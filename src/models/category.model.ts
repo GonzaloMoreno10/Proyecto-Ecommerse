@@ -26,7 +26,7 @@ export const categoryModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.NUMBER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.NUMBER,
@@ -40,6 +40,7 @@ export const categoryModel = (sequelize: any) => {
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue: new Date(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),
@@ -53,7 +54,7 @@ export const categoryModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
         },
       },
     }

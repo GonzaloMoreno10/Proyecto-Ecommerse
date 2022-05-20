@@ -6,7 +6,7 @@ import { ILine, INewLine } from '../interface/line.interface';
 class PRLIN extends Model<ILine, INewLine> {
   declare LinId: CreationOptional<number>;
   declare LinName: string;
-  declare IndModId: number;
+  declare LinModId: number;
   declare createdUser: number;
   declare updatedUser: number;
   declare createdAt: Date;
@@ -18,7 +18,7 @@ export const lineModel = (sequelize: any) => {
   const lineaToReturn = PRLIN.init(
     {
       LinId: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER(),
         autoIncrement: true,
         primaryKey: true,
       },
@@ -27,15 +27,15 @@ export const lineModel = (sequelize: any) => {
         allowNull: false,
       },
       LinModId: {
-        type: new DataTypes.NUMBER(),
+        type: new DataTypes.INTEGER(),
         allowNull: false,
       },
       updatedUser: {
-        type: DataTypes.NUMBER,
-        allowNull: false,
+        type: DataTypes.INTEGER(),
+        allowNull: true,
       },
       createdUser: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER(),
         allowNull: false,
       },
       createdAt: {
@@ -59,7 +59,7 @@ export const lineModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
         },
       },
     }

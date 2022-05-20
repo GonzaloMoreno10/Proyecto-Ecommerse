@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { modeloRepository } from '../repositories/model.repository';
+import { constructResponse } from '../utils/constructResponse';
 class ModeloController {
   async get(req: Request, res: Response) {
     const { marcaId } = req.params;
@@ -13,12 +14,12 @@ class ModeloController {
   }
 
   async setModelo(req: Request, res: Response) {
-    const { marcaId, nombre } = req.body;
+    const { ModBraId, ModName } = req.body;
 
-    if (!marcaId || !nombre) {
-      return res.status(400).json('Invalid body');
+    if (!ModBraId || !ModName) {
+      return constructResponse(128, res);
     }
-    let result = await modeloRepository.createModel({ marcaId, nombre });
+    let result = await modeloRepository.createModel({ ModBraId, ModName, createdUser: res.locals.userData.userId });
     const toReturn = await modeloRepository.getModelosById(Object.assign(result).insertId);
     return res.status(200).json(toReturn);
   }

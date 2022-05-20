@@ -1,43 +1,41 @@
 import { Request, Response } from 'express';
 import { mysqlCategoriaRepository } from '../repositories/category.repository';
 import { ICategory, INewCategory } from '../interface/category.interface';
+import { constructResponse } from '../utils/constructResponse';
 class CategoriaController {
   async get(req: Request, res: Response) {
     const { id } = req.params;
+    let result: ICategory[] | ICategory;
     try {
       if (!id) {
-        let categorias = await mysqlCategoriaRepository.getCategorias();
-        return res.status(200).json(categorias);
+        result = await mysqlCategoriaRepository.getCategorias();
       } else {
-        let categoria = await mysqlCategoriaRepository.getCategoriasById(parseInt(id));
-        return res.status(200).json(categoria);
+        result = await mysqlCategoriaRepository.getCategoriasById(parseInt(id));
       }
+      return constructResponse(121, res, result);
     } catch (err) {
       return res.status(400).json(err);
     }
   }
 
   async getCategoriesByName(req: Request, res: Response) {
-    let { nombre } = req.params;
-    if (!nombre) {
-      return res.status(400).json({ msg: 'Invalid body' });
-    }
+    let { CatName } = req.params;
     try {
-      let result = await mysqlCategoriaRepository.getCategoriaByNombre(nombre);
-      return res.status(200).json(result);
+      let result = await mysqlCategoriaRepository.getCategoriaByNombre(CatName);
+      return constructResponse(121, res, result);
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return constructResponse(500, res);
     }
   }
 
   async create(req: Request, res: Response) {
-    let { nombre, image } = req.body;
+    const { CatName, image } = req.body;
     let categoria: INewCategory = {
-      CatName: nombre,
-      createdUser: res.locals.userData.id,
+      CatName,
+      createdUser: res.locals.userData.userId,
     };
     let result = await mysqlCategoriaRepository.setCategoria(categoria);
-    return res.status(201).json(result);
+    return constructResponse(121, res, result);
   }
 }
 

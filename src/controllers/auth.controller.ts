@@ -2,11 +2,17 @@ import { generateToken } from '../services/jwt.service';
 import { Request, Response } from 'express';
 import { mysqlUserRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
+import { INewUser } from '../interface';
 
 class AuthController {
   async login(req: Request, res: Response) {
     const user = req.body;
-    const token = await generateToken(user);
+
+    const usrToValid: Partial<INewUser> = {
+      UsrEmail: user.email,
+      UsrPass: user.password,
+    };
+    const token = await generateToken(usrToValid);
     if (token.token) {
       res.locals.token = token.token;
     }

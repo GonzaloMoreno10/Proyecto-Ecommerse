@@ -6,24 +6,24 @@ import userRoute from './users.route';
 import serverConfigRoute from './serverConfig.route';
 //import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
-import marcasRoute from './brand.route';
 import productTypeRoute from './productType.route';
 import propertiesRoute from './properties.route';
 import modelosRoute from './model.route';
 import lineasRoute from './line.route';
 import statsRoute from './stats.route';
+import brandsRoute from './brand.route';
 
 const router = Router();
 
 router.use('/products', productoRoute);
 
-router.use('/users', userRoute);
+router.use('/account', userRoute);
 
 router.use('/orders', orderRoute);
 
 router.use('/stats', statsRoute);
 
-router.use('/marcas', marcasRoute);
+router.use('/brands', brandsRoute);
 
 router.use('/productTypes', productTypeRoute);
 
@@ -31,9 +31,9 @@ router.use('/properties', propertiesRoute);
 
 router.use('/categories', categoriaRoute);
 
-router.use('/modelos', modelosRoute);
+router.use('/models', modelosRoute);
 
-router.use('/lineas', lineasRoute);
+router.use('/lines', lineasRoute);
 
 router.use('/server', serverConfigRoute);
 
