@@ -50,10 +50,11 @@ class UsersController {
     console.log(accountData);
     try {
       await mysqlUserRepository.setUser(accountData);
-      const usuario = await mysqlUserRepository.getUsersByEmail(accountData.email);
+      const usuario = await mysqlUserRepository.getUsersByEmail(accountData.UsrEmail);
       if (usuario) {
+        console.log('email: ' + usuario.UsrEmail);
         GmailService.sendEmail(
-          accountData.email,
+          usuario.UsrEmail,
           'Creacion de cuenta',
           verifyAccount(usuario.UsrId, usuario.UsrValidCod)
         );

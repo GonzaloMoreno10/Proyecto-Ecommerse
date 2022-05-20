@@ -29,7 +29,7 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
       UsrPhone: post.UsrPhone,
       UsrAvatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
       UsrRolId: 1,
-      UsrVerified: false,
+      UsrVerfied: false,
       UsrValidCod: null,
     };
     res.locals.accountData = newAccount;

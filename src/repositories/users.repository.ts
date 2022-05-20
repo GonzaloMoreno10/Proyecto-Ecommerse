@@ -29,6 +29,7 @@ class UserRepository {
     const hash = await bcrypt.hash(user.UsrPass, salt);
     user.UsrValidCod = hash;
     user.UsrPass = hash;
+    console.log(user);
     return await UserModel.create(user);
   }
 }

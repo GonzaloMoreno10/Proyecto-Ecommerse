@@ -23,12 +23,11 @@ class AuthController {
     const { userId } = req.params;
     const { hash } = req.query;
     const userFound = await mysqlUserRepository.getUsersById(parseInt(userId));
-    //comentario
     if (userFound && !userFound.UsrVerfied) {
-      const user = Object.assign(userFound).dataValues;
-      if (user.codValidacion === hash) {
-        user.verificado = true;
-        await mysqlUserRepository.updateUser(user, user.id);
+      if (userFound.UsrValidCod === hash) {
+        console.log('Entro aca');
+        userFound.UsrVerfied = true;
+        await mysqlUserRepository.updateUser(Object.assign(userFound).dataValues, userFound.UsrId);
         return constructResponse(124, res);
       } else {
         return constructResponse(125, res);

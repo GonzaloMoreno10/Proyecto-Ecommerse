@@ -27,6 +27,8 @@ class Gmail {
   }
 
   async sendEmail(dest, subject, content) {
+    console.log(dest);
+    console.log(subject);
     const mailOptions = {
       from: this.owner,
       to: dest,
