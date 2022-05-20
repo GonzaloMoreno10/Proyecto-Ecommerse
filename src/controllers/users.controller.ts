@@ -47,6 +47,7 @@ class UsersController {
 
   async createUser(_, res: Response) {
     const accountData = res.locals.accountData;
+    console.log(accountData);
     try {
       await mysqlUserRepository.setUser(accountData);
       const usuario = await mysqlUserRepository.getUsersByEmail(accountData.email);

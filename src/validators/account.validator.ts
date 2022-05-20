@@ -18,19 +18,19 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
   }
   if (!errors.length) {
     const newAccount = {
-      email: post.UsrEmail,
-      password: post.UsrPass,
-      nombre: post.UsrName,
-      direccion: post.UsrAddress,
-      documento: post.UsrDoc,
-      tipoDocumento: post.UsrDocType,
-      fecha_nacimiento: post.UsrBirthDate,
+      UsrEmail: post.UsrEmail,
+      UsrPass: post.UsrPass,
+      UsrName: post.UsrName,
+      UsrAddress: post.UsrAddress,
+      UsrDoc: post.UsrDoc,
+      UsrDocType: post.UsrDocType,
+      UsrBirthDate: post.UsrBirthDate,
       createdUser: 1,
-      telefono: post.UsrPhone,
-      avatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
-      rol_id: 1,
-      verificado: false,
-      codValidacion: null,
+      UsrPhone: post.UsrPhone,
+      UsrAvatar: 'https://cdn3.iconfinder.com/data/icons/generic-avatars/128/avatar_portrait_man_male_1-128.png',
+      UsrRolId: 1,
+      UsrVerified: false,
+      UsrValidCod: null,
     };
     res.locals.accountData = newAccount;
     return next();
