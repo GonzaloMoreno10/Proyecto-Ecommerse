@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { statsRepository } from '../repositories/stats.repository';
 
 class StatsController {

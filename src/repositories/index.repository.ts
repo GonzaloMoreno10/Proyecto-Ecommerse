@@ -6,6 +6,6 @@ export * from './model.repository';
 export * from './orders.repository';
 export * from './product.repository';
 export * from './productType.repository';
-export * from './properties.repository';
+export * from './productProperties.repository';
 export * from './stats.repository';
 export * from './users.repository';

@@ -30,5 +30,5 @@ export const tokenOrApiKeyIsValid = (req: Request, res: Response, next: NextFunc
       return next();
     }
   }
-  constructResponse(501, res);
+  return constructResponse(501, res);
 };

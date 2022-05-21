@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { ILine } from '../interface/line.interface';
-import { lineasRepository } from '../repositories/line.repository';
+import { lineRepository } from '../repositories/line.repository';
 import { constructResponse } from '../utils/constructResponse';
 class LineaController {
   async getByModel(req: Request, res: Response) {
     const { LinModId } = req.params;
-    const lineas = await lineasRepository.getLineasByModelo(parseInt(LinModId));
+    const lineas = await lineRepository.getLinesByModel(parseInt(LinModId));
     return constructResponse(121, res, lineas);
   }
 
@@ -14,9 +14,9 @@ class LineaController {
     let result: ILine[] | ILine;
     try {
       if (LinId) {
-        result = await lineasRepository.getLineaById(parseInt(LinId));
+        result = await lineRepository.getLineById(parseInt(LinId));
       } else {
-        result = await lineasRepository.getLineas();
+        result = await lineRepository.getLines();
       }
       return constructResponse(121, res, result);
     } catch (err) {
@@ -28,12 +28,12 @@ class LineaController {
   async delLine(req: Request, res: Response) {
     const LinId = parseInt(req.params.LinId);
     try {
-      const line = await lineasRepository.getLineaById(LinId);
+      const line = await lineRepository.getLineById(LinId);
       if (!line) {
         return constructResponse(123, res);
       }
-      await lineasRepository.delLine(LinId, res.locals.userData.userId);
-      const result = await lineasRepository.getLineaById(LinId);
+      await lineRepository.delLine(LinId, res.locals.userData.userId);
+      const result = await lineRepository.getLineById(LinId);
       constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -47,7 +47,7 @@ class LineaController {
       return res.status(400).json('Invalid body');
     } else {
       try {
-        let linea = await lineasRepository.setLinea({ LinModId, LinName, createdUser });
+        let linea = await lineRepository.setLine({ LinModId, LinName, createdUser });
         constructResponse(121, res, linea);
       } catch (err) {
         console.log(err);

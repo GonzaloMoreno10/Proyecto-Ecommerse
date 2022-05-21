@@ -1,16 +1,12 @@
-import { model } from 'mongoose';
 import { LineModel } from '../datasource/sequelize';
-import { INewLine } from '../interface/line.interface';
-import { mysqlDataSource } from '../services/mysql.service';
+import { ILine, INewLine } from '../interface/line.interface';
 
-class LineaRepository {
-  private connection = mysqlDataSource.connection();
-
-  async getLineas(enabled = true) {
+class LineRepository {
+  async getLines(enabled = true) {
     return await LineModel.findAll({ where: { enabled } });
   }
 
-  async getLineaById(LinId: number, enabled = true) {
+  async getLineById(LinId: number, enabled = true) {
     const whereClause = {
       LinId: LinId,
       enabled: !enabled ? '' : true,
@@ -19,14 +15,18 @@ class LineaRepository {
     return result;
   }
 
-  async getLineasByModelo(LinModId: number) {
+  async getLinesByModel(LinModId: number) {
     const result = LineModel.findAll({ where: { LinModId, enabled: true } });
     return result;
   }
 
-  async setLinea(line: INewLine) {
+  async setLine(line: INewLine) {
     const result = await LineModel.create(line);
     return result;
+  }
+
+  async updLine(line: ILine, LinId: number) {
+    return await LineModel.update(line, { where: { LinId } });
   }
 
   async delLine(LinId: number, updatedUser: number) {
@@ -42,4 +42,4 @@ class LineaRepository {
   }
 }
 
-export const lineasRepository = new LineaRepository();
+export const lineRepository = new LineRepository();

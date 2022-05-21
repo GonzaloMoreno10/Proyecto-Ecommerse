@@ -3,7 +3,7 @@ export interface IBrand {
   BraName: string;
   BraTypId: number;
   BraImg?: string;
-  enabled: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
   createdUser: number;
@@ -14,8 +14,8 @@ export interface INewBrand {
   BraId?: number;
   BraName: string;
   BraTypId: number;
-  BraModId: number;
   BraImg?: string;
+  enabled?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;

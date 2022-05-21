@@ -1,5 +1,4 @@
-import { IProduct } from '../interface';
-import { mysqlDataSource } from '../services/mysql.service';
+import { INewProduct, IProduct, IProductRelations } from '../interface';
 import {
   CategoryModel,
   LineModel,
@@ -13,7 +12,7 @@ import {
 } from '../datasource/sequelize';
 const { Op } = require('sequelize');
 class ProductRepository {
-  async findProductsByMarca(id: number) {
+  async getProductsByBrand(id: number) {
     try {
       const resToReturn = await ProductModel.findAll({
         where: { enabled: true },
@@ -33,7 +32,7 @@ class ProductRepository {
     }
   }
 
-  async findByKeyWord(search: string): Promise<IProduct[]> {
+  async getProductsByKeyWord(search: string): Promise<IProduct[]> {
     const array = search.split(' ').filter(word => word !== '' && word.length > 2);
 
     const res = await ProductModel.findAll({
@@ -77,9 +76,8 @@ class ProductRepository {
 
     return <IProduct[]>(<unknown>res);
   }
-  private connection = mysqlDataSource.connection();
 
-  async getProducts(): Promise<IProduct[]> {
+  async getProducts(): Promise<IProductRelations[]> {
     const result = await ProductModel.findAll({
       attributes: { exclude: ['PrCatId', 'PrBraId', 'PrTypId', 'PrBmlId'] },
       where: {
@@ -88,7 +86,9 @@ class ProductRepository {
       include: [
         {
           model: BrandModelLineModel,
-          attributes: { exclude: ['BmlBraId', 'BmlModId', 'BmlLinId'] },
+          attributes: ['BmlId'],
+          where: { enabled: true },
+          required: true,
           include: [
             { model: BrandModel, attributes: ['BraId', 'BraName'] },
             { model: ModelModel, attributes: ['ModId', 'ModName'] },
@@ -97,12 +97,16 @@ class ProductRepository {
         },
         {
           model: ProductTypeModel,
-          include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
+          where: { enabled: true },
+          required: true,
+          include: [
+            { model: CategoryModel, attributes: ['CatId', 'CatName'], where: { enabled: true }, required: true },
+          ],
           attributes: ['TypId', 'TypName'],
         },
       ],
     });
-    return <IProduct[]>(<unknown>result);
+    return <IProductRelations[]>(<unknown>result);
   }
 
   async getProductsByProductType(productType: number) {
@@ -190,7 +194,7 @@ class ProductRepository {
     }
   }
 
-  async getRelatedProducts(id: number): Promise<IProduct[]> {
+  async getProductsRelatedById(id: number): Promise<IProduct[]> {
     const prod = await ProductModel.findOne({
       attributes: ['categoria', 'product_type_id'],
       where: { ProId: id },
@@ -271,7 +275,7 @@ class ProductRepository {
     return <IProduct[]>(<unknown>resToReturn);
   }
 
-  async getOffers() {
+  async getProductsInOffers() {
     try {
       const result = await ProductModel.findAll({
         order: [['descuento', 'desc']],
@@ -283,19 +287,9 @@ class ProductRepository {
     }
   }
 
-  async findByIds(ids: number[]) {
+  async getProductsByIds(ids: number[]): Promise<IProduct[]> {
     try {
-      const query = 'select * from products where activo = 1 and id in (';
-      let id = '';
-      for (let i in ids) {
-        if (parseInt(i) < ids.length - 1) {
-          id += `${ids[i].toString()},`;
-        } else {
-          id += `${ids[i].toString()})`;
-        }
-      }
-      const result = await this.connection.query(query + id);
-      return <any[]>result[0];
+      return await ProductModel.findAll({ where: { [Op.or]: [{ ProId: ids }] } });
     } catch (err) {
       console.log(err);
     }
@@ -309,64 +303,24 @@ class ProductRepository {
     return result;
   }
 
-  async getProductsQuery(options): Promise<IProduct[]> {
-    const query = `select
-    p.*,
-    m.nombre as marcaNombre,
-    pt.id as ptId,
-    pt.nombre as ptNombre,
-    c.id as categoryId,
-    c.nombre as categoryName
-  from
-    products p,
-    marcas m,
-    categorias c,
-    product_types pt `;
-    let where = ` where m.id = p.marca_id
-    and pt.id = p.product_type_id 
-    and p.activo = 1
-    and c.id = p.categoria  `;
-    if (options.categoria) where += ` and categoria = ${options.categoria}`;
-    if (options.codigo) where += ` and codigo = ${options.codigo}`;
-    if (options.maxPrice) where += ` and precio <= ${options.maxPrice}`;
-    if (options.minPrice) where += ` and precio >= ${options.minPrice}`;
-    if (options.nombre) where += ` and nombre like '%${options.nombre}%'`;
-    if (options.marca) where += ` and marca_id = ${options.marca}`;
-    if (options.productType) where += ` and product_type_id = ${options.productType}`;
-
-    const result = await this.connection.query(query + where);
-    return <IProduct[]>(<unknown>result[0]);
+  async setProduct(product: INewProduct) {
+    return await ProductModel.create(product);
   }
 
-  async setProduct(product) {
-    let query = `insert into products (nombre,descripcion,codigo,foto,precio,stock,categoria,product_type_id,marca_id,isOferta,descuento,activo,fotos,marcaModeloLineaId,sellerUser) values('${
-      product.nombre
-    }','${product.descripcion}',123,'${product.foto ?? ''}',${product.precio},${product.stock},${product.categoria},${
-      product.productTypeId
-    },${product.marcaId},${product.isOferta},${product.descuento ?? null},1,'${
-      product.fotos ? JSON.stringify(product.fotos) : ''
-    }',${product.marcaModeloLineaId},${product.userId})`;
-    let data = await this.connection.query(query);
-    return Object.assign(data[0]).insertId;
+  async updProduct(product: Partial<IProduct>, id: number) {
+    return await ProductModel.update(product, { where: { ProId: id } });
   }
 
-  async updateProduct(product, id: number) {
-    let query = `update products set nombre = '${product.nombre}',descripcion='${product.descripcion}',foto ='${product.foto}',precio = ${product.precio},stock = ${product.stock} where id = ${id}`;
-    let data = await this.connection.query(query);
-    return Object.assign(data[0]);
-  }
+  async delProduct(id: number, userid: number) {
+    const prodUpdate = await ProductModel.findOne({ where: { ProId: id }, raw: true });
+    if (prodUpdate) {
+      prodUpdate.enabled = false;
+      prodUpdate.updatedAt = new Date();
+      prodUpdate.updatedUser = userid;
 
-  async updatePicture(id: number, dir: string) {
-    let query = `update products set foto = '${dir}' where id = ${id}`;
-    let data = await this.connection.query(query);
-    return Object.assign(data[0]);
-  }
-
-  async deleteProduct(id: number) {
-    let query = `delete from products where id = ${id}`;
-    let data = await this.connection.query(query);
-    return Object.assign(data[0]);
+      return await ProductModel.update(prodUpdate, { where: { ProId: id } });
+    }
   }
 }
 
-export const mysqlProductRepository = new ProductRepository();
+export const productRepository = new ProductRepository();

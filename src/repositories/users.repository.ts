@@ -18,7 +18,7 @@ class UserRepository {
     return <IUser>(<unknown>result);
   }
 
-  async updateUser(user: IUser, id: number) {
+  async updUser(user: IUser, id: number) {
     const result = await UserModel.update(user, { where: { UsrId: id } });
     console.log(result);
     return result;
@@ -34,4 +34,4 @@ class UserRepository {
   }
 }
 
-export const mysqlUserRepository = new UserRepository();
+export const userRepository = new UserRepository();

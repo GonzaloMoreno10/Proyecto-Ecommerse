@@ -1,9 +1,13 @@
+import { IBrand } from './brand.model';
+import { ILine } from './line.interface';
+import { IModel } from './model.interface';
+
 export interface IBrandModelLine {
   BmlId: number;
-  BmlBraId: string;
+  BmlBraId: number;
   BmlModId: number;
-  BmlLinId: string;
-  enabled: string;
+  BmlLinId: number;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
   createdUser: number;
@@ -12,11 +16,18 @@ export interface IBrandModelLine {
 
 export interface INewBrandModelLine {
   BmlId?: number;
-  BmlBraId: string;
+  BmlBraId: number;
   BmlModId: number;
-  BmlLinId: string;
+  BmlLinId: number;
+  enabled?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
+}
+
+export interface IBrandModelLineRelations extends IBrandModelLine {
+  PRBRA: IBrand;
+  PRMOD: IModel;
+  PRLIN: ILine;
 }

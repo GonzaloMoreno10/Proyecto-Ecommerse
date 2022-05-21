@@ -1,11 +1,11 @@
-import { marcasRepository } from '../repositories/brands.repository';
+import { brandsRepository } from '../repositories/brands.repository';
 import { Request, Response } from 'express';
 import { INewBrand } from '../interface/brand.model';
 import { constructResponse } from '../utils/constructResponse';
 class MarcasController {
   async getMarcas(req: Request, res: Response) {
     try {
-      const result = await marcasRepository.getBrands();
+      const result = await brandsRepository.getBrands();
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -15,7 +15,7 @@ class MarcasController {
   async getMarcasByProductType(req: Request, res: Response) {
     try {
       const { BraTypId } = req.params;
-      const result = await marcasRepository.getBrandsByProductType(parseInt(BraTypId));
+      const result = await brandsRepository.getBrandsByProductType(parseInt(BraTypId));
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -25,7 +25,7 @@ class MarcasController {
   async getMarcasByCategory(req: Request, res: Response) {
     try {
       const { BraCatId } = req.params;
-      const result = await marcasRepository.getBrandsByCategoryId(parseInt(BraCatId));
+      const result = await brandsRepository.getBrandsByCategoryId(parseInt(BraCatId));
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -35,7 +35,7 @@ class MarcasController {
   async getBrandsById(req: Request, res: Response) {
     try {
       const { BraId } = req.params;
-      const result = await marcasRepository.getBrandsById(parseInt(BraId));
+      const result = await brandsRepository.getBrandsById(parseInt(BraId));
       if (!result) {
         return constructResponse(123, res);
       }
@@ -47,17 +47,16 @@ class MarcasController {
 
   async setMarca(req: Request, res: Response) {
     try {
-      const { BraName, BraTypId, BraModId } = req.body;
-      if (!BraName || !BraTypId || !BraModId) {
+      const { BraName, BraTypId } = req.body;
+      if (!BraName || !BraTypId) {
         return constructResponse(128, res);
       }
       const brand: INewBrand = {
         BraName,
         BraTypId,
-        BraModId,
         createdUser: res.locals.userData.userId,
       };
-      const result = await marcasRepository.setBrand(brand);
+      const result = await brandsRepository.setBrand(brand);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

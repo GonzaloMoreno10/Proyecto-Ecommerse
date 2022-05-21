@@ -19,28 +19,28 @@ export const brandModelLineModel = (sequelize: any) => {
   const marcaModeloLineaToReturn = PRBML.init(
     {
       BmlId: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
       BmlBraId: {
-        type: new DataTypes.NUMBER(),
+        type: new DataTypes.INTEGER(),
         allowNull: false,
       },
       BmlModId: {
-        type: new DataTypes.NUMBER(),
+        type: new DataTypes.INTEGER(),
         allowNull: false,
       },
       BmlLinId: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       updatedUser: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       createdUser: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       createdAt: {

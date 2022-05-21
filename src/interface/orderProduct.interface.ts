@@ -1,3 +1,7 @@
+import { IOrderRelation } from './order.interface';
+import { IProductRelations } from './product.interface';
+import { IUser } from './user.interface';
+
 export interface IOrderProduct {
   OrpId: number;
   OrpState: number;
@@ -24,4 +28,9 @@ export interface INewOrderProduct {
   createdUser: number;
   updatedUser?: number;
   enabled: boolean;
+}
+
+export interface IOrderProductRelation extends IOrderProduct {
+  PRPRO: IProductRelations;
+  FAORD: IOrderRelation;
 }

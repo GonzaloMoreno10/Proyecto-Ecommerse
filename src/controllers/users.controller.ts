@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { GmailService } from '../services/gmail.service';
-import { mysqlUserRepository } from '../repositories/users.repository';
+import { userRepository } from '../repositories/users.repository';
 import passport from 'passport';
 import { verifyAccount } from '../utils/emailTemplate';
 import { constructResponse } from '../utils/constructResponse';
@@ -8,10 +8,10 @@ import { INewUser } from '../interface';
 class UsersController {
   async getUsersById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
-    return res.json(await mysqlUserRepository.getUsersById(id));
+    return res.json(await userRepository.getUsersById(id));
   }
   async getUsers(req: Request, res: Response) {
-    return await mysqlUserRepository.getUsers();
+    return await userRepository.getUsers();
   }
   // async editPicture(req: Request, res: Response) {
   //   let userId = parseInt(req.params.userId);
@@ -49,8 +49,8 @@ class UsersController {
     const accountData = res.locals.accountData;
     console.log(accountData);
     try {
-      await mysqlUserRepository.setUser(accountData);
-      const usuario = await mysqlUserRepository.getUsersByEmail(accountData.UsrEmail);
+      await userRepository.setUser(accountData);
+      const usuario = await userRepository.getUsersByEmail(accountData.UsrEmail);
       if (usuario) {
         console.log('email: ' + usuario.UsrEmail);
         GmailService.sendEmail(

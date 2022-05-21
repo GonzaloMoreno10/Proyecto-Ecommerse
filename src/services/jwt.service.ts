@@ -15,7 +15,6 @@ export const verfiyToken = (token: string) => {
       return { code: 200, userData };
     }
   } catch (err) {
-    console.log(err);
     return { code: 401, message: err };
   }
 };
@@ -28,11 +27,14 @@ export const generateToken = async (user: Partial<INewUser>) => {
   if (!userFound) {
     return { code: 131 };
   }
-  if (!(await bcrypt.compare(UsrPass, userFound.dataValues.UsrPass))) {
+  if (!(await bcrypt.compare(UsrPass, userFound.UsrPass))) {
     return { code: 131 };
   }
+  if (!userFound.UsrVerfied) {
+    return { code: 514 };
+  }
 
-  if (!userFound.dataValues.UsrPass) {
+  if (!userFound.UsrPass) {
     return { code: 129 };
   }
 

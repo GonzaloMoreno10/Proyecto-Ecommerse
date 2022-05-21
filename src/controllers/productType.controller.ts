@@ -1,5 +1,6 @@
 import { productTypeRepository } from '../repositories/productType.repository';
 import { Request, Response } from 'express';
+import { INewProductType } from '../interface/productType.interface';
 class ProductTypeController {
   async getProductTypeByName(req: Request, res: Response) {
     try {
@@ -33,8 +34,13 @@ class ProductTypeController {
 
   async setProductType(req: Request, res: Response) {
     try {
-      const { categoryId, nombre, image } = req.body;
-      const result = await productTypeRepository.setProductType({ categoryId, nombre, image });
+      const { TypCatId, TypName } = req.body;
+      const producType: INewProductType = {
+        TypCatId,
+        TypName,
+        createdUser: res.locals.userData.userId,
+      };
+      const result = await productTypeRepository.setProductType(producType);
       res.status(200).json({ id: Object.assign(result).insertId });
     } catch (err) {
       console.log(err);

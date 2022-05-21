@@ -1,4 +1,7 @@
-export type IProduct = {
+import { IBrandModelLine, IBrandModelLineRelations } from './brandModelLine.interface';
+import { IProductType, IProductTypeRelations } from './productType.interface';
+
+export interface IProduct {
   ProId: number;
   ProName: string;
   ProPrice: string;
@@ -18,9 +21,9 @@ export type IProduct = {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
-};
+}
 
-export type INewProduct = {
+export interface INewProduct {
   ProId?: number;
   ProName: string;
   ProPrice: string;
@@ -35,9 +38,14 @@ export type INewProduct = {
   ProImgs: string[];
   ProBmlId: number;
   ProUsrId: number;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled: boolean;
-};
+  enabled?: boolean;
+}
+
+export interface IProductRelations extends IProduct {
+  PRBML: IBrandModelLineRelations;
+  PRTYP: IProductTypeRelations;
+}

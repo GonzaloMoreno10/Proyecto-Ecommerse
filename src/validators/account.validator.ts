@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { INewUser } from '../interface';
-import { mysqlUserRepository } from '../repositories/users.repository';
+import { userRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
 
 export const validAccountData = async (req: Request, res: Response, next: NextFunction) => {
   const post: INewUser = req.body;
   const errors = [];
   if (post.UsrEmail) {
-    const exists = await mysqlUserRepository.getUsersByEmail(post.UsrEmail);
+    const exists = await userRepository.getUsersByEmail(post.UsrEmail);
     if (exists) errors.push(127);
   }
   if (post.UsrDoc) {

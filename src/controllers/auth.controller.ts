@@ -1,6 +1,6 @@
 import { generateToken } from '../services/jwt.service';
 import { Request, Response } from 'express';
-import { mysqlUserRepository } from '../repositories/users.repository';
+import { userRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
 import { INewUser } from '../interface';
 
@@ -9,8 +9,8 @@ class AuthController {
     const user = req.body;
 
     const usrToValid: Partial<INewUser> = {
-      UsrEmail: user.email,
-      UsrPass: user.password,
+      UsrEmail: user.UsrEmail,
+      UsrPass: user.UsrPass,
     };
     const token = await generateToken(usrToValid);
     if (token.token) {
@@ -22,12 +22,11 @@ class AuthController {
   async accountVerification(req: Request, res: Response) {
     const { userId } = req.params;
     const { hash } = req.query;
-    const userFound = await mysqlUserRepository.getUsersById(parseInt(userId));
+    const userFound = await userRepository.getUsersById(parseInt(userId));
     if (userFound && !userFound.UsrVerfied) {
       if (userFound.UsrValidCod === hash) {
-        console.log('Entro aca');
         userFound.UsrVerfied = true;
-        await mysqlUserRepository.updateUser(Object.assign(userFound).dataValues, userFound.UsrId);
+        await userRepository.updUser(Object.assign(userFound).dataValues, userFound.UsrId);
         return constructResponse(124, res);
       } else {
         return constructResponse(125, res);

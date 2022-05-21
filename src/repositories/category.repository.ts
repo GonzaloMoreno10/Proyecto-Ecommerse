@@ -1,12 +1,12 @@
 import { CategoryModel } from '../datasource/sequelize';
 import { ICategory, INewCategory } from '../interface/category.interface';
-class ProductRepository {
-  async getCategorias(): Promise<ICategory[]> {
+class CategoryRepository {
+  async getCategories(): Promise<ICategory[]> {
     const result = CategoryModel.findAll();
     return result;
   }
 
-  async getCategoriasById(id: number): Promise<ICategory> {
+  async getCategoryById(id: number): Promise<ICategory> {
     try {
       const result = await CategoryModel.findOne({ where: { CatId: id } });
       return result;
@@ -16,12 +16,12 @@ class ProductRepository {
     }
   }
 
-  async setCategoria(categoria: INewCategory) {
+  async setCategory(categoria: INewCategory) {
     const result = CategoryModel.create(categoria);
     return result;
   }
 
-  async getCategoriaByNombre(CatName: string): Promise<ICategory> {
+  async getCategoryByName(CatName: string): Promise<ICategory> {
     try {
       const result = await CategoryModel.findOne({ where: { CatName } });
       return result;
@@ -30,7 +30,7 @@ class ProductRepository {
     }
   }
 
-  async deleteCategoria(id: number) {
+  async delCategory(id: number) {
     const category = await CategoryModel.findOne({ where: { CatId: id } });
     if (category) {
       category.enabled = false;
@@ -38,6 +38,10 @@ class ProductRepository {
     const result = await CategoryModel.update(category, { where: { CatId: id } });
     return result;
   }
+
+  async updCategory(category: ICategory, CatId: number) {
+    return await CategoryModel.update(category, { where: { CatId } });
+  }
 }
 
-export const mysqlCategoriaRepository = new ProductRepository();
+export const categoryRepository = new CategoryRepository();

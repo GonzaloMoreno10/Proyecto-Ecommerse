@@ -6,7 +6,7 @@ export interface IModel {
   updatedAt: Date;
   createdUser: number;
   updatedUser: number;
-  enabled: true;
+  enabled: boolean;
 }
 
 export interface INewModel {
@@ -17,5 +17,5 @@ export interface INewModel {
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled?: true;
+  enabled?: boolean;
 }

@@ -1,26 +1,37 @@
-import { model } from 'mongoose';
 import { ModelModel } from '../datasource/sequelize';
-import { INewModel } from '../interface/model.interface';
-import { mysqlDataSource } from '../services/mysql.service';
+import { IModel, INewModel } from '../interface/model.interface';
 
-class ModeloRepository {
-  private connection = mysqlDataSource.connection();
-
-  async getModelos() {
+class ModelRepository {
+  async getModels() {
     return await ModelModel.findAll({ where: { enabled: true } });
   }
 
-  async getModelosById(ModId: number) {
+  async getModelsById(ModId: number) {
     return await ModelModel.findOne({ where: { ModId, enabled: true } });
   }
 
-  async getModelosByMarca(ModBraId: number) {
+  async getModelByBrand(ModBraId: number) {
     return await ModelModel.findAll({ where: { ModBraId } });
   }
 
-  async createModel(modelo: INewModel) {
+  async updModel(model: IModel, ModId: number) {
+    return await ModelModel.update(model, { where: { ModId } });
+  }
+
+  async delModel(ModId: number, userId: number) {
+    const model = await ModelModel.findOne({ where: { ModId }, raw: true });
+    if (model) {
+      model.enabled = false;
+      model.updatedAt = new Date();
+      model.updatedUser = userId;
+
+      return await ModelModel.update(model, { where: { ModId } });
+    }
+  }
+
+  async setModel(modelo: INewModel) {
     return await ModelModel.create(modelo);
   }
 }
 
-export const modeloRepository = new ModeloRepository();
+export const modelRepository = new ModelRepository();

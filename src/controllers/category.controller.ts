@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { mysqlCategoriaRepository } from '../repositories/category.repository';
+import { categoryRepository } from '../repositories/category.repository';
 import { ICategory, INewCategory } from '../interface/category.interface';
 import { constructResponse } from '../utils/constructResponse';
 class CategoriaController {
@@ -8,9 +8,9 @@ class CategoriaController {
     let result: ICategory[] | ICategory;
     try {
       if (!id) {
-        result = await mysqlCategoriaRepository.getCategorias();
+        result = await categoryRepository.getCategories();
       } else {
-        result = await mysqlCategoriaRepository.getCategoriasById(parseInt(id));
+        result = await categoryRepository.getCategoryById(parseInt(id));
       }
       return constructResponse(121, res, result);
     } catch (err) {
@@ -21,7 +21,7 @@ class CategoriaController {
   async getCategoriesByName(req: Request, res: Response) {
     let { CatName } = req.params;
     try {
-      let result = await mysqlCategoriaRepository.getCategoriaByNombre(CatName);
+      let result = await categoryRepository.getCategoryByName(CatName);
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -34,7 +34,7 @@ class CategoriaController {
       CatName,
       createdUser: res.locals.userData.userId,
     };
-    let result = await mysqlCategoriaRepository.setCategoria(categoria);
+    let result = await categoryRepository.setCategory(categoria);
     return constructResponse(121, res, result);
   }
 }
