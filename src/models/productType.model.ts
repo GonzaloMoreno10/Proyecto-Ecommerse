@@ -32,7 +32,7 @@ export const productTypeModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.NUMBER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.NUMBER,
@@ -49,7 +49,7 @@ export const productTypeModel = (sequelize: any) => {
       },
       enabled: {
         type: DataTypes.BOOLEAN(),
-        allowNull: false,
+        allowNull: true,
         defaultValue: true,
       },
     },

@@ -68,6 +68,6 @@ export const brandModel = (sequelize: any) => {
       },
     }
   );
-  marcaToReturn.belongsTo(ProductTypeModel, { foreignKey: 'BraModId' });
+  marcaToReturn.belongsTo(ProductTypeModel, { foreignKey: 'BraTypId' });
   return marcaToReturn;
 };

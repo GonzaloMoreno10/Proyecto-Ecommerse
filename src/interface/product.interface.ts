@@ -9,7 +9,6 @@ export interface IProduct {
   ProCod: number;
   ProDesc: string;
   ProCatId: number;
-  ProBraId: number;
   ProTypId: number;
   ProIsOffer: number;
   ProDiscount: number;
@@ -31,7 +30,6 @@ export interface INewProduct {
   ProCod: number;
   ProDesc: string;
   ProCatId: number;
-  ProBraId: number;
   ProTypId: number;
   ProIsOffer: number;
   ProDiscount: number;

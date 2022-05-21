@@ -17,7 +17,6 @@ class PRPRO extends Model<IProduct, INewProduct> {
   declare ProCod: number;
   declare ProDesc: string;
   declare ProCatId: number;
-  declare ProBraId: number;
   declare ProTypId: number;
   declare ProIsOffer: number;
   declare ProDiscount: number;
@@ -63,10 +62,6 @@ export const productModel = (sequelize: any) => {
         type: new DataTypes.NUMBER(),
         allowNull: false,
       },
-      ProBraId: {
-        type: new DataTypes.NUMBER(),
-        allowNull: false,
-      },
       ProTypId: {
         type: new DataTypes.NUMBER(),
         allowNull: false,
@@ -93,7 +88,7 @@ export const productModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.NUMBER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.NUMBER,
@@ -137,6 +132,5 @@ export const productModel = (sequelize: any) => {
     foreignKey: 'ProCatId',
   });
   prodToReturn.belongsTo(BrandModelLineModel, { foreignKey: 'ProBmlId' });
-  prodToReturn.belongsTo(BrandModel, { foreignKey: 'ProBraId' });
   return prodToReturn;
 };

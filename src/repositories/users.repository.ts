@@ -20,7 +20,6 @@ class UserRepository {
 
   async updUser(user: IUser, id: number) {
     const result = await UserModel.update(user, { where: { UsrId: id } });
-    console.log(result);
     return result;
   }
 

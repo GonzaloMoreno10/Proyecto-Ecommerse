@@ -161,35 +161,70 @@ class ProductRepository {
     }
   }
 
-  async getProductsById(id: number): Promise<IProduct> {
+  constructProductInclude(fields: string[]) {
+    let toReturn = [];
+    if (fields.filter(x => x === 'PRBML').length > 0 && fields.filter(x => x === 'PRTYP').length > 0) {
+      toReturn = [
+        {
+          model: BrandModelLineModel,
+
+          attributes: ['BmlId'],
+          include: [
+            { model: BrandModel, attributes: ['BraId', 'BraName'] },
+            { model: ModelModel, attributes: ['ModId', 'ModName'] },
+            { model: LineModel, attributes: ['LinId', 'linName'] },
+          ],
+        },
+        {
+          model: ProductTypeModel,
+
+          include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
+          attributes: ['TypId', 'TypName'],
+        },
+      ];
+    }
+    if (fields.filter(x => x === 'PRBML').length == 0 && fields.filter(x => x === 'PRTYP').length > 0) {
+      toReturn = [
+        {
+          model: ProductTypeModel,
+
+          include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
+          attributes: ['TypId', 'TypName'],
+        },
+      ];
+    }
+    if (fields.filter(x => x === 'PRBML').length > 0 && fields.filter(x => x === 'PRTYP').length == 0) {
+      toReturn = [
+        {
+          model: BrandModelLineModel,
+
+          attributes: ['BmlId'],
+          include: [
+            { model: BrandModel, attributes: ['BraId', 'BraName'] },
+            { model: ModelModel, attributes: ['ModId', 'ModName'] },
+            { model: LineModel, attributes: ['LinId', 'linName'] },
+          ],
+        },
+      ];
+    }
+
+    return toReturn;
+  }
+
+  async getProductsById(id: number, fields: string[] = []): Promise<IProduct> {
     try {
+      const includes = this.constructProductInclude(fields);
       const result = await ProductModel.findOne({
-        attributes: { exclude: ['ProCatId', 'ProBraId', 'ProTypId', 'ProBmlId'] },
+        attributes: { exclude: ['ProCatId', 'ProTypId', 'ProBmlId'] },
         where: {
           enabled: true,
           ProId: id,
         },
-        include: [
-          {
-            model: BrandModelLineModel,
-
-            attributes: { exclude: ['BmlBraId', 'BmlModId', 'BmlLinId'] },
-            include: [
-              { model: BrandModel, attributes: ['BraId', 'BraName'] },
-              { model: ModelModel, attributes: ['ModId', 'ModName'] },
-              { model: LineModel, attributes: ['LinId', 'linName'] },
-            ],
-          },
-          {
-            model: ProductTypeModel,
-
-            include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
-            attributes: ['TypId', 'TypName'],
-          },
-        ],
+        include: includes,
       });
       return <IProduct>(<unknown>result);
     } catch (err) {
+      console.log(err);
       return err;
     }
   }

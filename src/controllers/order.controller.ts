@@ -54,7 +54,6 @@ class OrderController {
     const userData = res.locals.userData;
     try {
       const result = await orderRepository.getOrdersByUser(parseInt(userData.userId));
-      console.log(result[0].FAORP[0].PRPRO.PRTYP);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

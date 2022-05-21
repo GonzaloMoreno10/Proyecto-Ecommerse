@@ -8,6 +8,7 @@ class MarcasController {
       const result = await brandsRepository.getBrands();
       return constructResponse(121, res, result);
     } catch (err) {
+      console.log(err);
       return constructResponse(500, res);
     }
   }

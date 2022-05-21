@@ -33,7 +33,7 @@ export const constructResponse = async (
     toReturn = {
       code: response[0].resCod,
       message: response[0].resDesc,
-      data: data ?? [],
+      data: data ? (Object.assign(data).token ? data : Array.isArray(data) ? data : [data]) : [],
     };
   }
   res.status(toReturn.code).json(toReturn);
