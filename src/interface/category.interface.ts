@@ -6,6 +6,8 @@ export interface ICategory {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewCategory {
@@ -16,4 +18,6 @@ export interface INewCategory {
   createdUser: number;
   updatedUser?: number;
   enabled?: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

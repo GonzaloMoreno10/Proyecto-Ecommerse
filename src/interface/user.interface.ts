@@ -17,6 +17,8 @@ export interface IUser {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewUser {
@@ -38,4 +40,6 @@ export interface INewUser {
   createdUser: number;
   updatedUser?: number;
   enabled?: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

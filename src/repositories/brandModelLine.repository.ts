@@ -2,31 +2,28 @@ import { BrandModelLineModel } from '../datasource/sequelize';
 import { INewBrandModelLine, IBrandModelLine } from '../interface/brandModelLine.interface';
 
 class BrandModelLineRepository {
-  async getBrandModelLine(): Promise<IBrandModelLine[]> {
-    const result = await BrandModelLineModel.findAll();
-    return <IBrandModelLine[]>(<unknown>result);
+  async get(): Promise<IBrandModelLine[]> {
+    return await BrandModelLineModel.findAll();
   }
 
-  async getBrandModelLineById(id: number): Promise<IBrandModelLine> {
-    const result = await BrandModelLineModel.findOne({ where: { BmlId: id } });
-    return <IBrandModelLine>(<unknown>result);
+  async getById(id: number): Promise<IBrandModelLine> {
+    return await BrandModelLineModel.findOne({ where: { BmlId: id } });
   }
 
-  async setBrandModelLine(mmm: INewBrandModelLine) {
-    const result = BrandModelLineModel.create(mmm);
-    return result;
+  async set(mmm: INewBrandModelLine): Promise<IBrandModelLine> {
+    return await BrandModelLineModel.create(mmm);
   }
 
-  async updBrandModelLine(bml: IBrandModelLine, BmlId: number) {
+  async upd(bml: IBrandModelLine, BmlId: number) {
     return await BrandModelLineModel.update(bml, { where: { BmlId } });
   }
 
-  async delBrandModelLine(BmlId: number, userId: number) {
+  async del(BmlId: number, userId: number) {
     const bml = await BrandModelLineModel.findOne({ where: { BmlId }, raw: true });
     if (bml) {
       bml.enabled = false;
-      bml.updatedAt = new Date();
-      bml.updatedUser = userId;
+      bml.deletedAt = new Date();
+      bml.deletedUser = userId;
 
       return await BrandModelLineModel.update(bml, { where: { BmlId } });
     }

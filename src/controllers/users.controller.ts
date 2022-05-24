@@ -8,10 +8,10 @@ import { INewUser } from '../interface';
 class UsersController {
   async getUsersById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
-    return res.json(await userRepository.getUsersById(id));
+    return res.json(await userRepository.getById(id));
   }
   async getUsers(req: Request, res: Response) {
-    return await userRepository.getUsers();
+    return await userRepository.get();
   }
   // async editPicture(req: Request, res: Response) {
   //   let userId = parseInt(req.params.userId);
@@ -49,8 +49,8 @@ class UsersController {
     const accountData = res.locals.accountData;
     console.log(accountData);
     try {
-      await userRepository.setUser(accountData);
-      const usuario = await userRepository.getUsersByEmail(accountData.UsrEmail);
+      await userRepository.set(accountData);
+      const usuario = await userRepository.getByEmail(accountData.UsrEmail);
       if (usuario) {
         console.log('email: ' + usuario.UsrEmail);
         GmailService.sendEmail(

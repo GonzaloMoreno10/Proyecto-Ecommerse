@@ -7,6 +7,8 @@ export interface IModel {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewModel {
@@ -18,4 +20,6 @@ export interface INewModel {
   createdUser: number;
   updatedUser?: number;
   enabled?: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

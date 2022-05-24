@@ -1,45 +1,33 @@
 import { CategoryModel } from '../datasource/sequelize';
 import { ICategory, INewCategory } from '../interface/category.interface';
 class CategoryRepository {
-  async getCategories(): Promise<ICategory[]> {
-    const result = CategoryModel.findAll();
-    return result;
+  async get(): Promise<ICategory[]> {
+    return await CategoryModel.findAll();
   }
 
-  async getCategoryById(id: number): Promise<ICategory> {
-    try {
-      const result = await CategoryModel.findOne({ where: { CatId: id } });
-      return result;
-    } catch (err) {
-      console.log(err);
-      return err;
-    }
+  async getById(id: number): Promise<ICategory> {
+    return await CategoryModel.findOne({ where: { CatId: id } });
   }
 
-  async setCategory(categoria: INewCategory) {
-    const result = CategoryModel.create(categoria);
-    return result;
+  async set(categoria: INewCategory): Promise<ICategory> {
+    return await CategoryModel.create(categoria);
   }
 
-  async getCategoryByName(CatName: string): Promise<ICategory> {
-    try {
-      const result = await CategoryModel.findOne({ where: { CatName } });
-      return result;
-    } catch (err) {
-      return err;
-    }
+  async getByName(CatName: string): Promise<ICategory> {
+    return await CategoryModel.findOne({ where: { CatName } });
   }
 
-  async delCategory(id: number) {
-    const category = await CategoryModel.findOne({ where: { CatId: id } });
+  async del(CatId: number, userId: number) {
+    const category = await CategoryModel.findOne({ where: { CatId } });
     if (category) {
       category.enabled = false;
+      category.deletedAt = new Date();
+      category.deletedUser = userId;
     }
-    const result = await CategoryModel.update(category, { where: { CatId: id } });
-    return result;
+    return await CategoryModel.update(category, { where: { CatId } });
   }
 
-  async updCategory(category: ICategory, CatId: number) {
+  async upd(category: ICategory, CatId: number) {
     return await CategoryModel.update(category, { where: { CatId } });
   }
 }

@@ -1,23 +1,24 @@
-import { OrderModel, OrderProductsModel } from '../datasource/sequelize';
-import { INewOrder, IOrderRelation } from '../interface';
+import { OrderModel } from '../datasource/sequelize';
+import { IOrder, INewOrder } from '../interface';
 
 class OrderRepository {
-  async getOrders(): Promise<any[]> {
-    return await OrderModel.findAll();
+  async get(): Promise<IOrder[]> {
+    const result = await OrderModel.findAll();
+    return <IOrder[]>(<unknown>result);
   }
 
-  async getOrdersByUser(OrdUsrId: number): Promise<IOrderRelation[]> {
+  async getByUser(OrdUsrId: number): Promise<IOrder[]> {
     const result = await OrderModel.findAll({
       where: { OrdUsrId },
-      include: [{ model: OrderProductsModel, required: true }],
     });
-    return <IOrderRelation[]>(<unknown>result);
+    return <IOrder[]>(<unknown>result);
   }
-  async getOrderById(OrdId: number) {
-    return await OrderModel.findOne({ where: { OrdId } });
+  async getById(OrdId: number): Promise<IOrder> {
+    const result = await OrderModel.findOne({ where: { OrdId } });
+    return <IOrder>(<unknown>result);
   }
 
-  async setOrder(order: INewOrder) {
+  async set(order: INewOrder) {
     return await OrderModel.create(order);
   }
 }

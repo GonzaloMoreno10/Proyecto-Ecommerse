@@ -7,7 +7,7 @@ export const lineValidator = async (req: Request, res: Response, next: NextFunct
   const line: INewLine = req.body;
   const errors = [];
   if (line.LinModId) {
-    const modelo = await modelRepository.getModelsById(line.LinModId);
+    const modelo = await modelRepository.getById(line.LinModId);
     if (!modelo) {
       errors.push(504);
     }

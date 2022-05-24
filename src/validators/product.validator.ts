@@ -21,19 +21,19 @@ export const productValidator = async (req: Request, res: Response, next: NextFu
     errors.push(534);
   }
   if (product.ProTypId) {
-    const res = await productTypeRepository.getProductTypeById(product.ProTypId);
+    const res = await productTypeRepository.getById(product.ProTypId);
     if (!res) {
       errors.push(507);
     }
   }
   if (product.ProCatId) {
-    const cat = await categoryRepository.getCategoryById(product.ProCatId);
+    const cat = await categoryRepository.getById(product.ProCatId);
     if (!cat) {
       errors.push(524);
     }
   }
   if (product.ProBmlId) {
-    const bml = await brandModelLineRepository.getBrandModelLineById(product.ProBmlId);
+    const bml = await brandModelLineRepository.getById(product.ProBmlId);
     if (!bml) {
       errors.push(544);
     }

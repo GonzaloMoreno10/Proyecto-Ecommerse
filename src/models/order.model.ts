@@ -3,6 +3,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { OrderProductsModel } from '../datasource/sequelize';
 import { INewOrder, IOrder } from '../interface';
+import { IOrderProduct } from '../interface/orderProduct.interface';
 
 class FAORD extends Model<IOrder, INewOrder> {
   declare OrdId: CreationOptional<number>;
@@ -10,32 +11,34 @@ class FAORD extends Model<IOrder, INewOrder> {
   declare OrdUsrId: number;
   declare createdUser: number;
   declare updatedUser: number;
+  declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
-
 export const orderModel = (sequelize: any) => {
   const orderToReturn = FAORD.init(
     {
       OrdId: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER(),
         autoIncrement: true,
         primaryKey: true,
       },
       OrdState: {
-        type: new DataTypes.NUMBER(),
+        type: new DataTypes.INTEGER(),
         allowNull: false,
       },
       OrdUsrId: {
-        type: new DataTypes.NUMBER(),
+        type: new DataTypes.INTEGER(),
         allowNull: false,
       },
       updatedUser: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER(),
         allowNull: false,
       },
       createdUser: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER(),
         allowNull: false,
       },
       createdAt: {
@@ -49,8 +52,16 @@ export const orderModel = (sequelize: any) => {
       },
       enabled: {
         type: DataTypes.BOOLEAN(),
-        allowNull: false,
+        allowNull: true,
         defaultValue: true,
+      },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
       },
     },
     {
@@ -59,7 +70,7 @@ export const orderModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

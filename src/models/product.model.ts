@@ -28,6 +28,8 @@ class PRPRO extends Model<IProduct, INewProduct> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const productModel = (sequelize: any) => {
@@ -108,6 +110,14 @@ export const productModel = (sequelize: any) => {
         allowNull: false,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -115,7 +125,7 @@ export const productModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

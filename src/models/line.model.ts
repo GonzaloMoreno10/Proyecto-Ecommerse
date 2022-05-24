@@ -12,6 +12,8 @@ class PRLIN extends Model<ILine, INewLine> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const lineModel = (sequelize: any) => {
@@ -52,6 +54,14 @@ export const lineModel = (sequelize: any) => {
         allowNull: false,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -59,7 +69,7 @@ export const lineModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

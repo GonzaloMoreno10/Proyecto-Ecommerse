@@ -3,7 +3,7 @@ import { ResponseModel } from '../datasource/sequelize';
 import { IResponses } from '../interface/responses.interface';
 
 class ResponseRepository {
-  async getResponseByResIds(resId: number | number[]): Promise<IResponses[]> {
+  async getByResIds(resId: number | number[]): Promise<IResponses[]> {
     return await ResponseModel.findAll({
       where: {
         resId: {

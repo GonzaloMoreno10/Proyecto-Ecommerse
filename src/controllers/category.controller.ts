@@ -8,9 +8,9 @@ class CategoriaController {
     let result: ICategory[] | ICategory;
     try {
       if (!id) {
-        result = await categoryRepository.getCategories();
+        result = await categoryRepository.get();
       } else {
-        result = await categoryRepository.getCategoryById(parseInt(id));
+        result = await categoryRepository.getById(parseInt(id));
       }
       return constructResponse(121, res, result);
     } catch (err) {
@@ -21,7 +21,7 @@ class CategoriaController {
   async getCategoriesByName(req: Request, res: Response) {
     let { CatName } = req.params;
     try {
-      let result = await categoryRepository.getCategoryByName(CatName);
+      let result = await categoryRepository.getByName(CatName);
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
@@ -34,7 +34,7 @@ class CategoriaController {
       CatName,
       createdUser: res.locals.userData.userId,
     };
-    let result = await categoryRepository.setCategory(categoria);
+    let result = await categoryRepository.set(categoria);
     return constructResponse(121, res, result);
   }
 }

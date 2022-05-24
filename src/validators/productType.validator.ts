@@ -7,7 +7,7 @@ export const productTypeValidator = async (req: Request, res: Response, next: Ne
   const productType: IProductType = req.body;
   const errors = [];
   if (productType.TypCatId) {
-    const pt = await categoryRepository.getCategoryById(productType.TypCatId);
+    const pt = await categoryRepository.getById(productType.TypCatId);
     if (!pt) {
       errors.push(524);
     }

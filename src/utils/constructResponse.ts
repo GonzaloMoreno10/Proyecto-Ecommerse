@@ -9,7 +9,7 @@ export const constructResponse = async (
   message?: string,
   fieldName?: string
 ) => {
-  const response: IResponses[] = await responseRepository.getResponseByResIds(resId);
+  const response: IResponses[] = await responseRepository.getByResIds(resId);
   response.map(res => {
     if (res.resId == 508) {
       res.resDesc = res.resDesc + ' ' + fieldName;

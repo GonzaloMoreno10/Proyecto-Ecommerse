@@ -8,16 +8,20 @@ import {
 import { INewProductProperty } from '../interface/productProperty.interface';
 
 class ProductPropertiesRepository {
-  async getproductPropertyById(propertyId: number) {
+  async get() {
+    return await ProductPropertyModel.findAll({ where: { enabled: true } });
+  }
+
+  async getById(propertyId: number) {
     try {
-      const result = await ProductPropertyModel.findOne({ where: { ProId: propertyId } });
+      const result = await ProductPropertyModel.findOne({ where: { ProId: propertyId, enabled: true } });
       return result;
     } catch (err) {
       console.log(err);
     }
   }
 
-  async getProductPropertyByProductTypeId(productTypeId: number) {
+  async getByProductType(productTypeId: number) {
     const result = await ProductPropertyModel.findAll({
       where: { ProTypId: productTypeId },
       attributes: { exclude: ['productPropertieValueId'] },
@@ -36,11 +40,11 @@ class ProductPropertiesRepository {
     return <any[]>result;
   }
 
-  async setProductProperty(property: INewProductProperty) {
+  async set(property: INewProductProperty) {
     return await ProductPropertyModel.create(property);
   }
 
-  async getPropertiesByProductId(productId: number) {
+  async getByProduct(productId: number) {
     const result = await ProductPropertyModel.findAll({
       attributes: { exclude: ['ProTypId', 'ProCatId'] },
       include: [

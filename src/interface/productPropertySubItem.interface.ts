@@ -7,6 +7,8 @@ export interface IProductPropertySubItem {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewProductPropertySubItem {
@@ -18,4 +20,6 @@ export interface INewProductPropertySubItem {
   createdUser: number;
   updatedUser?: number;
   enabled: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

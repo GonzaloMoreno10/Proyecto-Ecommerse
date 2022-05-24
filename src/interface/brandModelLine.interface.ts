@@ -12,6 +12,8 @@ export interface IBrandModelLine {
   updatedAt: Date;
   createdUser: number;
   updatedUser: number;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewBrandModelLine {
@@ -24,6 +26,8 @@ export interface INewBrandModelLine {
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
+  deletedAt?: Date;
+  deletedUser?: number;
 }
 
 export interface IBrandModelLineRelations extends IBrandModelLine {

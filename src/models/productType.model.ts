@@ -12,6 +12,8 @@ class PRTYP extends Model<IProductType, INewProductType> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const productTypeModel = (sequelize: any) => {
@@ -52,6 +54,14 @@ export const productTypeModel = (sequelize: any) => {
         allowNull: true,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -59,7 +69,7 @@ export const productTypeModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

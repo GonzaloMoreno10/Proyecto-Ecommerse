@@ -2,38 +2,36 @@ import { BrandModel, ProductTypeModel } from '../datasource/sequelize';
 import { IBrand, INewBrand } from '../interface/brand.model';
 
 class BrandsRepository {
-  async getBrands(): Promise<IBrand[]> {
-    const result = await BrandModel.findAll();
-    return <IBrand[]>(<unknown>result);
+  async get(): Promise<IBrand[]> {
+    return await BrandModel.findAll({ where: { enabled: true } });
   }
 
-  async getBrandsById(BraId: number): Promise<IBrand> {
-    const result = await BrandModel.findOne({ where: { BraId } });
-    return <IBrand>(<unknown>result);
+  async getById(BraId: number): Promise<IBrand> {
+    return await BrandModel.findOne({ where: { BraId, enabled: true } });
   }
 
-  async updBrand(brand: IBrand, BraId: number) {
+  async upd(brand: IBrand, BraId: number) {
     return await BrandModel.update(brand, { where: { BraId } });
   }
 
-  async delBrand(BraId: number, userId: number) {
+  async del(BraId: number, userId: number) {
     const brand = await BrandModel.findOne({ where: { BraId }, raw: true });
     if (brand) {
-      brand.updatedAt = new Date();
+      console.log(userId);
+      brand.deletedAt = new Date();
       brand.enabled = false;
-      brand.updatedUser = userId;
-
+      brand.deletedUser = userId;
       return await BrandModel.update(brand, { where: { BraId } });
     }
   }
 
-  async setBrand(marca: INewBrand) {
-    const result = await BrandModel.create(marca);
-    return result;
+  async set(marca: INewBrand): Promise<IBrand> {
+    return await BrandModel.create(marca);
   }
 
-  async getBrandsByCategoryId(BraCatId: number): Promise<IBrand[]> {
-    const result = BrandModel.findAll({
+  async getByCategory(BraCatId: number): Promise<IBrand[]> {
+    return await BrandModel.findAll({
+      where: { enabled: true },
       include: [
         {
           model: ProductTypeModel,
@@ -43,21 +41,12 @@ class BrandsRepository {
         },
       ],
     });
-    return <IBrand[]>(<unknown>result);
   }
 
   async getBrandsByProductType(BraTypId: number): Promise<IBrand[]> {
-    const result = await BrandModel.findAll({
-      include: [
-        {
-          model: ProductTypeModel,
-          required: true,
-          where: { BraTypId },
-          attributes: [],
-        },
-      ],
+    return await BrandModel.findAll({
+      where: { BraTypId, enabled: true },
     });
-    return <IBrand[]>(<unknown>result);
   }
 }
 

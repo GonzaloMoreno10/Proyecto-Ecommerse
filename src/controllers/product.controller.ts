@@ -1,22 +1,13 @@
 import { Request, Response } from 'express';
 import { INewProduct, IProduct, IProductRelations } from '../interface/product.interface';
 import { productRepository } from '../repositories/product.repository';
-import { productPropertyRepository } from '../repositories/productProperties.repository';
-import {
-  INewProductPresentationProperty,
-  IProductPresentationProperty,
-} from '../interface/productPresentationProperty.interface';
-import { HEROKU } from '../constants/venv';
-import { IBrandModelLine, INewBrandModelLine } from '../interface/brandModelLine.interface';
-import { brandModelLineRepository } from '../repositories/brandModelLine.repository';
 import { constructResponse } from '../utils/constructResponse';
-import { IError } from '../interface/response.interface';
 
 export class ProductoController {
   async getRelatedProduct(req: Request, res: Response) {
     try {
       const { id } = req.query;
-      const result = await productRepository.getProductsRelatedById(Number(id));
+      const result = await productRepository.getByRelated(Number(id));
       return constructResponse(122, res, result);
     } catch (err) {
       console.log(err);
@@ -27,7 +18,7 @@ export class ProductoController {
   async getProductsByOrdersUser(req: Request, res: Response) {
     try {
       const { userId } = req.params;
-      const result = await productRepository.getProductsByLastOrdersUser(parseInt(userId));
+      const result = await productRepository.getByLastOrderUser(parseInt(userId));
       res.status(200).json(result);
     } catch (err) {
       console.log(err);
@@ -37,7 +28,7 @@ export class ProductoController {
 
   async getOffers(req: Request, res: Response) {
     try {
-      const result = await productRepository.getProductsInOffers();
+      const result = await productRepository.getInOffer();
       return res.status(200).json(result);
     } catch (err) {
       console.log(err);
@@ -48,7 +39,7 @@ export class ProductoController {
   async getProductsByProductType(req: Request, res: Response) {
     try {
       const { productType } = req.params;
-      let products = await productRepository.getProductsByProductType(parseInt(productType));
+      let products = await productRepository.getByProductType(parseInt(productType));
       return res.status(200).json(products);
     } catch (err) {
       return res.status(400).json(err);
@@ -63,7 +54,7 @@ export class ProductoController {
         fields = query.split(',');
       }
 
-      let product = await productRepository.getProductsById(parseInt(id), fields.length > 0 ? fields : undefined);
+      let product = await productRepository.getById(parseInt(id), fields.length > 0 ? fields : undefined);
       if (product) {
         // const properties = await productPropertyRepository.getPropertiesByProductId(product.ProId);
         // Object.assign(product).dataValues.PPPROs = properties;
@@ -82,7 +73,7 @@ export class ProductoController {
       if (!id) {
         return res.status(400).json({ message: 'Bad Request' });
       }
-      const result = await productRepository.getProductsByBrand(parseInt(id));
+      const result = await productRepository.getByBrand(parseInt(id));
       return res.status(200).json(result);
     } catch (err) {
       console.log(err);
@@ -94,7 +85,7 @@ export class ProductoController {
       let { userId, activo } = req.params;
       if (userId) {
         const finalArray = [];
-        let product = await productRepository.getProductsBySellerUser(parseInt(userId), parseInt(activo));
+        let product = await productRepository.getBySellerUser(parseInt(userId), parseInt(activo));
         product ? res.json(product) : res.status(404).json('Product not found');
       } else {
         res.status(400).json('Invalid user id');
@@ -108,7 +99,7 @@ export class ProductoController {
     let { categoriaId } = req.params;
     try {
       if (categoriaId) {
-        const productos = await productRepository.getProductsByCategoryId(parseInt(categoriaId));
+        const productos = await productRepository.getByCategory(parseInt(categoriaId));
 
         return res.status(200).json(productos);
       } else {
@@ -121,7 +112,7 @@ export class ProductoController {
 
   async get(_, res: Response) {
     try {
-      const result: IProductRelations[] = await productRepository.getProducts();
+      const result: IProductRelations[] = await productRepository.get();
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
@@ -131,7 +122,7 @@ export class ProductoController {
   async agregar(_, res: Response) {
     try {
       const product: INewProduct = res.locals.newProduct;
-      const result = await productRepository.setProduct(product);
+      const result = await productRepository.set(product);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
@@ -153,10 +144,10 @@ export class ProductoController {
         ProTypId,
       };
 
-      let prod = await productRepository.getProductsById(parseInt(id));
+      let prod = await productRepository.getById(parseInt(id));
       if (prod) {
-        let data = await productRepository.updProduct(producto, parseInt(id));
-        let productToRes = await productRepository.getProductsById(parseInt(id));
+        let data = await productRepository.upd(producto, parseInt(id));
+        let productToRes = await productRepository.getById(parseInt(id));
         res.status(200).json({ result: 'Producto Actualizado', productToRes });
       } else {
         res.status(400).json('Producto no encontrado');
@@ -169,7 +160,7 @@ export class ProductoController {
   async find(req: Request, res: Response) {
     const { search } = req.params;
     try {
-      const products = await productRepository.getProductsByKeyWord(search);
+      const products = await productRepository.getByKeyWord(search);
       res.status(200).json(products);
     } catch (err) {
       console.log(err);
@@ -179,39 +170,16 @@ export class ProductoController {
   async borrar(req: Request, res: Response) {
     try {
       let id = parseInt(req.params.id);
-      let prod = await productRepository.getProductsById(id);
+      let prod = await productRepository.getById(id);
       if (prod) {
         //await productPropertyRepository.deletePropertiesByProduct(id);
-        await productRepository.delProduct(id, res.locals.userData.userId);
+        await productRepository.del(id, res.locals.userData.userId);
         return constructResponse(121, res);
       } else {
         return constructResponse(123, res);
       }
     } catch (err) {
       console.log(err);
-    }
-  }
-
-  async setImage(req: Request, res: Response) {
-    //const { fileName } = req.params;
-    const { file } = req;
-    //const { productId } = req.params;
-    //console.log(productId);
-    let dir = '';
-    if (HEROKU) {
-      dir = `https://ecommerce-be-01.herokuapp.com/storage/imgs/${file.originalname}.jpg`;
-    } else {
-      dir = `http://localhost:3000/storage/imgs/${file.originalname}.jpg`;
-    }
-
-    //console.log(product);
-    //product.foto = dir;
-    try {
-      //await mysqlProductRepository.updatePicture(parseInt(productId), dir);
-      //const updateProduct = await mysqlProductRepository.getProductsById(parseInt(productId));
-      return res.status(200).json(dir);
-    } catch (err) {
-      return res.json(err);
     }
   }
 }

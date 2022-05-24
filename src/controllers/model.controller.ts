@@ -1,27 +1,50 @@
 import { Request, Response } from 'express';
+import { model } from 'mongoose';
+import { IModel } from '../interface/model.interface';
 import { modelRepository } from '../repositories/model.repository';
 import { constructResponse } from '../utils/constructResponse';
 class ModeloController {
   async get(req: Request, res: Response) {
-    const { marcaId } = req.params;
-    if (!marcaId) {
-      let modelos = await modelRepository.getModels();
-      return res.status(200).json(modelos);
-    } else {
-      let modelos = await modelRepository.getModelByBrand(parseInt(marcaId));
-      return res.status(200).json(modelos);
+    const { MoId } = req.params;
+    let models: IModel | IModel[];
+    try {
+      if (!MoId) {
+        models = await modelRepository.get();
+      } else {
+        models = await modelRepository.getByBrand(parseInt(MoId));
+      }
+      if (models.length > 0) {
+        return constructResponse(121, res, models);
+      }
+      return constructResponse(123, res);
+    } catch (err) {
+      return constructResponse(500, res, undefined, err);
     }
   }
 
-  async setModelo(req: Request, res: Response) {
-    const { ModBraId, ModName } = req.body;
-
-    if (!ModBraId || !ModName) {
-      return constructResponse(128, res);
+  async delModel(req: Request, res: Response) {
+    const { ModId } = req.params;
+    const userId = res.locals.userData.userId;
+    try {
+      const mod = await modelRepository.getById(parseInt(ModId));
+      if (!mod) {
+        return constructResponse(123, res);
+      }
+      await modelRepository.del(parseInt(ModId), userId);
+      return constructResponse(121, res);
+    } catch (err) {
+      return constructResponse(500, res, err);
     }
-    let result = await modelRepository.setModel({ ModBraId, ModName, createdUser: res.locals.userData.userId });
-    const toReturn = await modelRepository.getModelsById(Object.assign(result).insertId);
-    return res.status(200).json(toReturn);
+  }
+
+  async setModelo(_, res: Response) {
+    const model = res.locals.newModel;
+    try {
+      let result = await modelRepository.set(model);
+      return constructResponse(121, res, result);
+    } catch (err) {
+      return constructResponse(500, res, undefined, err);
+    }
   }
 }
 

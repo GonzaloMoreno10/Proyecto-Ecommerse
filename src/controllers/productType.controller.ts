@@ -5,8 +5,8 @@ import { constructResponse } from '../utils/constructResponse';
 class ProductTypeController {
   async getProductTypeByid(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-      const result = await productTypeRepository.getProductTypeById(parseInt(id));
+      const { TypId } = req.params;
+      const result = await productTypeRepository.getById(parseInt(TypId));
       if (result) return constructResponse(121, res, result);
 
       return constructResponse(123, res);
@@ -17,8 +17,8 @@ class ProductTypeController {
   }
   async getproductTypeByCategory(req: Request, res: Response) {
     try {
-      const { categoryId } = req.params;
-      const result = await productTypeRepository.getProductTypesByCategory(parseInt(categoryId));
+      const { TypCatId } = req.params;
+      const result = await productTypeRepository.getByCategory(parseInt(TypCatId));
       if (result.length > 0) return constructResponse(121, res, result);
       return constructResponse(123, res);
     } catch (err) {
@@ -34,8 +34,23 @@ class ProductTypeController {
         TypName,
         createdUser: res.locals.userData.userId,
       };
-      const result = await productTypeRepository.setProductType(producType);
+      const result = await productTypeRepository.set(producType);
       return constructResponse(121, res, result);
+    } catch (err) {
+      return constructResponse(500, res);
+    }
+  }
+
+  async delProductType(req: Request, res: Response) {
+    try {
+      const { TypId } = req.params;
+      const userId = res.locals.userData.userId;
+      const pt = await productTypeRepository.getById(parseInt(TypId));
+      if (!pt) {
+        return constructResponse(123, res);
+      }
+      await productTypeRepository.del(parseInt(TypId), userId);
+      return constructResponse(121, res);
     } catch (err) {
       return constructResponse(500, res);
     }
@@ -43,7 +58,7 @@ class ProductTypeController {
 
   async getProductTypes(req: Request, res: Response) {
     try {
-      const result = await productTypeRepository.getProductTypes();
+      const result = await productTypeRepository.get();
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

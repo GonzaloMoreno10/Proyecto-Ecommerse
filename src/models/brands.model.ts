@@ -13,6 +13,8 @@ class PRBRA extends Model<IBrand, INewBrand> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const brandModel = (sequelize: any) => {
@@ -56,6 +58,14 @@ export const brandModel = (sequelize: any) => {
         allowNull: false,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -63,7 +73,7 @@ export const brandModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

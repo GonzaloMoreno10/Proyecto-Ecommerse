@@ -22,11 +22,11 @@ class AuthController {
   async accountVerification(req: Request, res: Response) {
     const { userId } = req.params;
     const { hash } = req.query;
-    const userFound = await userRepository.getUsersById(parseInt(userId));
+    const userFound = await userRepository.getById(parseInt(userId));
     if (userFound && !userFound.UsrVerfied) {
       if (userFound.UsrValidCod === hash) {
         userFound.UsrVerfied = true;
-        await userRepository.updUser(Object.assign(userFound).dataValues, userFound.UsrId);
+        await userRepository.upd(Object.assign(userFound).dataValues, userFound.UsrId);
         return constructResponse(124, res);
       } else {
         return constructResponse(125, res);

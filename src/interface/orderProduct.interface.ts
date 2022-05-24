@@ -14,6 +14,8 @@ export interface IOrderProduct {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewOrderProduct {
@@ -28,6 +30,8 @@ export interface INewOrderProduct {
   createdUser: number;
   updatedUser?: number;
   enabled: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }
 
 export interface IOrderProductRelation extends IOrderProduct {

@@ -7,6 +7,6 @@ const router = Router();
 
 router.get('/:id?', tokenOrApiKeyIsValid, orderController.getOrders);
 
-//router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, orderController.setOrder);
+//router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator,modelValidator, );
 
 export default router;

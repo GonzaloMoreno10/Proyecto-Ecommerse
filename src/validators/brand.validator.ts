@@ -9,10 +9,17 @@ export const brandValidator = async (req: Request, res: Response, next: NextFunc
   const brand: INewBrand = req.body;
   const errors = [];
   if (brand.BraTypId) {
-    const typ = await productTypeRepository.getProductTypeById(brand.BraTypId);
+    const typ = await productTypeRepository.getById(brand.BraTypId);
     if (!typ) {
       errors.push(507);
     }
+  }
+  if (brand.BraName) {
+    if (brand.BraName.length <= 1) {
+      errors.push(554);
+    }
+  } else {
+    errors.push(554);
   }
   if (errors.length) {
     return constructResponse(errors, res);

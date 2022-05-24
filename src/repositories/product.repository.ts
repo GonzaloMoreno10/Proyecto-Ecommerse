@@ -12,7 +12,7 @@ import {
 } from '../datasource/sequelize';
 const { Op } = require('sequelize');
 class ProductRepository {
-  async getProductsByBrand(id: number) {
+  async getByBrand(id: number) {
     try {
       const resToReturn = await ProductModel.findAll({
         where: { enabled: true },
@@ -32,7 +32,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsByKeyWord(search: string): Promise<IProduct[]> {
+  async getByKeyWord(search: string): Promise<IProduct[]> {
     const array = search.split(' ').filter(word => word !== '' && word.length > 2);
 
     const res = await ProductModel.findAll({
@@ -77,7 +77,7 @@ class ProductRepository {
     return <IProduct[]>(<unknown>res);
   }
 
-  async getProducts(): Promise<IProductRelations[]> {
+  async get(): Promise<IProductRelations[]> {
     const result = await ProductModel.findAll({
       attributes: { exclude: ['PrCatId', 'PrBraId', 'PrTypId', 'PrBmlId'] },
       where: {
@@ -109,7 +109,7 @@ class ProductRepository {
     return <IProductRelations[]>(<unknown>result);
   }
 
-  async getProductsByProductType(productType: number) {
+  async getByProductType(productType: number) {
     try {
       const result = await ProductModel.findAll({
         attributes: { exclude: ['PrCatId', 'PrBraId', 'PrTypId', 'PrBmlId'] },
@@ -141,7 +141,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsBySellerUser(userId: number, activo: number) {
+  async getBySellerUser(userId: number, activo: number) {
     try {
       const result = ProductModel.findAll({
         where: { ProUsrId: userId },
@@ -211,7 +211,7 @@ class ProductRepository {
     return toReturn;
   }
 
-  async getProductsById(id: number, fields: string[] = []): Promise<IProduct> {
+  async getById(id: number, fields: string[] = []): Promise<IProduct> {
     try {
       const includes = this.constructProductInclude(fields);
       const result = await ProductModel.findOne({
@@ -229,7 +229,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsRelatedById(id: number): Promise<IProduct[]> {
+  async getByRelated(id: number): Promise<IProduct[]> {
     const prod = await ProductModel.findOne({
       attributes: ['categoria', 'product_type_id'],
       where: { ProId: id },
@@ -260,7 +260,7 @@ class ProductRepository {
       return <IProduct[]>(<unknown>prodToReturn);
     }
   }
-  async getProductsByLastOrdersUser(userId: number) {
+  async getByLastOrderUser(userId: number) {
     const res = await OrderModel.findAll({
       attributes: ['id', 'createdAt'],
       where: { OrdUsrId: userId },
@@ -310,7 +310,7 @@ class ProductRepository {
     return <IProduct[]>(<unknown>resToReturn);
   }
 
-  async getProductsInOffers() {
+  async getInOffer() {
     try {
       const result = await ProductModel.findAll({
         order: [['descuento', 'desc']],
@@ -322,7 +322,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsByIds(ids: number[]): Promise<IProduct[]> {
+  async getByIds(ids: number[]): Promise<IProduct[]> {
     try {
       return await ProductModel.findAll({ where: { [Op.or]: [{ ProId: ids }] } });
     } catch (err) {
@@ -330,7 +330,7 @@ class ProductRepository {
     }
   }
 
-  async getProductsByCategoryId(categoryId: number) {
+  async getByCategory(categoryId: number) {
     const result = await ProductModel.findAll({
       where: { ProCatId: categoryId },
       include: [{ model: ProductTypeModel }],
@@ -338,20 +338,20 @@ class ProductRepository {
     return result;
   }
 
-  async setProduct(product: INewProduct) {
+  async set(product: INewProduct) {
     return await ProductModel.create(product);
   }
 
-  async updProduct(product: Partial<IProduct>, id: number) {
+  async upd(product: Partial<IProduct>, id: number) {
     return await ProductModel.update(product, { where: { ProId: id } });
   }
 
-  async delProduct(id: number, userid: number) {
+  async del(id: number, userid: number) {
     const prodUpdate = await ProductModel.findOne({ where: { ProId: id }, raw: true });
     if (prodUpdate) {
       prodUpdate.enabled = false;
-      prodUpdate.updatedAt = new Date();
-      prodUpdate.updatedUser = userid;
+      prodUpdate.deletedAt = new Date();
+      prodUpdate.deletedUser = userid;
 
       return await ProductModel.update(prodUpdate, { where: { ProId: id } });
     }

@@ -2,34 +2,34 @@ import { ModelModel } from '../datasource/sequelize';
 import { IModel, INewModel } from '../interface/model.interface';
 
 class ModelRepository {
-  async getModels() {
+  async get(): Promise<IModel[]> {
     return await ModelModel.findAll({ where: { enabled: true } });
   }
 
-  async getModelsById(ModId: number) {
+  async getById(ModId: number): Promise<IModel> {
     return await ModelModel.findOne({ where: { ModId, enabled: true } });
   }
 
-  async getModelByBrand(ModBraId: number) {
+  async getByBrand(ModBraId: number): Promise<IModel[]> {
     return await ModelModel.findAll({ where: { ModBraId } });
   }
 
-  async updModel(model: IModel, ModId: number) {
+  async upd(model: IModel, ModId: number) {
     return await ModelModel.update(model, { where: { ModId } });
   }
 
-  async delModel(ModId: number, userId: number) {
+  async del(ModId: number, userId: number) {
     const model = await ModelModel.findOne({ where: { ModId }, raw: true });
     if (model) {
       model.enabled = false;
-      model.updatedAt = new Date();
-      model.updatedUser = userId;
+      model.deletedAt = new Date();
+      model.deletedUser = userId;
 
       return await ModelModel.update(model, { where: { ModId } });
     }
   }
 
-  async setModel(modelo: INewModel) {
+  async set(modelo: INewModel): Promise<IModel> {
     return await ModelModel.create(modelo);
   }
 }

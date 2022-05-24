@@ -7,9 +7,11 @@ const router = Router();
 
 router.get('/', tokenOrApiKeyIsValid, productTypeController.getProductTypes);
 
-router.get('/:id', tokenOrApiKeyIsValid, productTypeController.getProductTypeByid);
+router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getProductTypeByid);
 
-router.get('/category/:categoryId', tokenOrApiKeyIsValid, productTypeController.getproductTypeByCategory);
+router.delete('/:TypId', tokenOrApiKeyIsValid, productTypeController.delProductType);
+
+router.get('/category/:TypCatId', tokenOrApiKeyIsValid, productTypeController.getproductTypeByCategory);
 
 router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.setProductType);
 

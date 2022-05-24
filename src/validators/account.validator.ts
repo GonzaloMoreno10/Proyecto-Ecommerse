@@ -7,7 +7,7 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
   const post: INewUser = req.body;
   const errors = [];
   if (post.UsrEmail) {
-    const exists = await userRepository.getUsersByEmail(post.UsrEmail);
+    const exists = await userRepository.getByEmail(post.UsrEmail);
     if (exists) errors.push(127);
   }
   if (post.UsrDoc) {

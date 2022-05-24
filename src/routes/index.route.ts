@@ -6,7 +6,7 @@ export * from './model.route';
 export * from './orders.route';
 export * from './product.route';
 export * from './productType.route';
-export * from './properties.route';
+export * from './productProperty.route';
 export * from './serverConfig.route';
 export * from './stats.route';
 export * from './users.route';

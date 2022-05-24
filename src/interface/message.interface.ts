@@ -6,6 +6,8 @@ export interface IMensaje {
   updatedAt: Date;
   createdUser: number;
   updatedUser: number;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface IAutor {
@@ -18,4 +20,6 @@ export interface IAutor {
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

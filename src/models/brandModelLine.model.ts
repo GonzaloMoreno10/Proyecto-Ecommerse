@@ -13,6 +13,8 @@ class PRBML extends Model<IBrandModelLine, INewBrandModelLine> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const brandModelLineModel = (sequelize: any) => {
@@ -52,6 +54,14 @@ export const brandModelLineModel = (sequelize: any) => {
         type: DataTypes.DATE(),
         allowNull: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
       enabled: {
         type: DataTypes.BOOLEAN(),
         allowNull: false,
@@ -64,7 +74,7 @@ export const brandModelLineModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

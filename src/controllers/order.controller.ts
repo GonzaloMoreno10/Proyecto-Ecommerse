@@ -53,7 +53,7 @@ class OrderController {
   async getOrdersByUser(req: Request, res: Response) {
     const userData = res.locals.userData;
     try {
-      const result = await orderRepository.getOrdersByUser(parseInt(userData.userId));
+      const result = await orderRepository.getByUser(parseInt(userData.userId));
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
@@ -64,7 +64,7 @@ class OrderController {
   async getOrders(_, res: Response) {
     const userData = res.locals.userData;
     try {
-      const result = await orderRepository.getOrdersByUser(parseInt(userData.userId));
+      const result = await orderRepository.getByUser(parseInt(userData.userId));
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

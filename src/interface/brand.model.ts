@@ -8,6 +8,8 @@ export interface IBrand {
   updatedAt: Date;
   createdUser: number;
   updatedUser: number;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewBrand {
@@ -20,6 +22,8 @@ export interface INewBrand {
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
+  deletedAt?: Date;
+  deletedUser?: number;
 }
 
 export interface IBrand2 {

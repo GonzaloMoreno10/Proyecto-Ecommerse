@@ -5,7 +5,7 @@ import { constructResponse } from '../utils/constructResponse';
 class MarcasController {
   async getMarcas(req: Request, res: Response) {
     try {
-      const result = await brandsRepository.getBrands();
+      const result = await brandsRepository.get();
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
@@ -19,6 +19,7 @@ class MarcasController {
       const result = await brandsRepository.getBrandsByProductType(parseInt(BraTypId));
       return constructResponse(121, res, result);
     } catch (err) {
+      console.log(err);
       return constructResponse(500, res);
     }
   }
@@ -26,17 +27,34 @@ class MarcasController {
   async getMarcasByCategory(req: Request, res: Response) {
     try {
       const { BraCatId } = req.params;
-      const result = await brandsRepository.getBrandsByCategoryId(parseInt(BraCatId));
+      const result = await brandsRepository.getByCategory(parseInt(BraCatId));
       return constructResponse(121, res, result);
     } catch (err) {
       return constructResponse(500, res);
     }
   }
 
+  async delBrand(req: Request, res: Response) {
+    try {
+      console.log(res.locals.userData);
+      const { BraId } = req.params;
+      const userId = res.locals.userData.userId;
+      const bra = await brandsRepository.getById(parseInt(BraId));
+      if (!bra) {
+        return constructResponse(123, res);
+      }
+      console.log(userId);
+      await brandsRepository.del(parseInt(BraId), userId);
+      return constructResponse(121, res);
+    } catch (err) {
+      return constructResponse(500, res, err);
+    }
+  }
+
   async getBrandsById(req: Request, res: Response) {
     try {
       const { BraId } = req.params;
-      const result = await brandsRepository.getBrandsById(parseInt(BraId));
+      const result = await brandsRepository.getById(parseInt(BraId));
       if (!result) {
         return constructResponse(123, res);
       }
@@ -57,7 +75,7 @@ class MarcasController {
         BraTypId,
         createdUser: res.locals.userData.userId,
       };
-      const result = await brandsRepository.setBrand(brand);
+      const result = await brandsRepository.set(brand);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

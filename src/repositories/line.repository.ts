@@ -2,42 +2,37 @@ import { LineModel } from '../datasource/sequelize';
 import { ILine, INewLine } from '../interface/line.interface';
 
 class LineRepository {
-  async getLines(enabled = true) {
+  async get(enabled = true): Promise<ILine[]> {
     return await LineModel.findAll({ where: { enabled } });
   }
 
-  async getLineById(LinId: number, enabled = true) {
+  async getById(LinId: number, enabled = true): Promise<ILine> {
     const whereClause = {
       LinId: LinId,
       enabled: !enabled ? '' : true,
     };
-    const result = await LineModel.findOne({ where: whereClause });
-    return result;
+    return await LineModel.findOne({ where: whereClause });
   }
 
-  async getLinesByModel(LinModId: number) {
-    const result = LineModel.findAll({ where: { LinModId, enabled: true } });
-    return result;
+  async getByModel(LinModId: number): Promise<ILine[]> {
+    return await LineModel.findAll({ where: { LinModId, enabled: true } });
   }
 
-  async setLine(line: INewLine) {
-    const result = await LineModel.create(line);
-    return result;
+  async set(line: INewLine): Promise<ILine> {
+    return await LineModel.create(line);
   }
 
-  async updLine(line: ILine, LinId: number) {
+  async upd(line: ILine, LinId: number) {
     return await LineModel.update(line, { where: { LinId } });
   }
 
-  async delLine(LinId: number, updatedUser: number) {
-    const res = await LineModel.findOne({ where: { LinId, enabled: true } });
+  async del(LinId: number, userId: number) {
+    const res = await LineModel.findOne({ where: { LinId, enabled: true }, raw: true });
     if (res) {
-      const lineUpdate = Object.assign(res).dataValues;
-      lineUpdate.UpdatedAt = new Date();
-      lineUpdate.enabled = false;
-      lineUpdate.updatedUser = updatedUser;
-      const result = await LineModel.update(lineUpdate, { where: { LinId: lineUpdate.LinId } });
-      return result;
+      res.deletedAt = new Date();
+      res.enabled = false;
+      res.deletedUser = userId;
+      return await LineModel.update(res, { where: { LinId: res.LinId } });
     }
   }
 }

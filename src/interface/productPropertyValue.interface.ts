@@ -8,6 +8,8 @@ export interface IProductPropertyValue {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewProductPropertyValue {
@@ -19,5 +21,7 @@ export interface INewProductPropertyValue {
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled: boolean;
+  enabled?: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }

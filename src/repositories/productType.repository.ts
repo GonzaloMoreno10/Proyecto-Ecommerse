@@ -1,30 +1,36 @@
-import { CategoryModel, ProductTypeModel } from '../datasource/sequelize';
-import { INewProductType } from '../interface/productType.interface';
-const { Op } = require('sequelize');
+import { ProductTypeModel } from '../datasource/sequelize';
+import { INewProductType, IProductType } from '../interface/productType.interface';
 class ProductTypeRepository {
-  async getProductTypes() {
-    const result = await ProductTypeModel.findAll();
-    return result;
+  async get() {
+    return await ProductTypeModel.findAll({ where: { enabled: true } });
   }
 
-  async setProductType(productType: INewProductType) {
+  async set(productType: INewProductType): Promise<IProductType> {
     return await ProductTypeModel.create(productType);
   }
 
-  async getProductTypesByCategory(categoryId: number) {
-    const result = await ProductTypeModel.findAll({
-      where: { TypCatId: categoryId },
-      include: [{ model: CategoryModel, required: true }],
+  async getByCategory(TypCatId: number) {
+    return await ProductTypeModel.findAll({
+      where: { TypCatId, enabled: true },
     });
-    return result;
   }
 
-  async getProductTypeById(id: number) {
-    const result = await ProductTypeModel.findOne({
-      where: { TypId: id },
-      include: [{ model: CategoryModel, required: true }],
+  async del(TypId: number, userId: number) {
+    const pt = await ProductTypeModel.findOne({ where: { TypId, enabled: true }, raw: true });
+    console.log(pt);
+    if (pt) {
+      pt.deletedAt = new Date();
+      pt.enabled = false;
+      pt.deletedUser = userId;
+
+      return await ProductTypeModel.update(pt, { where: { TypId } });
+    }
+  }
+
+  async getById(TypId: number): Promise<IProductType> {
+    return await ProductTypeModel.findOne({
+      where: { TypId, enabled: true },
     });
-    return result;
   }
 }
 

@@ -15,6 +15,8 @@ class FAORP extends Model<IOrderProduct, INewOrderProduct> {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const orderProductsModel = (sequelize: any) => {
@@ -47,7 +49,7 @@ export const orderProductsModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.NUMBER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.NUMBER,
@@ -67,6 +69,14 @@ export const orderProductsModel = (sequelize: any) => {
         allowNull: false,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -74,7 +84,7 @@ export const orderProductsModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

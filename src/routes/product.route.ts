@@ -19,8 +19,6 @@ router.get('/', tokenOrApiKeyIsValid, asyncHandler(productoController.get));
 
 router.get('/:id', tokenOrApiKeyIsValid, asyncHandler(productoController.getById));
 
-router.put('/pictures/:fileName', tokenOrApiKeyIsValid, upload.single('file'), productoController.setImage);
-
 router.get('/offers/all', tokenOrApiKeyIsValid, productoController.getOffers);
 
 router.get('/orders/user/:userId', tokenOrApiKeyIsValid, productoController.getProductsByOrdersUser);

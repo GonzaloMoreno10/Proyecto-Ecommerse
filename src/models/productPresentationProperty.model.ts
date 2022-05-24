@@ -15,6 +15,8 @@ class PPPRE extends Model<IProductPresentationProperty, INewProductPresentationP
   declare createdAt: Date;
   declare updatedAt: Date;
   declare enabled: boolean;
+  declare deletedAt: Date;
+  declare deletedUser: number;
 }
 
 export const productPresentationPropertyModel = (sequelize: any) => {
@@ -35,7 +37,7 @@ export const productPresentationPropertyModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.NUMBER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.NUMBER,
@@ -55,6 +57,14 @@ export const productPresentationPropertyModel = (sequelize: any) => {
         allowNull: false,
         defaultValue: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE(),
+        allowNull: true,
+      },
+      deletedUser: {
+        type: DataTypes.INTEGER(),
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
@@ -62,7 +72,7 @@ export const productPresentationPropertyModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled'],
+          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
         },
       },
     }

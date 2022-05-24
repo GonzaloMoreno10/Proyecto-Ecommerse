@@ -16,4 +16,6 @@ router.get('/category/:BraCatId', tokenOrApiKeyIsValid, marcasController.getMarc
 
 router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getBrandsById);
 
+router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.delBrand);
+
 export default router;

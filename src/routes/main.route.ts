@@ -7,7 +7,7 @@ import serverConfigRoute from './serverConfig.route';
 //import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
 import productTypeRoute from './productType.route';
-import propertiesRoute from './properties.route';
+import propertiesRoute from './productProperty.route';
 import modelosRoute from './model.route';
 import lineasRoute from './line.route';
 import statsRoute from './stats.route';
@@ -27,7 +27,7 @@ router.use('/brands', brandsRoute);
 
 router.use('/productTypes', productTypeRoute);
 
-router.use('/properties', propertiesRoute);
+router.use('/productProperties', propertiesRoute);
 
 router.use('/categories', categoriaRoute);
 

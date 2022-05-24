@@ -20,6 +20,8 @@ export interface IProduct {
   createdUser: number;
   updatedUser: number;
   enabled: boolean;
+  deletedAt: Date;
+  deletedUser: number;
 }
 
 export interface INewProduct {
@@ -41,6 +43,8 @@ export interface INewProduct {
   createdUser: number;
   updatedUser?: number;
   enabled?: boolean;
+  deletedAt?: Date;
+  deletedUser?: number;
 }
 
 export interface IProductRelations extends IProduct {
