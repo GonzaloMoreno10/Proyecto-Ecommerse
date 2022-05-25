@@ -12,6 +12,8 @@ import modelosRoute from './model.route';
 import lineasRoute from './line.route';
 import statsRoute from './stats.route';
 import brandsRoute from './brand.route';
+import ppsuiRoute from './ppsui.route';
+import ppvalRoute from './ppval.route';
 
 const router = Router();
 
@@ -36,6 +38,10 @@ router.use('/models', modelosRoute);
 router.use('/lines', lineasRoute);
 
 router.use('/server', serverConfigRoute);
+
+router.use('/propertySubitems', ppsuiRoute);
+
+router.use('/propertyValues', ppvalRoute);
 
 //router.use('/messages', mensajeRouter);
 

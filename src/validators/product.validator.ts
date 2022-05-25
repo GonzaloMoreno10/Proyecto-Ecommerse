@@ -1,23 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { INewProduct } from '../interface';
 import { brandModelLineRepository } from '../repositories/brandModelLine.repository';
-import { brandsRepository } from '../repositories/brands.repository';
 import { categoryRepository } from '../repositories/category.repository';
 import { productTypeRepository } from '../repositories/productType.repository';
 import { constructResponse } from '../utils/constructResponse';
+import { validateBindings } from '../utils/validateBindings';
 
 export const productValidator = async (req: Request, res: Response, next: NextFunction) => {
   const product: INewProduct = req.body;
   const errors = [];
-  if (
-    !product.ProName ||
-    !product.ProPrice ||
-    !product.ProStock ||
-    !product.ProTypId ||
-    !product.ProCatId ||
-    !product.ProBmlId ||
-    (product.ProIsOffer && !product.ProDiscount)
-  ) {
+  const obligatorios = ['ProName', 'ProPrice', 'ProStock', 'ProTypId', 'ProCatId', 'ProBmlId'];
+  const missing = validateBindings(obligatorios, product);
+  if (missing.length > 0) {
     errors.push(534);
   }
   if (product.ProTypId) {
@@ -39,7 +33,7 @@ export const productValidator = async (req: Request, res: Response, next: NextFu
     }
   }
   if (errors.length > 0) {
-    return constructResponse(errors, res);
+    return constructResponse(errors, res, undefined, undefined, validateBindings(obligatorios, product));
   }
 
   const prod: INewProduct = {

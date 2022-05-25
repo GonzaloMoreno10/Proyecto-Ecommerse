@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { API_URL } from '../constants/venv';
 import { INewProduct, IProduct, IProductRelations } from '../interface/product.interface';
 import { productRepository } from '../repositories/product.repository';
 import { constructResponse } from '../utils/constructResponse';
@@ -110,10 +111,32 @@ export class ProductoController {
     }
   }
 
-  async get(_, res: Response) {
+  async get(req: Request, res: Response) {
     try {
-      const result: IProductRelations[] = await productRepository.get();
-      return constructResponse(121, res, result);
+      const { pageSize, page } = req.query;
+      if (pageSize && page) {
+        let nextPage: string = '';
+        const limit: number = Number(pageSize || 10);
+        const offset: number = Number(page || 0) * limit;
+        const products = await productRepository.get(limit, offset);
+        if (products.length > 0) {
+          const quantity = await productRepository.count();
+          const nextPageProds = await productRepository.get(limit, offset + 1);
+          if (nextPageProds.length > 0) {
+            nextPage = `${API_URL}/products?pageSize=${pageSize}&page=${Number(page) + 1}`;
+          }
+          return constructResponse(121, res, {
+            quantity,
+            page: Number(page),
+            perPage: Number(pageSize),
+            nextPage: nextPage ? nextPage : null,
+            products,
+          });
+        }
+        return constructResponse(123, res);
+      } else {
+        return constructResponse(121, res, await productRepository.get(10, 0));
+      }
     } catch (err) {
       console.log(err);
     }

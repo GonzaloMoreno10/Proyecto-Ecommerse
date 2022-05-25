@@ -2,10 +2,21 @@ import { NextFunction, Request, Response } from 'express';
 import { INewUser } from '../interface';
 import { userRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
+import { validateBindings } from '../utils/validateBindings';
+import emailValidator from 'email-validator';
+import { UserModel } from '../datasource/sequelize';
 
 export const validAccountData = async (req: Request, res: Response, next: NextFunction) => {
   const post: INewUser = req.body;
   const errors = [];
+  const bindings = ['UsrEmail', 'UsrPass', 'UsrName', 'UsrAddress', 'UsrBirthDate', 'UsrPhone'];
+  const missing = validateBindings(bindings, post);
+  if (!emailValidator.validate(post.UsrEmail)) {
+    errors.push(574);
+  }
+  if (missing.length > 0) {
+    errors.push(534);
+  }
   if (post.UsrEmail) {
     const exists = await userRepository.getByEmail(post.UsrEmail);
     if (exists) errors.push(127);
@@ -36,7 +47,7 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
     return next();
   } else {
     console.log(errors);
-    return constructResponse(errors, res);
+    return constructResponse(errors, res, undefined, undefined, missing);
   }
 };
 

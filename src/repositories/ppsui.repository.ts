@@ -1,5 +1,5 @@
 import { ProductPropertySubItemModel } from '../datasource/sequelize';
-import { IProductPropertySubItem } from '../interface/productPropertySubItem.interface';
+import { INewProductPropertySubItem, IProductPropertySubItem } from '../interface/productPropertySubItem.interface';
 
 class PpsuiRepository {
   async get(): Promise<IProductPropertySubItem[]> {
@@ -10,7 +10,7 @@ class PpsuiRepository {
     return await ProductPropertySubItemModel.findOne({ where: { SuiId, enabled: true } });
   }
 
-  async set(sui: IProductPropertySubItem): Promise<IProductPropertySubItem> {
+  async set(sui: INewProductPropertySubItem): Promise<IProductPropertySubItem> {
     return await ProductPropertySubItemModel.create(sui);
   }
 

@@ -15,11 +15,11 @@ export interface INewProductPropertySubItem {
   SuiId?: number;
   SuiProId: number;
   SuiName: string;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;
-  enabled: boolean;
+  enabled?: boolean;
   deletedAt?: Date;
   deletedUser?: number;
 }

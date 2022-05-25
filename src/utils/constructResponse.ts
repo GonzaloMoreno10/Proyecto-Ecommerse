@@ -7,12 +7,12 @@ export const constructResponse = async (
   res: Response,
   data?: Object | Object[],
   message?: string,
-  fieldName?: string
+  fieldName?: string[] | string
 ) => {
   const response: IResponses[] = await responseRepository.getByResIds(resId);
   response.map(res => {
-    if (res.resId == 508) {
-      res.resDesc = res.resDesc + ' ' + fieldName;
+    if (res.resId == 534) {
+      res.resDesc = res.resDesc + ': [' + fieldName + ']';
     }
   });
   let toReturn: IResponse;

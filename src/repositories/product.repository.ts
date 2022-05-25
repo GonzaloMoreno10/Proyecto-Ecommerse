@@ -77,36 +77,17 @@ class ProductRepository {
     return <IProduct[]>(<unknown>res);
   }
 
-  async get(): Promise<IProductRelations[]> {
+  async count(): Promise<number> {
+    return await ProductModel.count();
+  }
+
+  async get(limit: number, offset: number): Promise<IProduct[]> {
     const result = await ProductModel.findAll({
-      attributes: { exclude: ['PrCatId', 'PrBraId', 'PrTypId', 'PrBmlId'] },
-      where: {
-        enabled: true,
-      },
-      include: [
-        {
-          model: BrandModelLineModel,
-          attributes: ['BmlId'],
-          where: { enabled: true },
-          required: true,
-          include: [
-            { model: BrandModel, attributes: ['BraId', 'BraName'] },
-            { model: ModelModel, attributes: ['ModId', 'ModName'] },
-            { model: LineModel, attributes: ['LinId', 'LinName'] },
-          ],
-        },
-        {
-          model: ProductTypeModel,
-          where: { enabled: true },
-          required: true,
-          include: [
-            { model: CategoryModel, attributes: ['CatId', 'CatName'], where: { enabled: true }, required: true },
-          ],
-          attributes: ['TypId', 'TypName'],
-        },
-      ],
+      where: { enabled: true },
+      limit,
+      offset,
     });
-    return <IProductRelations[]>(<unknown>result);
+    return result;
   }
 
   async getByProductType(productType: number) {
