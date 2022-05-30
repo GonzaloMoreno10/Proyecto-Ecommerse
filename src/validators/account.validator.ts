@@ -4,12 +4,11 @@ import { userRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
 import { validateBindings } from '../utils/validateBindings';
 import emailValidator from 'email-validator';
-import { UserModel } from '../datasource/sequelize';
 
 export const validAccountData = async (req: Request, res: Response, next: NextFunction) => {
   const post: INewUser = req.body;
   const errors = [];
-  const bindings = ['UsrEmail', 'UsrPass', 'UsrName', 'UsrAddress', 'UsrBirthDate', 'UsrPhone'];
+  const bindings = ['UsrEmail', 'UsrPass', 'UsrName', 'UsrAddress', 'UsrBirthDate', 'UsrPhone', 'UsrDoc', 'UsrDocType'];
   const missing = validateBindings(bindings, post);
   if (!emailValidator.validate(post.UsrEmail)) {
     errors.push(574);

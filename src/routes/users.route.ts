@@ -16,9 +16,9 @@ const router = Router();
 
 router.get('/mailValidation/:userId', authContrroller.accountVerification);
 
-router.get('/:id', tokenOrApiKeyIsValid, userController.getUsersById);
-router.get('/', tokenOrApiKeyIsValid, userController.getUsers);
+router.get('/:id', tokenOrApiKeyIsValid, userController.getById);
+router.get('/', tokenOrApiKeyIsValid, userController.get);
 
-router.post('/signup', emptyBodyValidator, validAccountData, userController.createUser);
+router.post('/signup', emptyBodyValidator, validAccountData, userController.set);
 
 export default router;

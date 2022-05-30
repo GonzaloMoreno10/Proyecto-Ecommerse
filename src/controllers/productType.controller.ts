@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { INewProductType } from '../interface/productType.interface';
 import { constructResponse } from '../utils/constructResponse';
 class ProductTypeController {
-  async getProductTypeByid(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { TypId } = req.params;
       const result = await productTypeRepository.getById(parseInt(TypId));
@@ -15,7 +15,7 @@ class ProductTypeController {
       return constructResponse(500, res);
     }
   }
-  async getproductTypeByCategory(req: Request, res: Response) {
+  async getByCategory(req: Request, res: Response) {
     try {
       const { TypCatId } = req.params;
       const result = await productTypeRepository.getByCategory(parseInt(TypCatId));
@@ -26,7 +26,7 @@ class ProductTypeController {
     }
   }
 
-  async setProductType(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     try {
       const { TypCatId, TypName } = req.body;
       const producType: INewProductType = {
@@ -41,7 +41,7 @@ class ProductTypeController {
     }
   }
 
-  async delProductType(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     try {
       const { TypId } = req.params;
       const userId = res.locals.userData.userId;
@@ -56,7 +56,7 @@ class ProductTypeController {
     }
   }
 
-  async getProductTypes(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
       const result = await productTypeRepository.get();
       return constructResponse(121, res, result);

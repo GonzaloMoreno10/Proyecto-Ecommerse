@@ -6,16 +6,10 @@ import { productPropertyValidator } from '../validators/productProperty.validato
 
 const router = Router();
 
-router.get('/:productTypeId', tokenOrApiKeyIsValid, productPropertyController.getPropertiesByProductType);
+router.get('/:productTypeId', tokenOrApiKeyIsValid, productPropertyController.getByProductType);
 
 router.get('/', tokenOrApiKeyIsValid, productPropertyController.get);
 
-router.post(
-  '/',
-  tokenOrApiKeyIsValid,
-  emptyBodyValidator,
-  productPropertyValidator,
-  productPropertyController.setProductProperty
-);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productPropertyValidator, productPropertyController.set);
 
 export default router;

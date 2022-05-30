@@ -1,9 +1,13 @@
 import getCategorias from './getCategorias';
 import createCategoria from './createCategoria';
+import getCategoryById from './getCategoryById';
 
 export default {
-  '/categorias': {
+  '/categories': {
     ...getCategorias,
     ...createCategoria,
+  },
+  '/categories/{CatId}': {
+    ...getCategoryById,
   },
 };

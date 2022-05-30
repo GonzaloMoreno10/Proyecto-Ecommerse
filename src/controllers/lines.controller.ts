@@ -9,7 +9,7 @@ class LineaController {
     return constructResponse(121, res, lineas);
   }
 
-  async getLine(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     const { LinId } = req.params;
     let result: ILine[] | ILine;
     try {
@@ -25,7 +25,7 @@ class LineaController {
     }
   }
 
-  async delLine(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     const LinId = parseInt(req.params.LinId);
     try {
       const line = await lineRepository.getById(LinId);
@@ -40,7 +40,7 @@ class LineaController {
     }
   }
 
-  async setLinea(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     const { LinModId, LinName } = req.body;
     const createdUser = res.locals.userData.userId;
     if (!LinModId || !LinName) {

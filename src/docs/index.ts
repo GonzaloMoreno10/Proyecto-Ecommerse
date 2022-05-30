@@ -1,15 +1,14 @@
 import basicInfo from './basicInfo';
-import cart from './cart';
-import chat from './chat';
 import components from './components';
-import login from './login';
+import login from './auth';
 import orders from './orders';
 import products from './products';
 import servers from './servers';
 import tags from './tags';
-import users from './users';
+import account from './account';
 import info from './info';
-import categorias from './categorias';
+import categorias from './categories';
+import subCategories from './subCategories';
 
 export default {
   ...basicInfo,
@@ -18,12 +17,11 @@ export default {
   ...components,
   paths: {
     ...products,
-    ...cart,
     ...login,
-    ...users,
+    ...account,
     ...orders,
-    ...chat,
     ...info,
     ...categorias,
+    ...subCategories,
   },
 };
