@@ -1,8 +1,8 @@
 export default {
-  delete: {
-    tags: ['Products'],
-    description: 'Eliminar un producto',
-    operationId: 'deleteProduct',
+  get: {
+    tags: ['Categories'],
+    description: 'Lista las categorias',
+    operationId: 'getCategory',
     parameters: [
       {
         name: 'apikey',
@@ -13,35 +13,31 @@ export default {
         description: 'Apikey from product service',
       },
       {
-        name: 'id',
-        in: 'path',
+        name: 'CatName',
+        in: 'query',
         schema: {
-          $ref: '#/components/schemas/ProductId',
+          type: 'string',
         },
-        required: true,
-        description: 'Product ID',
+        description: 'Category Name',
       },
     ],
     responses: {
       200: {
-        description: 'Producto eliminado correctamente',
-      },
-      401: {
-        description: 'Unauthorized',
+        description: 'Categories',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ObjectSuccess',
             },
           },
         },
       },
-      404: {
-        description: 'El producto no existe',
+      401: {
+        escription: 'Unauthorized',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ErrorResponse',
             },
           },
         },

@@ -24,6 +24,25 @@ export interface IProduct {
   deletedUser: number;
 }
 
+export interface IProductFilters {
+  ProName: string;
+  MaxPrice: number;
+  MinPrice: number;
+  MaxStock: number;
+  MinStock: number;
+  ProCod: number;
+  ProCatId: number;
+  ProTypId: number;
+  ProIsOffer: boolean;
+  MinDiscount: number;
+  MaxDiscount: number;
+  ProUsrId: number;
+  enabled: boolean;
+  sort: string;
+}
+
+export type IProductQueryFields = 'PRBML' | 'PRPRO' | 'PRTYP';
+
 export interface INewProduct {
   ProId?: number;
   ProName: string;

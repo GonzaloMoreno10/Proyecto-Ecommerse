@@ -103,6 +103,61 @@ export default {
           },
         },
       },
+      ObjectSuccess: {
+        type: 'object',
+        description: 'Success template',
+        properties: {
+          code: {
+            type: 'number',
+            description: 'Success code',
+            example: '200',
+          },
+          message: {
+            type: 'string',
+            description: 'Success message',
+            example: 'Exito',
+          },
+          result: {
+            type: 'object',
+            description: 'Response result',
+          },
+        },
+      },
+      ErrorResponse: {
+        type: 'object',
+        description: 'Error response',
+        properties: {
+          code: {
+            type: 'number',
+            description: 'Http status',
+            example: '401',
+          },
+          errors: {
+            type: 'object',
+            properties: {
+              schema: {
+                $ref: '#/components/schemas/ObjectError',
+              },
+            },
+          },
+        },
+      },
+      ObjectError: {
+        type: 'object',
+        description: 'Error template',
+        properties: {
+          code: {
+            type: 'string',
+            description: 'Error code',
+            example: 'ERROR CODE',
+          },
+          message: {
+            type: 'string',
+            description: 'Error message',
+            example: 'Error message',
+          },
+        },
+      },
       UserData: {
         type: 'object',
         description: 'Logged in user data.',

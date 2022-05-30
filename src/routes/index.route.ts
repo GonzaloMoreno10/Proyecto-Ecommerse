@@ -1,5 +1,5 @@
 export * from './auth.route';
-export * from './category.routes';
+export * from './category.route';
 export * from './line.route';
 export * from './brand.route';
 export * from './model.route';

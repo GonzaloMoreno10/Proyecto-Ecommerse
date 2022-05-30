@@ -8,8 +8,6 @@ const router = Router();
 
 router.get('/:id?', tokenOrApiKeyIsValid, categoriaController.get);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, validCategory, categoriaController.create);
-
-router.get('/name/:CatName', tokenOrApiKeyIsValid, categoriaController.getCategoriesByName);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, validCategory, categoriaController.set);
 
 export default router;

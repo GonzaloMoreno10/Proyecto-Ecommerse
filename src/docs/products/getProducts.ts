@@ -12,92 +12,156 @@ export default {
         },
         description: 'Apikey from product service',
       },
-      // {
-      //   name: 'nombre',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'string',
-      //   },
-      //   description: 'Nombre del producto',
-      //   example: 'Auricular RedRagon Zeus',
-      // },
-      // {
-      //   name: 'codigo',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'string',
-      //   },
-      //   description: 'Codigo del producto',
-      //   example: '1235',
-      // },
-      // {
-      //   name: 'minPrice',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'number',
-      //   },
-      //   description: 'Precio minimo',
-      //   example: '100',
-      // },
-      // {
-      //   name: 'maxPrice',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'number',
-      //   },
-      //   description: 'Precio maximo',
-      //   example: '200',
-      // },
-      // {
-      //   name: 'minStock',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'number',
-      //   },
-      //   description: 'Stock minimo',
-      //   example: '20',
-      // },
-      // {
-      //   name: 'maxStock',
-      //   in: 'query',
-      //   schema: {
-      //     type: 'number',
-      //   },
-      //   description: 'Stock maximo',
-      //   example: '30',
-      // },
+      {
+        name: 'authorization',
+        in: 'header',
+        schema: {
+          type: 'string',
+        },
+        description: 'Bearer token',
+      },
+      {
+        name: 'ProCatId',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Category id',
+      },
+      {
+        name: 'ProTypId',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'SubCategory id',
+      },
+      {
+        name: 'ProCod',
+        in: 'query',
+        schema: {
+          type: 'string',
+        },
+        description: 'Product Code',
+      },
+      {
+        name: 'MaxPrice',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Max price',
+      },
+      {
+        name: 'MinPrice',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Min price',
+      },
+      {
+        name: 'MaxStock',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Max stock',
+      },
+      {
+        name: 'MinStock',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Min stock',
+      },
+      {
+        name: 'MaxDiscount',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Max Discount',
+      },
+      {
+        name: 'MinDiscount',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'Min Discount',
+      },
+      {
+        name: 'enabled',
+        in: 'query',
+        schema: {
+          type: 'boolean',
+        },
+        default: true,
+        description: 'Is product enabled?',
+      },
+      {
+        name: 'ProIsOffer',
+        in: 'query',
+        schema: {
+          type: 'boolean',
+        },
+        default: false,
+        description: 'Is offer?',
+      },
+      {
+        name: 'ProUsrId',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        description: 'User created',
+      },
+      {
+        name: 'ProName',
+        in: 'query',
+        schema: {
+          type: 'string',
+        },
+        description: 'Product name',
+      },
+      {
+        name: 'pageSize',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        default: 10,
+        description: 'Products per page',
+      },
+      {
+        name: 'page',
+        in: 'query',
+        schema: {
+          type: 'number',
+        },
+        default: 0,
+        description: 'Page number',
+      },
     ],
     responses: {
       200: {
-        description: 'Productos obtenidos',
+        description: 'Products',
         content: {
           'application/json': {
             schema: {
-              type: 'array',
-              description: 'Array de productos',
-              items: {
-                $ref: '#/components/schemas/Product',
-              },
+              $ref: '#/components/schemas/ObjectSuccess',
             },
           },
         },
       },
       401: {
-        description: 'Unauthorized',
+        escription: 'Unauthorized',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
-            },
-          },
-        },
-      },
-      404: {
-        description: 'No hay productos cargados',
-        content: {
-          'application/json': {
-            schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ErrorResponse',
             },
           },
         },

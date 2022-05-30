@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import orderRoute from './orders.route';
 import productoRoute from './product.route';
-import categoriaRoute from './category.routes';
+import categoriaRoute from './category.route';
 import userRoute from './users.route';
 import serverConfigRoute from './serverConfig.route';
 //import mensajeRouter from './mensajes.route';
@@ -14,6 +14,7 @@ import statsRoute from './stats.route';
 import brandsRoute from './brand.route';
 import ppsuiRoute from './ppsui.route';
 import ppvalRoute from './ppval.route';
+import pppreRoute from './pppre.route';
 
 const router = Router();
 
@@ -30,6 +31,8 @@ router.use('/brands', brandsRoute);
 router.use('/productTypes', productTypeRoute);
 
 router.use('/productProperties', propertiesRoute);
+
+router.use('/presentationProperty', pppreRoute);
 
 router.use('/categories', categoriaRoute);
 

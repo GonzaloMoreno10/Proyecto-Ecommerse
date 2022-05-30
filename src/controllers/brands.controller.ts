@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { INewBrand } from '../interface/brand.model';
 import { constructResponse } from '../utils/constructResponse';
 class MarcasController {
-  async getMarcas(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
       const result = await brandsRepository.get();
       return constructResponse(121, res, result);
@@ -13,7 +13,7 @@ class MarcasController {
     }
   }
 
-  async getMarcasByProductType(req: Request, res: Response) {
+  async getByProductType(req: Request, res: Response) {
     try {
       const { BraTypId } = req.params;
       const result = await brandsRepository.getBrandsByProductType(parseInt(BraTypId));
@@ -24,7 +24,7 @@ class MarcasController {
     }
   }
 
-  async getMarcasByCategory(req: Request, res: Response) {
+  async getByCategory(req: Request, res: Response) {
     try {
       const { BraCatId } = req.params;
       const result = await brandsRepository.getByCategory(parseInt(BraCatId));
@@ -34,7 +34,7 @@ class MarcasController {
     }
   }
 
-  async delBrand(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     try {
       console.log(res.locals.userData);
       const { BraId } = req.params;
@@ -51,7 +51,7 @@ class MarcasController {
     }
   }
 
-  async getBrandsById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { BraId } = req.params;
       const result = await brandsRepository.getById(parseInt(BraId));
@@ -64,7 +64,7 @@ class MarcasController {
     }
   }
 
-  async setMarca(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     try {
       const { BraName, BraTypId } = req.body;
       if (!BraName || !BraTypId) {

@@ -50,7 +50,7 @@ class OrderController {
   //   }
   // }
 
-  async getOrdersByUser(req: Request, res: Response) {
+  async getByUser(req: Request, res: Response) {
     const userData = res.locals.userData;
     try {
       const result = await orderRepository.getByUser(parseInt(userData.userId));
@@ -61,7 +61,7 @@ class OrderController {
     }
   }
 
-  async getOrders(_, res: Response) {
+  async get(_, res: Response) {
     const userData = res.locals.userData;
     try {
       const result = await orderRepository.getByUser(parseInt(userData.userId));

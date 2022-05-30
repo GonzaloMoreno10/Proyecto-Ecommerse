@@ -6,16 +6,16 @@ import { emptyBodyValidator } from '../validators/emptyBody.validator';
 
 const router = Router();
 
-router.get('/', tokenOrApiKeyIsValid, marcasController.getMarcas);
+router.get('/', tokenOrApiKeyIsValid, marcasController.get);
 
-router.get('/productType/:BraTypId', tokenOrApiKeyIsValid, marcasController.getMarcasByProductType);
+router.get('/productType/:BraTypId', tokenOrApiKeyIsValid, marcasController.getByProductType);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.setMarca);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
 
-router.get('/category/:BraCatId', tokenOrApiKeyIsValid, marcasController.getMarcasByCategory);
+router.get('/category/:BraCatId', tokenOrApiKeyIsValid, marcasController.getByCategory);
 
-router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getBrandsById);
+router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getById);
 
-router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.delBrand);
+router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.del);
 
 export default router;

@@ -1,4 +1,4 @@
-import { INewProduct, IProduct, IProductRelations } from '../interface';
+import { INewProduct, IProduct, IProductFilters, IProductQueryFields, IProductRelations } from '../interface';
 import {
   CategoryModel,
   LineModel,
@@ -9,7 +9,11 @@ import {
   OrderProductsModel,
   ProductModel,
   ProductTypeModel,
+  sequelize,
+  ProductPresentationPropertyModel,
 } from '../datasource/sequelize';
+import { sortProduct } from '../utils/sortProducts';
+import { ModuleResolutionKind } from 'typescript';
 const { Op } = require('sequelize');
 class ProductRepository {
   async getByBrand(id: number) {
@@ -81,12 +85,84 @@ class ProductRepository {
     return await ProductModel.count();
   }
 
-  async get(limit: number, offset: number): Promise<IProduct[]> {
+  async get(limit: number, offset: number, filter?: Partial<IProductFilters>, fields?: any): Promise<IProduct[]> {
+    const whereClause: any = { enabled: filter?.enabled ?? true, ProIsOffer: filter?.ProIsOffer ?? '' };
+    if (filter) {
+      if (filter.ProCod) whereClause.ProCod = filter.ProCod;
+      if (filter.ProUsrId) whereClause.ProUsrId = filter.ProUsrId;
+      if (filter.ProTypId) whereClause.ProTypId = filter.ProTypId;
+      if (filter.ProCatId) whereClause.ProCatId = filter.ProCatId;
+      if (filter.MinStock && filter.MaxStock) {
+        whereClause.ProStock = { [Op.between]: [filter.MinStock, filter.MaxStock] };
+      } else {
+        if (filter.MaxStock) {
+          whereClause.ProStock = { [Op.lte]: filter.MaxStock };
+        } else {
+          if (filter.MinStock) {
+            whereClause.ProStock = { [Op.gte]: filter.MinStock };
+          }
+        }
+      }
+      if (filter.MinPrice && filter.MaxPrice) {
+        whereClause.ProPrice = { [Op.between]: [filter.MinPrice, filter.MaxPrice] };
+      } else {
+        if (filter.MaxPrice) {
+          whereClause.ProPrice = { [Op.lte]: filter.MaxPrice };
+        } else {
+          if (filter.MinPrice) {
+            whereClause.ProPrice = { [Op.gte]: filter.MinPrice };
+          }
+        }
+      }
+      if (filter.MinDiscount && filter.MaxDiscount) {
+        whereClause.ProDiscount = { [Op.between]: [filter.MinDiscount, filter.MaxDiscount] };
+      } else {
+        if (filter.MaxDiscount) {
+          whereClause.ProDiscount = { [Op.lte]: filter.MaxDiscount };
+        } else {
+          if (filter.MinDiscount) {
+            whereClause.ProDiscount = { [Op.gte]: filter.MinDiscount };
+          }
+        }
+      }
+      if (filter.ProName)
+        whereClause.ProName = {
+          [Op.or]: [
+            { [Op.like]: `%${filter.ProName}%` },
+            { [Op.like]: `%${filter.ProName.substring(0, filter.ProName.length / 2)}%` },
+            { [Op.like]: `%${filter.ProName.split(' ')[0]}%` },
+          ],
+        };
+    }
     const result = await ProductModel.findAll({
-      where: { enabled: true },
+      where: whereClause,
+      attributes: filter?.ProName
+        ? {
+            include: [
+              [
+                sequelize.literal(`(
+              select
+                case
+                  when ProName like '${filter.ProName}' then 4
+                  when ProName like '%${filter.ProName}%' then 3
+                  when ProName like '%${filter.ProName.substring(0, filter.ProName.length / 2)}%' then 2
+                  when ProName like '%${filter.ProName.split(' ')[0]}%' then 1
+                  else 0
+                  end as 'OrderPriority'
+                from
+                  PRPRO pr where pr.ProId = PRPRO.ProId)`),
+                'OrderPriority',
+              ],
+            ],
+            exclude: ['OrderPriority'],
+          }
+        : { exclude: ['OrderPriority'] },
       limit,
       offset,
+      include: this.constructProductInclude(fields),
+      order: [filter?.ProName ? sequelize.literal('OrderPriority DESC') : ['ProName', 'asc']],
     });
+
     return result;
   }
 
@@ -122,31 +198,11 @@ class ProductRepository {
     }
   }
 
-  async getBySellerUser(userId: number, activo: number) {
-    try {
-      const result = ProductModel.findAll({
-        where: { ProUsrId: userId },
-        include: [
-          { model: BrandModelLineModel, required: true, include: [{ model: BrandModel, required: true }] },
-          {
-            model: ProductTypeModel,
-            required: true,
-            include: [{ model: CategoryModel, required: true }],
-          },
-        ],
-      });
-      return <IProduct[]>(<unknown>result);
-    } catch (err) {
-      console.log(err);
-      return err;
-    }
-  }
-
   constructProductInclude(fields: string[]) {
     let toReturn = [];
-    if (fields.filter(x => x === 'PRBML').length > 0 && fields.filter(x => x === 'PRTYP').length > 0) {
-      toReturn = [
-        {
+    if (fields) {
+      if (fields.includes('PRBML')) {
+        toReturn.push({
           model: BrandModelLineModel,
 
           attributes: ['BmlId'],
@@ -155,41 +211,26 @@ class ProductRepository {
             { model: ModelModel, attributes: ['ModId', 'ModName'] },
             { model: LineModel, attributes: ['LinId', 'linName'] },
           ],
-        },
-        {
+        });
+      }
+      if (fields.includes('PRTYP')) {
+        toReturn.push({
           model: ProductTypeModel,
+        });
+      }
 
-          include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
-          attributes: ['TypId', 'TypName'],
-        },
-      ];
+      if (fields.includes('PRPRO')) {
+        toReturn.push({
+          model: ProductPresentationPropertyModel,
+        });
+      }
+      if (fields.includes('PRCAT')) {
+        toReturn.push({
+          model: CategoryModel,
+        });
+      }
+      return toReturn;
     }
-    if (fields.filter(x => x === 'PRBML').length == 0 && fields.filter(x => x === 'PRTYP').length > 0) {
-      toReturn = [
-        {
-          model: ProductTypeModel,
-
-          include: [{ model: CategoryModel, attributes: ['CatId', 'CatName'] }],
-          attributes: ['TypId', 'TypName'],
-        },
-      ];
-    }
-    if (fields.filter(x => x === 'PRBML').length > 0 && fields.filter(x => x === 'PRTYP').length == 0) {
-      toReturn = [
-        {
-          model: BrandModelLineModel,
-
-          attributes: ['BmlId'],
-          include: [
-            { model: BrandModel, attributes: ['BraId', 'BraName'] },
-            { model: ModelModel, attributes: ['ModId', 'ModName'] },
-            { model: LineModel, attributes: ['LinId', 'linName'] },
-          ],
-        },
-      ];
-    }
-
-    return toReturn;
   }
 
   async getById(id: number, fields: string[] = []): Promise<IProduct> {
@@ -212,13 +253,13 @@ class ProductRepository {
 
   async getByRelated(id: number): Promise<IProduct[]> {
     const prod = await ProductModel.findOne({
-      attributes: ['categoria', 'product_type_id'],
+      attributes: ['ProCatId', 'ProTypId'],
       where: { ProId: id },
       include: [
         {
           model: BrandModelLineModel,
           required: true,
-          attributes: ['marcaId'],
+          attributes: ['BmlBraId'],
         },
       ],
       limit: 10,
@@ -229,11 +270,10 @@ class ProductRepository {
           ProId: { [Op.ne]: id },
 
           [Op.or]: [
-            { categoria: prod.ProCatId },
+            { ProCatId: prod.ProCatId },
             {
-              product_type_id: prod.ProTypId,
+              ProTypId: prod.ProTypId,
             },
-            { marca_id: Object.assign(prod).MarcaModeloLinea.marcaId },
           ],
         },
         limit: 15,

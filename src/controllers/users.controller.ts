@@ -6,30 +6,13 @@ import { verifyAccount } from '../utils/emailTemplate';
 import { constructResponse } from '../utils/constructResponse';
 import { INewUser } from '../interface';
 class UsersController {
-  async getUsersById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
     return res.json(await userRepository.getById(id));
   }
-  async getUsers(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     return await userRepository.get();
   }
-  // async editPicture(req: Request, res: Response) {
-  //   let userId = parseInt(req.params.userId);
-
-  //   //let dir = '';
-  //   let usuario = await mysqlUserRepository.getUsersById(userId);
-
-  //   let dir = `http://localhost:3000/storage/imgs/${userId}.jpg`;
-
-  //   usuario.avatar = dir;
-  //   try {
-  //     await mysqlUserRepository.updateUser(usuario, userId);
-  //     const updateUser = await mysqlUserRepository.getUsersById(userId);
-  //     return res.status(200).json(updateUser);
-  //   } catch (err) {
-  //     return res.json(err);
-  //   }
-  // }
 
   async login(req: Request, res: Response, next: NextFunction) {
     await passport.authenticate('login', async function (err, user, info) {
@@ -45,7 +28,7 @@ class UsersController {
     })(req, res, next);
   }
 
-  async createUser(_, res: Response) {
+  async set(_, res: Response) {
     const accountData = res.locals.accountData;
     console.log(accountData);
     try {

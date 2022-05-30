@@ -1,8 +1,8 @@
 export default {
-  delete: {
-    tags: ['Products'],
-    description: 'Eliminar un producto',
-    operationId: 'deleteProduct',
+  get: {
+    tags: ['SubCategories'],
+    description: 'SubCategories',
+    operationId: 'getSubCategoriesById',
     parameters: [
       {
         name: 'apikey',
@@ -13,35 +13,31 @@ export default {
         description: 'Apikey from product service',
       },
       {
-        name: 'id',
+        name: 'TypId',
         in: 'path',
         schema: {
-          $ref: '#/components/schemas/ProductId',
+          type: 'number',
         },
-        required: true,
-        description: 'Product ID',
+        description: 'SubCategory id',
       },
     ],
     responses: {
       200: {
-        description: 'Producto eliminado correctamente',
-      },
-      401: {
-        description: 'Unauthorized',
+        description: 'SubCategories',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ObjectSuccess',
             },
           },
         },
       },
-      404: {
-        description: 'El producto no existe',
+      401: {
+        escription: 'Unauthorized',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ErrorResponse',
             },
           },
         },

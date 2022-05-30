@@ -22,7 +22,7 @@ class ModeloController {
     }
   }
 
-  async delModel(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     const { ModId } = req.params;
     const userId = res.locals.userData.userId;
     try {
@@ -37,7 +37,7 @@ class ModeloController {
     }
   }
 
-  async setModelo(_, res: Response) {
+  async set(_, res: Response) {
     const model = res.locals.newModel;
     try {
       let result = await modelRepository.set(model);
