@@ -23,7 +23,7 @@ class LineRepository {
   }
 
   async upd(line: ILine, LinId: number) {
-    return await LineModel.update(line, { where: { LinId } });
+    return await LineModel.update(line, { where: { LinId, enabled: true } });
   }
 
   async del(LinId: number, userId: number) {

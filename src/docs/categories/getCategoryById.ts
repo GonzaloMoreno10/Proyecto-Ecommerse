@@ -1,12 +1,10 @@
 export default {
-  delete: {
-    tags: ['Products'],
-    description: 'Eliminar un producto',
-    operationId: 'deleteProduct',
+  get: {
+    tags: ['Categories'],
+    description: 'Categoria por id',
+    operationId: 'getCategory by id',
     parameters: [
       {
-<<<<<<< Updated upstream
-=======
         name: 'apikey',
         in: 'header',
         default: '51515as1d5as1das1g51gjg6k13jh5mdf3g51dsf',
@@ -16,36 +14,29 @@ export default {
         description: 'Apikey from product service',
       },
       {
->>>>>>> Stashed changes
-        name: 'id',
+        name: 'CatId',
         in: 'path',
-        schema: {
-          $ref: '#/components/schemas/ProductId',
-        },
         required: true,
-        description: 'Product ID',
+        description: 'Category Id',
       },
     ],
     responses: {
       200: {
-        description: 'Producto eliminado correctamente',
-      },
-      401: {
-        description: 'Unauthorized',
+        description: 'Categories',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ObjectSuccess',
             },
           },
         },
       },
-      404: {
-        description: 'El producto no existe',
+      401: {
+        escription: 'Unauthorized',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ErrorResponse',
             },
           },
         },

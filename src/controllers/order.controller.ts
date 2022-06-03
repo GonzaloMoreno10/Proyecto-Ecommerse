@@ -50,10 +50,10 @@ class OrderController {
   //   }
   // }
 
-  async getOrdersByUser(req: Request, res: Response) {
+  async getByUser(req: Request, res: Response) {
     const userData = res.locals.userData;
     try {
-      const result = await orderRepository.getByUser(parseInt(userData.userId));
+      const result = await orderRepository.get({ OrdUsrId: parseInt(userData.userId) });
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
@@ -61,10 +61,10 @@ class OrderController {
     }
   }
 
-  async getOrders(_, res: Response) {
-    const userData = res.locals.userData;
+  async get(req: Request, res: Response) {
+    const filters = req.query;
     try {
-      const result = await orderRepository.getByUser(parseInt(userData.userId));
+      const result = await orderRepository.get(filters);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

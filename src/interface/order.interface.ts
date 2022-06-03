@@ -12,6 +12,13 @@ export interface IOrder {
   deletedAt: Date;
   deletedUser: number;
 }
+
+export interface IOrderFilter {
+  OrdState: number;
+  OrdUsrId: number;
+  enabled: true;
+}
+
 export interface INewOrder {
   OrdId?: number;
   OrdState: number;

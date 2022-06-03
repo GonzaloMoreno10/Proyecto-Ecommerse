@@ -16,6 +16,13 @@ export interface IBrandModelLine {
   deletedUser: number;
 }
 
+export interface IBrandModelLineFilter {
+  BmlBraId: number;
+  BmlModId: number;
+  BmlLinId: number;
+  enabled: boolean;
+}
+
 export interface INewBrandModelLine {
   BmlId?: number;
   BmlBraId: number;

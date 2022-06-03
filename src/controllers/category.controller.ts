@@ -18,7 +18,7 @@ class CategoriaController {
     }
   }
 
-  async getCategoriesByName(req: Request, res: Response) {
+  async getByName(req: Request, res: Response) {
     let { CatName } = req.params;
     try {
       let result = await categoryRepository.getByName(CatName);

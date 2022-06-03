@@ -1,6 +1,6 @@
 import { productTypeRepository } from '../repositories/productType.repository';
 import { Request, Response } from 'express';
-import { INewProductType } from '../interface/productType.interface';
+import { INewProductType, IProductTypeFilter } from '../interface/productType.interface';
 import { constructResponse } from '../utils/constructResponse';
 class ProductTypeController {
   async getProductTypeByid(req: Request, res: Response) {
@@ -12,16 +12,6 @@ class ProductTypeController {
       return constructResponse(123, res);
     } catch (err) {
       console.log(err);
-      return constructResponse(500, res);
-    }
-  }
-  async getproductTypeByCategory(req: Request, res: Response) {
-    try {
-      const { TypCatId } = req.params;
-      const result = await productTypeRepository.getByCategory(parseInt(TypCatId));
-      if (result.length > 0) return constructResponse(121, res, result);
-      return constructResponse(123, res);
-    } catch (err) {
       return constructResponse(500, res);
     }
   }
@@ -58,7 +48,8 @@ class ProductTypeController {
 
   async getProductTypes(req: Request, res: Response) {
     try {
-      const result = await productTypeRepository.get();
+      const filter: Partial<IProductTypeFilter> = req.query;
+      const result = await productTypeRepository.get(filter);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

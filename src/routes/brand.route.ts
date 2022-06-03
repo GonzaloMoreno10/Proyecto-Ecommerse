@@ -8,6 +8,7 @@ const router = Router();
 
 router.get('/', tokenOrApiKeyIsValid, marcasController.getMarcas);
 
+<<<<<<< Updated upstream
 router.get('/productType/:BraTypId', tokenOrApiKeyIsValid, marcasController.getMarcasByProductType);
 
 router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.setMarca);
@@ -15,6 +16,11 @@ router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marca
 router.get('/category/:BraCatId', tokenOrApiKeyIsValid, marcasController.getMarcasByCategory);
 
 router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getBrandsById);
+=======
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
+
+router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getById);
+>>>>>>> Stashed changes
 
 router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.delBrand);
 

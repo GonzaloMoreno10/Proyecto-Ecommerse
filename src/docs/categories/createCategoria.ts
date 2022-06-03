@@ -1,8 +1,8 @@
 export default {
   post: {
-    tags: ['Products'],
-    description: 'Crear un nuevo producto',
-    operationId: 'saveProduct',
+    tags: ['Categories'],
+    description: 'Crea una categoria',
+    operationId: 'categoryCreate',
     parameters: [
       {
         name: 'apikey',
@@ -19,38 +19,35 @@ export default {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/ProductInputAdd',
+            type: 'object',
+            properties: {
+              CatName: {
+                type: 'string',
+                description: 'Category name',
+                example: 'Pets',
+              },
+            },
           },
         },
       },
     },
     responses: {
-      201: {
-        description: 'Producto creado correctamente',
+      200: {
+        description: 'Category created',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Product',
+              $ref: '#/components/schemas/ObjectSuccess',
             },
           },
         },
       },
       400: {
-        description: 'Invalid body',
+        escription: 'Validation error',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Error',
-            },
-          },
-        },
-      },
-      401: {
-        description: 'Unauthorized',
-        content: {
-          'application/json': {
-            schema: {
-              $ref: '#/components/schemas/Error',
+              $ref: '#/components/schemas/ErrorResponse',
             },
           },
         },

@@ -37,7 +37,7 @@ app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(docs));
 
 app.use(express.json({ limit: '50mb' }));
 
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', mainRouter);
 

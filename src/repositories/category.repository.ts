@@ -6,15 +6,15 @@ class CategoryRepository {
   }
 
   async getById(id: number): Promise<ICategory> {
-    return await CategoryModel.findOne({ where: { CatId: id } });
+    return await CategoryModel.findOne({ where: { CatId: id, enabled: true } });
+  }
+
+  async getByName(CatName: string) {
+    return await CategoryModel.findOne({ where: { CatName, enabled: true } });
   }
 
   async set(categoria: INewCategory): Promise<ICategory> {
     return await CategoryModel.create(categoria);
-  }
-
-  async getByName(CatName: string): Promise<ICategory> {
-    return await CategoryModel.findOne({ where: { CatName } });
   }
 
   async del(CatId: number, userId: number) {
@@ -28,7 +28,7 @@ class CategoryRepository {
   }
 
   async upd(category: ICategory, CatId: number) {
-    return await CategoryModel.update(category, { where: { CatId } });
+    return await CategoryModel.update(category, { where: { CatId, enabled: true } });
   }
 }
 

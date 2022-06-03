@@ -1,8 +1,21 @@
 import { ModelModel } from '../datasource/sequelize';
-import { IModel, INewModel } from '../interface/model.interface';
+import { IModel, IModelFilter, INewModel } from '../interface/model.interface';
 
 class ModelRepository {
-  async get(): Promise<IModel[]> {
+  async get(filter?: Partial<IModelFilter>): Promise<IModel[]> {
+    if (filter) {
+      const whereClause: Partial<IModelFilter> = { enabled: true };
+      if (filter.ModBraId) {
+        whereClause.ModBraId = filter.ModBraId;
+      }
+      if (filter.ModName) {
+        whereClause.ModName = filter.ModName;
+      }
+      if (filter.createdUser) {
+        whereClause.createdUser = filter.createdUser;
+      }
+      return await ModelModel.findAll({ where: whereClause });
+    }
     return await ModelModel.findAll({ where: { enabled: true } });
   }
 
@@ -10,12 +23,8 @@ class ModelRepository {
     return await ModelModel.findOne({ where: { ModId, enabled: true } });
   }
 
-  async getByBrand(ModBraId: number): Promise<IModel[]> {
-    return await ModelModel.findAll({ where: { ModBraId } });
-  }
-
   async upd(model: IModel, ModId: number) {
-    return await ModelModel.update(model, { where: { ModId } });
+    return await ModelModel.update(model, { where: { ModId, enabled: true } });
   }
 
   async del(ModId: number, userId: number) {

@@ -11,8 +11,6 @@ router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getProductType
 
 router.delete('/:TypId', tokenOrApiKeyIsValid, productTypeController.delProductType);
 
-router.get('/category/:TypCatId', tokenOrApiKeyIsValid, productTypeController.getproductTypeByCategory);
-
 router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.setProductType);
 
 export default router;

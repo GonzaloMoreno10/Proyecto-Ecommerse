@@ -5,7 +5,7 @@ import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/:id?', tokenOrApiKeyIsValid, orderController.getOrders);
+router.get('/:id?', tokenOrApiKeyIsValid, orderController.get);
 
 //router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator,modelValidator, );
 

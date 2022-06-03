@@ -12,6 +12,12 @@ export interface IBrand {
   deletedUser: number;
 }
 
+export interface IBrandFilter {
+  BraName: string;
+  BraTypId: number;
+  enabled: boolean;
+}
+
 export interface INewBrand {
   BraId?: number;
   BraName: string;
