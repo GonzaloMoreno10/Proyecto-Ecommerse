@@ -32,12 +32,10 @@ class ProductTypeRepository {
 
   async del(TypId: number, userId: number) {
     const pt = await ProductTypeModel.findOne({ where: { TypId, enabled: true }, raw: true });
-    console.log(pt);
     if (pt) {
       pt.deletedAt = new Date();
       pt.enabled = false;
       pt.deletedUser = userId;
-
       return await ProductTypeModel.update(pt, { where: { TypId } });
     }
   }
