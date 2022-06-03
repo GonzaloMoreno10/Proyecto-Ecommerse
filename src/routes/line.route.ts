@@ -8,10 +8,10 @@ const router = Router();
 
 router.get('/model/:LinModId', tokenOrApiKeyIsValid, lineasController.getByModel);
 
-router.get('/:LinId?', tokenOrApiKeyIsValid, lineasController.getLine);
+router.get('/:LinId?', tokenOrApiKeyIsValid, lineasController.get);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, lineValidator, lineasController.setLinea);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, lineValidator, lineasController.set);
 
-router.delete('/:LinId', tokenOrApiKeyIsValid, lineasController.delLine);
+router.delete('/:LinId', tokenOrApiKeyIsValid, lineasController.del);
 
 export default router;

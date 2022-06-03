@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { INewProductType, IProductTypeFilter } from '../interface/productType.interface';
 import { constructResponse } from '../utils/constructResponse';
 class ProductTypeController {
-  async getProductTypeByid(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { TypId } = req.params;
       const result = await productTypeRepository.getById(parseInt(TypId));
@@ -16,7 +16,7 @@ class ProductTypeController {
     }
   }
 
-  async setProductType(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     try {
       const { TypCatId, TypName } = req.body;
       const producType: INewProductType = {
@@ -31,7 +31,7 @@ class ProductTypeController {
     }
   }
 
-  async delProductType(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     try {
       const { TypId } = req.params;
       const userId = res.locals.userData.userId;
@@ -46,7 +46,7 @@ class ProductTypeController {
     }
   }
 
-  async getProductTypes(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
       const filter: Partial<IProductTypeFilter> = req.query;
       const result = await productTypeRepository.get(filter);

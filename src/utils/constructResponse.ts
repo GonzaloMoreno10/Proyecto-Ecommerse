@@ -11,7 +11,7 @@ export const constructResponse = async (
 ) => {
   const response: IResponses[] = await responseRepository.getByResIds(resId);
   response.map(res => {
-    if (res.resId == 534) {
+    if (res.resId == 534 || res.resId == 614 || res.resId == 634) {
       res.resDesc = res.resDesc + ': [' + fieldName + ']';
     }
   });
@@ -32,7 +32,7 @@ export const constructResponse = async (
   } else {
     toReturn = {
       code: response[0].resCod,
-      message: response[0].resDesc,
+      message: response[0].resDesc ?? 'Ocurrio un error',
       data: data ? (Object.assign(data).token ? data : Array.isArray(data) ? data : [data]) : [],
     };
   }

@@ -17,7 +17,7 @@ class ProductPropertyController {
       return constructResponse(500, res, err);
     }
   }
-  async setProductProperty(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     const pp = res.locals.newProductProperty;
     try {
       const result = await productPropertyRepository.set(pp);
@@ -27,7 +27,7 @@ class ProductPropertyController {
       return constructResponse(500, res, undefined, err);
     }
   }
-  async getPropertiesByProductType(req: Request, res: Response) {
+  async getByProductType(req: Request, res: Response) {
     try {
       const { productTypeId } = req.params;
       const properties = await productPropertyRepository.getByProductType(parseInt(productTypeId));

@@ -1,6 +1,6 @@
 import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
-import { ProductPropertyValueModel } from '../datasource/sequelize';
+import { ProductModel, ProductPropertyValueModel } from '../datasource/sequelize';
 import {
   INewProductPresentationProperty,
   IProductPresentationProperty,
@@ -72,12 +72,21 @@ export const productPresentationPropertyModel = (sequelize: any) => {
       sequelize, // passing the `sequelize` instance is required
       defaultScope: {
         attributes: {
-          exclude: ['updatedAt', 'createdAt', 'updatedUser', 'createdUser', 'enabled', 'deletedAt', 'deletedUser'],
+          exclude: [
+            'updatedAt',
+            'createdAt',
+            'updatedUser',
+            'createdUser',
+            'enabled',
+            'deletedAt',
+            'deletedUser',
+            'ProId',
+          ],
         },
       },
     }
   );
-  ProductPropertyValueModel.hasMany(productPresentationPropertyToReturn, { foreignKey: 'PreValId' });
   productPresentationPropertyToReturn.belongsTo(ProductPropertyValueModel, { foreignKey: 'PreValId' });
+
   return productPresentationPropertyToReturn;
 };

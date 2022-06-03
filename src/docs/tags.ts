@@ -7,19 +7,13 @@ export default {
       name: 'Authentication',
     },
     {
-      name: 'User',
+      name: 'Account',
     },
     {
       name: 'Products',
     },
     {
-      name: 'Cart',
-    },
-    {
       name: 'Orders',
-    },
-    {
-      name: 'Chat',
     },
   ],
 };

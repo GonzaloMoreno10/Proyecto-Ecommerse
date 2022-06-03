@@ -6,22 +6,14 @@ import { emptyBodyValidator } from '../validators/emptyBody.validator';
 
 const router = Router();
 
-router.get('/', tokenOrApiKeyIsValid, marcasController.getMarcas);
+router.get('/', tokenOrApiKeyIsValid, marcasController.get);
 
-<<<<<<< Updated upstream
-router.get('/productType/:BraTypId', tokenOrApiKeyIsValid, marcasController.getMarcasByProductType);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.setMarca);
-
-router.get('/category/:BraCatId', tokenOrApiKeyIsValid, marcasController.getMarcasByCategory);
-
-router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getBrandsById);
-=======
 router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
 
 router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getById);
->>>>>>> Stashed changes
 
-router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.delBrand);
+router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.del);
 
 export default router;

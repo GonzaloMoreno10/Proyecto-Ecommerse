@@ -1,18 +1,9 @@
 export default {
   post: {
-    tags: ['Categories'],
-    description: 'Crea una categoria',
-    operationId: 'categoryCreate',
-    parameters: [
-      {
-        name: 'apikey',
-        in: 'header',
-        schema: {
-          type: 'string',
-        },
-        description: 'Apikey from product service',
-      },
-    ],
+    tags: ['Authentication'],
+    description: 'Ingresar al sistema',
+    operationId: 'login',
+    parameters: [],
     requestBody: {
       required: true,
       content: {
@@ -20,10 +11,15 @@ export default {
           schema: {
             type: 'object',
             properties: {
-              CatName: {
+              UsrEmail: {
                 type: 'string',
-                description: 'Category name',
-                example: 'Pets',
+                description: 'User email.',
+                example: 'test1@example.com',
+              },
+              UsrPass: {
+                type: 'string',
+                description: 'User password.',
+                example: 'Secret1*',
               },
             },
           },
@@ -32,7 +28,7 @@ export default {
     },
     responses: {
       200: {
-        description: 'Category created',
+        description: 'Loggin succeded',
         content: {
           'application/json': {
             schema: {

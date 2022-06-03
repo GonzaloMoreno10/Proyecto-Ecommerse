@@ -1,8 +1,11 @@
+const { Op } = require('sequelize');
 import { CategoryModel } from '../datasource/sequelize';
 import { ICategory, INewCategory } from '../interface/category.interface';
 class CategoryRepository {
-  async get(): Promise<ICategory[]> {
-    return await CategoryModel.findAll();
+  async get(CatName?: string): Promise<ICategory[]> {
+    return await CategoryModel.findAll(
+      CatName ? { where: { CatName: { [Op.like]: `%${CatName}%` }, enabled: true } } : { where: { enabled: true } }
+    );
   }
 
   async getById(id: number): Promise<ICategory> {
@@ -18,7 +21,7 @@ class CategoryRepository {
   }
 
   async del(CatId: number, userId: number) {
-    const category = await CategoryModel.findOne({ where: { CatId } });
+    const category = await CategoryModel.findOne({ where: { CatId, enabled: true } });
     if (category) {
       category.enabled = false;
       category.deletedAt = new Date();

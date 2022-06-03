@@ -1,29 +1,26 @@
 export default {
   get: {
-    tags: ['Categories'],
-    description: 'Lista las categorias',
-    operationId: 'getCategory',
+    tags: ['Account'],
+    description: 'Validar cuenta',
+    operationId: 'Mail validation',
     parameters: [
       {
-        name: 'apikey',
-        in: 'header',
-        schema: {
-          type: 'string',
-        },
-        description: 'Apikey from product service',
+        name: 'UsrId',
+        in: 'path',
+        required: true,
+        description: 'User ID',
       },
       {
-        name: 'CatName',
+        name: 'hash',
         in: 'query',
-        schema: {
-          type: 'string',
-        },
-        description: 'Category Name',
+        required: true,
+        description: 'hash',
       },
     ],
+
     responses: {
       200: {
-        description: 'Categories',
+        description: 'Validation success',
         content: {
           'application/json': {
             schema: {
@@ -32,8 +29,8 @@ export default {
           },
         },
       },
-      401: {
-        escription: 'Unauthorized',
+      400: {
+        escription: 'Validation error',
         content: {
           'application/json': {
             schema: {

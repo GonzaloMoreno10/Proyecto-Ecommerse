@@ -10,6 +10,7 @@ import cors from 'cors';
 import { errorHandler } from '../controllers/errors.controller';
 import swaggerUI from 'swagger-ui-express';
 import docs from '../docs';
+import morgan from 'morgan';
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.set('views', pugPath);
 //Middlewares
 
 app.use(cors());
+
+app.use(morgan('common'));
 
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(docs));
 

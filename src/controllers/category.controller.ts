@@ -5,10 +5,13 @@ import { constructResponse } from '../utils/constructResponse';
 class CategoriaController {
   async get(req: Request, res: Response) {
     const { id } = req.params;
+    const { CatName } = req.query;
     let result: ICategory[] | ICategory;
     try {
       if (!id) {
-        result = await categoryRepository.get();
+        if (CatName) {
+          result = await categoryRepository.get(String(CatName));
+        } else result = await categoryRepository.get();
       } else {
         result = await categoryRepository.getById(parseInt(id));
       }
@@ -18,18 +21,11 @@ class CategoriaController {
     }
   }
 
-  async getByName(req: Request, res: Response) {
-    let { CatName } = req.params;
-    try {
-      let result = await categoryRepository.getByName(CatName);
-      return constructResponse(121, res, result);
-    } catch (err) {
-      return constructResponse(500, res);
-    }
-  }
-
-  async create(req: Request, res: Response) {
+  async set(req: Request, res: Response) {
     const { CatName, image } = req.body;
+    if (await categoryRepository.getByName(CatName)) {
+      return constructResponse(644, res);
+    }
     let categoria: INewCategory = {
       CatName,
       createdUser: res.locals.userData.userId,

@@ -10,7 +10,6 @@ export default {
         schema: {
           type: 'string',
         },
-        default: '51515as1d5as1das1g51gjg6k13jh5mdf3g51dsf',
         description: 'Apikey from product service',
       },
       {

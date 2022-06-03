@@ -5,8 +5,6 @@ export default {
     operationId: 'deleteProduct',
     parameters: [
       {
-<<<<<<< Updated upstream
-=======
         name: 'apikey',
         in: 'header',
         default: '51515as1d5as1das1g51gjg6k13jh5mdf3g51dsf',
@@ -16,7 +14,6 @@ export default {
         description: 'Apikey from product service',
       },
       {
->>>>>>> Stashed changes
         name: 'id',
         in: 'path',
         schema: {

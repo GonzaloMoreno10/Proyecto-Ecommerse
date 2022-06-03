@@ -16,6 +16,7 @@ export const tokenOrApiKeyIsValid = (req: Request, res: Response, next: NextFunc
   const { apikey, authorization } = req.headers;
   if (apikey) {
     if (apikey === APIKEY) {
+      res.locals.userData = { userId: 1 };
       return next();
     } else {
       return constructResponse(502, res);

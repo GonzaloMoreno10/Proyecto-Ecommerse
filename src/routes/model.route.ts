@@ -8,8 +8,8 @@ const router = Router();
 
 router.get('/:ModId?', tokenOrApiKeyIsValid, modeloController.get);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, modelValidator, modeloController.setModelo);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, modelValidator, modeloController.set);
 
-router.delete('/:ModId', tokenOrApiKeyIsValid, modeloController.delModel);
+router.delete('/:ModId', tokenOrApiKeyIsValid, modeloController.del);
 
 export default router;

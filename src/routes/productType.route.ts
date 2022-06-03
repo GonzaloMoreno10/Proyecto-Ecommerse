@@ -5,12 +5,12 @@ import { emptyBodyValidator } from '../validators/emptyBody.validator';
 import { productTypeValidator } from '../validators/productType.validator';
 const router = Router();
 
-router.get('/', tokenOrApiKeyIsValid, productTypeController.getProductTypes);
+router.get('/', tokenOrApiKeyIsValid, productTypeController.get);
 
-router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getProductTypeByid);
+router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getById);
 
-router.delete('/:TypId', tokenOrApiKeyIsValid, productTypeController.delProductType);
+router.delete('/:TypId', tokenOrApiKeyIsValid, productTypeController.del);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.setProductType);
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.set);
 
 export default router;
