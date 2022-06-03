@@ -60,7 +60,6 @@ class OrderController {
       return constructResponse(500, res);
     }
   }
-
   async get(req: Request, res: Response) {
     const filters = req.query;
     try {

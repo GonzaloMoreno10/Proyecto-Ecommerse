@@ -8,11 +8,9 @@ const router = Router();
 
 router.get('/', tokenOrApiKeyIsValid, marcasController.get);
 
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
-
-router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
-
 router.get('/:BraId', tokenOrApiKeyIsValid, marcasController.getById);
+
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, brandValidator, marcasController.set);
 
 router.delete('/:BraId', tokenOrApiKeyIsValid, marcasController.del);
 

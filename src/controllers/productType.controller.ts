@@ -15,7 +15,16 @@ class ProductTypeController {
       return constructResponse(500, res);
     }
   }
-
+  async getproductTypeByCategory(req: Request, res: Response) {
+    try {
+      const { TypCatId } = req.params;
+      const result = await productTypeRepository.getByCategory(parseInt(TypCatId));
+      if (result.length > 0) return constructResponse(121, res, result);
+      return constructResponse(123, res);
+    } catch (err) {
+      return constructResponse(500, res);
+    }
+  }
   async set(req: Request, res: Response) {
     try {
       const { TypCatId, TypName } = req.body;
