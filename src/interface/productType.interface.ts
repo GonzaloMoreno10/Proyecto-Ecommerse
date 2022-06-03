@@ -13,6 +13,12 @@ export interface IProductType {
   deletedUser: number;
 }
 
+export interface IProductTypeFilter {
+  TypCatId: number;
+  TypName: string;
+  enabled: boolean;
+}
+
 export interface INewProductType {
   TypId?: number;
   TypName: string;

@@ -11,8 +11,12 @@ router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getProductType
 
 router.delete('/:TypId', tokenOrApiKeyIsValid, productTypeController.delProductType);
 
+<<<<<<< Updated upstream
 router.get('/category/:TypCatId', tokenOrApiKeyIsValid, productTypeController.getproductTypeByCategory);
 
 router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.setProductType);
+=======
+router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productTypeValidator, productTypeController.set);
+>>>>>>> Stashed changes
 
 export default router;

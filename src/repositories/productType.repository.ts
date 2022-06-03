@@ -1,8 +1,23 @@
 import { ProductTypeModel } from '../datasource/sequelize';
-import { INewProductType, IProductType } from '../interface/productType.interface';
+import { INewProductType, IProductType, IProductTypeFilter } from '../interface/productType.interface';
+import { productTypeModel } from '../models/productType.model';
 class ProductTypeRepository {
-  async get() {
-    return await ProductTypeModel.findAll({ where: { enabled: true } });
+  async get(filters: Partial<IProductTypeFilter>): Promise<IProductType[]> {
+    let result: IProductType[];
+    if (filters) {
+      const whereClause: Partial<IProductTypeFilter> = { enabled: true };
+      if (filters.TypCatId) {
+        whereClause.TypCatId = filters.TypCatId;
+      }
+      if (filters.TypName) {
+        whereClause.TypName = filters.TypName;
+      }
+      result = await ProductTypeModel.findAll({ where: whereClause });
+    } else {
+      result = await ProductTypeModel.findAll({ where: { enabled: true } });
+    }
+
+    return result;
   }
 
   async set(productType: INewProductType): Promise<IProductType> {

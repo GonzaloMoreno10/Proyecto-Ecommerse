@@ -11,6 +11,13 @@ export interface IModel {
   deletedUser: number;
 }
 
+export interface IModelFilter {
+  ModName: string;
+  ModBraId: number;
+  createdUser: number;
+  enabled: true;
+}
+
 export interface INewModel {
   ModId?: number;
   ModName: string;

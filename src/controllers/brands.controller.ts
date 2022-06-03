@@ -5,38 +5,22 @@ import { constructResponse } from '../utils/constructResponse';
 class MarcasController {
   async getMarcas(req: Request, res: Response) {
     try {
-      const result = await brandsRepository.get();
+      console.log(req.hostname);
+      console.log(req.originalUrl);
+      console.log(req.socket.remoteAddress);
+      const filters = req.query;
+      const result = await brandsRepository.get(filters);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
       return constructResponse(500, res);
     }
   }
-
-  async getMarcasByProductType(req: Request, res: Response) {
+  async del(req: Request, res: Response) {
     try {
-      const { BraTypId } = req.params;
-      const result = await brandsRepository.getBrandsByProductType(parseInt(BraTypId));
-      return constructResponse(121, res, result);
-    } catch (err) {
-      console.log(err);
-      return constructResponse(500, res);
-    }
-  }
-
-  async getMarcasByCategory(req: Request, res: Response) {
-    try {
-      const { BraCatId } = req.params;
-      const result = await brandsRepository.getByCategory(parseInt(BraCatId));
-      return constructResponse(121, res, result);
-    } catch (err) {
-      return constructResponse(500, res);
-    }
-  }
-
-  async delBrand(req: Request, res: Response) {
-    try {
-      console.log(res.locals.userData);
+      console.log(req.hostname);
+      console.log(req.originalUrl);
+      console.log(req.socket.remoteAddress);
       const { BraId } = req.params;
       const userId = res.locals.userData.userId;
       const bra = await brandsRepository.getById(parseInt(BraId));

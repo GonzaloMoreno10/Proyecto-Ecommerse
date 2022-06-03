@@ -6,7 +6,15 @@ class CategoryRepository {
   }
 
   async getById(id: number): Promise<ICategory> {
+<<<<<<< Updated upstream
     return await CategoryModel.findOne({ where: { CatId: id } });
+=======
+    return await CategoryModel.findOne({ where: { CatId: id, enabled: true } });
+  }
+
+  async getByName(CatName: string) {
+    return await CategoryModel.findOne({ where: { CatName, enabled: true } });
+>>>>>>> Stashed changes
   }
 
   async set(categoria: INewCategory): Promise<ICategory> {
@@ -28,7 +36,7 @@ class CategoryRepository {
   }
 
   async upd(category: ICategory, CatId: number) {
-    return await CategoryModel.update(category, { where: { CatId } });
+    return await CategoryModel.update(category, { where: { CatId, enabled: true } });
   }
 }
 

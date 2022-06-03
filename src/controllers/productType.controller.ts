@@ -1,6 +1,6 @@
 import { productTypeRepository } from '../repositories/productType.repository';
 import { Request, Response } from 'express';
-import { INewProductType } from '../interface/productType.interface';
+import { INewProductType, IProductTypeFilter } from '../interface/productType.interface';
 import { constructResponse } from '../utils/constructResponse';
 class ProductTypeController {
   async getProductTypeByid(req: Request, res: Response) {
@@ -15,6 +15,7 @@ class ProductTypeController {
       return constructResponse(500, res);
     }
   }
+<<<<<<< Updated upstream
   async getproductTypeByCategory(req: Request, res: Response) {
     try {
       const { TypCatId } = req.params;
@@ -25,6 +26,8 @@ class ProductTypeController {
       return constructResponse(500, res);
     }
   }
+=======
+>>>>>>> Stashed changes
 
   async setProductType(req: Request, res: Response) {
     try {
@@ -58,7 +61,8 @@ class ProductTypeController {
 
   async getProductTypes(req: Request, res: Response) {
     try {
-      const result = await productTypeRepository.get();
+      const filter: Partial<IProductTypeFilter> = req.query;
+      const result = await productTypeRepository.get(filter);
       return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);

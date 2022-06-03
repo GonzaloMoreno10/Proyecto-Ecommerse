@@ -1,9 +1,22 @@
-import { BrandModel, ProductTypeModel } from '../datasource/sequelize';
-import { IBrand, INewBrand } from '../interface/brand.model';
+import { BrandModel, CategoryModel, ProductTypeModel } from '../datasource/sequelize';
+import { IBrand, IBrandFilter, INewBrand } from '../interface/brand.model';
 
 class BrandsRepository {
-  async get(): Promise<IBrand[]> {
-    return await BrandModel.findAll({ where: { enabled: true } });
+  async get(filter?: Partial<IBrandFilter>): Promise<IBrand[]> {
+    let result: IBrand[];
+    if (filter) {
+      const whereClause: Partial<IBrandFilter> = { enabled: true };
+      if (filter.BraTypId) {
+        whereClause.BraTypId = filter.BraTypId;
+      }
+      if (filter.BraName) {
+        whereClause.BraName = filter.BraName;
+      }
+      result = await BrandModel.findAll({ where: whereClause });
+    } else {
+      result = await BrandModel.findAll({ where: { enabled: true } });
+    }
+    return result;
   }
 
   async getById(BraId: number): Promise<IBrand> {
@@ -11,11 +24,11 @@ class BrandsRepository {
   }
 
   async upd(brand: IBrand, BraId: number) {
-    return await BrandModel.update(brand, { where: { BraId } });
+    return await BrandModel.update(brand, { where: { BraId, enabled: true } });
   }
 
   async del(BraId: number, userId: number) {
-    const brand = await BrandModel.findOne({ where: { BraId }, raw: true });
+    const brand = await BrandModel.findOne({ where: { BraId, enabled: true }, raw: true });
     if (brand) {
       console.log(userId);
       brand.deletedAt = new Date();

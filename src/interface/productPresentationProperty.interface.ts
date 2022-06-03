@@ -11,6 +11,12 @@ export interface IProductPresentationProperty {
   deletedUser: number;
 }
 
+export interface IProductPresentationPropertyFilter {
+  PreProdId: number;
+  PreValId: number;
+  enabled: boolean;
+}
+
 export interface INewProductPresentationProperty {
   PreId?: number;
   PreProId: number;
