@@ -27,6 +27,4 @@ router.post('/', tokenOrApiKeyIsValid, emptyBodyValidator, productValidator, pro
 
 router.delete('/:id', tokenOrApiKeyIsValid, asyncHandler(productoController.del));
 
-router.get('/marca/:id', tokenOrApiKeyIsValid, productoController.getByBrand);
-
 export default router;
