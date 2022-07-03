@@ -1,20 +1,37 @@
-import { OrderModel } from '../datasource/sequelize';
+import { OrderModel, OrderProductsModel, ProductModel } from '../datasource/sequelize';
 import { IOrder, INewOrder, IOrderFilter } from '../interface';
 
 class OrderRepository {
-  async get(filters?: Partial<IOrderFilter>): Promise<IOrder[]> {
+  async get(filters?: Partial<IOrderFilter>, fields?: string[]): Promise<IOrder[]> {
+    const whereClause: Partial<IOrderFilter> = { enabled: true };
     let result: any;
+    let include = [];
+    if (fields) {
+      if (fields.includes('FAORP')) {
+        include = [
+          {
+            model: OrderProductsModel,
+            attributes: ['OrpId', 'OrpProId', 'OrpQuantity', 'OrpPrice'],
+            where: { enabled: true },
+
+            include: fields.includes('PRPRO') ? [{ model: ProductModel, where: { enabled: true } }] : [],
+          },
+        ];
+      }
+    }
     if (filters) {
-      const whereClause: Partial<IOrderFilter> = { enabled: true };
       if (filters.OrdState) {
         whereClause.OrdState = filters.OrdState;
+      }
+      if (filters.OrdId) {
+        whereClause.OrdId = filters.OrdId;
       }
       if (filters.OrdUsrId) {
         whereClause.OrdUsrId = filters.OrdUsrId;
       }
-      result = await OrderModel.findAll({ where: whereClause });
+      result = await OrderModel.findAll({ where: whereClause, include });
     } else {
-      result = await OrderModel.findAll();
+      result = await OrderModel.findAll({ where: whereClause, include });
     }
 
     return <IOrder[]>(<unknown>result);

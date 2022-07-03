@@ -13,7 +13,7 @@ export interface IBrand {
 }
 
 export interface IBrandFilter {
-  BraName: string;
+  BraName: object;
   BraTypId: number;
   enabled: boolean;
 }

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { UserModel } from '../datasource/sequelize';
 import { INewUser, IUser } from '../interface';
@@ -25,10 +26,10 @@ class UserRepository {
 
   async set(user: INewUser) {
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(user.UsrPass, salt);
-    user.UsrValidCod = hash;
-    user.UsrPass = hash;
-    console.log(user);
+    const UsrPassHash = await bcrypt.hash(user.UsrPass, salt);
+    const UsrValidCod = crypto.randomBytes(32).toString('hex');
+    user.UsrValidCod = await bcrypt.hash(UsrValidCod, salt);
+    user.UsrPass = UsrPassHash;
     return await UserModel.create(user);
   }
 }

@@ -20,7 +20,7 @@ class BmlController {
     }
   }
 
-  async set(req: Request, res: Response) {
+  async set(_, res: Response) {
     const { bml } = res.locals;
     try {
       const result = await brandModelLineRepository.set(bml);

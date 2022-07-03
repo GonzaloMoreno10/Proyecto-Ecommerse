@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { userController } from '../controllers/users.controller';
 import { authContrroller } from '../controllers/auth.controller';
-import { tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
+import { tokenIsValid, tokenOrApiKeyIsValid } from '../middlewares/auth.middleware';
 import { validAccountData } from '../validators/account.validator';
 import { emptyBodyValidator } from '../validators/emptyBody.validator';
 
@@ -14,11 +14,11 @@ const router = Router();
 //   userController.editPicture
 // );
 
-router.get('/mailValidation/:userId', authContrroller.accountVerification);
+router.get('/mailValidation/:UsrEmail', tokenOrApiKeyIsValid, authContrroller.accountVerification);
 
-router.get('/:id', tokenOrApiKeyIsValid, userController.getById);
-router.get('/', tokenOrApiKeyIsValid, userController.get);
+router.get('/:id', tokenIsValid, userController.getById);
+router.get('/', tokenIsValid, userController.get);
 
-router.post('/signup', emptyBodyValidator, validAccountData, userController.set);
+router.post('/signup', tokenOrApiKeyIsValid, emptyBodyValidator, validAccountData, userController.set);
 
 export default router;

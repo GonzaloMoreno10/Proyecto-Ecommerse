@@ -35,7 +35,7 @@ export const orderModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.INTEGER(),
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.INTEGER(),

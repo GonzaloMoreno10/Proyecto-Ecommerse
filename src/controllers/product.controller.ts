@@ -18,12 +18,12 @@ export class ProductoController {
   }
   async getByOrder(req: Request, res: Response) {
     try {
-      const { userId } = req.params;
+      const { userId } = res.locals.userData;
       const result = await productRepository.getByLastOrderUser(parseInt(userId));
-      res.status(200).json(result);
+      return constructResponse(121, res, result);
     } catch (err) {
       console.log(err);
-      return res.status(400).json(err);
+      return constructResponse(500, res);
     }
   }
   async getById(req: Request, res: Response) {
@@ -42,7 +42,7 @@ export class ProductoController {
         return constructResponse(123, res);
       }
     } catch (err) {
-      console.log(err);
+      return constructResponse(500, res);
     }
   }
   async get(req: Request, res: Response) {
@@ -80,8 +80,7 @@ export class ProductoController {
         });
       }
     } catch (err) {
-      console.log(err);
-      return constructResponse(500, res, undefined, err);
+      return constructResponse(500, res);
     }
   }
   async set(_, res: Response) {
@@ -124,9 +123,9 @@ export class ProductoController {
     const { search } = req.params;
     try {
       const products = await productRepository.getByKeyWord(search);
-      res.status(200).json(products);
+      return constructResponse(121, res, products);
     } catch (err) {
-      console.log(err);
+      return constructResponse(500, res, undefined, err);
     }
   }
   async del(req: Request, res: Response) {

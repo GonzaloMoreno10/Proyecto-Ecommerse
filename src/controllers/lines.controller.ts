@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ILine } from '../interface/line.interface';
+import { ILine, ILineFilter } from '../interface/line.interface';
 import { lineRepository } from '../repositories/line.repository';
 import { constructResponse } from '../utils/constructResponse';
 class LineaController {
@@ -11,14 +11,18 @@ class LineaController {
 
   async get(req: Request, res: Response) {
     const { LinId } = req.params;
-    let result: ILine[] | ILine;
+    const filters: Partial<ILineFilter> = req.query;
+    let lines: ILine[];
     try {
       if (LinId) {
-        result = await lineRepository.getById(parseInt(LinId));
+        lines = await lineRepository.getById(parseInt(LinId));
       } else {
-        result = await lineRepository.get();
+        lines = await lineRepository.get(filters);
       }
-      return constructResponse(121, res, result);
+      if (lines.length > 0) {
+        return constructResponse(121, res, lines);
+      }
+      return constructResponse(123, res);
     } catch (err) {
       console.log(err);
       constructResponse(500, res);
@@ -29,7 +33,7 @@ class LineaController {
     const LinId = parseInt(req.params.LinId);
     try {
       const line = await lineRepository.getById(LinId);
-      if (!line) {
+      if (line.length <= 0) {
         return constructResponse(123, res);
       }
       await lineRepository.del(LinId, res.locals.userData.userId);

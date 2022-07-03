@@ -10,3 +10,4 @@ export * from './productProperty.route';
 export * from './serverConfig.route';
 export * from './stats.route';
 export * from './users.route';
+export * from './orderProduct.route';

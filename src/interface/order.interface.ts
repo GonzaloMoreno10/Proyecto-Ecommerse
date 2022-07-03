@@ -17,6 +17,7 @@ export interface IOrderFilter {
   OrdState: number;
   OrdUsrId: number;
   enabled: true;
+  OrdId: number;
 }
 
 export interface INewOrder {

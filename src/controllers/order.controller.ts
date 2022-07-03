@@ -61,13 +61,29 @@ class OrderController {
     }
   }
   async get(req: Request, res: Response) {
-    const filters = req.query;
+    const { orderFields, orderFilter } = res.locals;
+    const { OrdId } = req.params;
+    if (OrdId) {
+      orderFilter.OrdId = OrdId;
+    }
     try {
-      const result = await orderRepository.get(filters);
-      return constructResponse(121, res, result);
+      const result = await orderRepository.get(orderFilter, orderFields);
+      if (result.length > 0) {
+        return constructResponse(121, res, result);
+      }
+      return constructResponse(123, res);
     } catch (err) {
       console.log(err);
       return constructResponse(500, res);
+    }
+  }
+  async create(_, res: Response) {
+    const { newOrder } = res.locals;
+    try {
+      const result = await orderRepository.set(newOrder);
+      return constructResponse(121, res, result);
+    } catch (err) {
+      return constructResponse(500, res, undefined, err);
     }
   }
 }

@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
+import { model } from 'mongoose';
 import { IModel, IModelFilter } from '../interface/model.interface';
 import { modelRepository } from '../repositories/model.repository';
 import { constructResponse } from '../utils/constructResponse';
 class ModeloController {
   async get(req: Request, res: Response) {
-    const { MoId } = req.params;
+    const { ModId } = req.params;
     const filter: Partial<IModelFilter> = req.query;
-    let models: IModel | IModel[];
+    let models: IModel[];
     try {
-      if (!MoId) {
+      if (!ModId) {
         models = await modelRepository.get(filter);
       } else {
-        models = await modelRepository.get({ ModBraId: parseInt(MoId) });
+        models = await modelRepository.getById(parseInt(ModId));
       }
       if (models.length > 0) {
         return constructResponse(121, res, models);
@@ -27,7 +28,7 @@ class ModeloController {
     const userId = res.locals.userData.userId;
     try {
       const mod = await modelRepository.getById(parseInt(ModId));
-      if (!mod) {
+      if (mod.length <= 0) {
         return constructResponse(123, res);
       }
       await modelRepository.del(parseInt(ModId), userId);

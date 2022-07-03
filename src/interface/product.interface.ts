@@ -35,13 +35,14 @@ export interface IProductFilters {
   ProTypId: number;
   ProIsOffer: boolean;
   MinDiscount: number;
+  KeyWords: string[];
   MaxDiscount: number;
   ProUsrId: number;
   enabled: boolean;
   sort: string;
 }
 
-export type IProductQueryFields = 'PRBML' | 'PRPRO' | 'PRTYP';
+export type IProductQueryFields = ['PRBML' | 'PRPRO' | 'PRTYP'];
 
 export interface INewProduct {
   ProId?: number;

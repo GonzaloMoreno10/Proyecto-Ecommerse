@@ -1,6 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { type } from 'os';
-import { idText } from 'typescript';
 import { INewProduct, IProductFilters } from '../interface';
 import { brandModelLineRepository } from '../repositories/brandModelLine.repository';
 import { categoryRepository } from '../repositories/category.repository';
@@ -62,6 +60,7 @@ export const filterValidator = (req: Request, res: Response, next: NextFunction)
   const filters = Object.entries(req.query);
   let hasError = false;
   const invalidFilters = [];
+  const invalidWords = 'select' || 'insert' || 'delete' || 'drop' || 'table' || 'database';
   const avaibleFilters = [
     'ProName',
     'MaxPrice',
@@ -73,6 +72,7 @@ export const filterValidator = (req: Request, res: Response, next: NextFunction)
     'ProTypId',
     'ProIsOffer',
     'MinDiscount',
+    'KeyWords',
     'MaxDiscount',
     'ProUsrId',
     'pageSize',
@@ -101,6 +101,18 @@ export const filterValidator = (req: Request, res: Response, next: NextFunction)
   if (object.MaxPrice) {
     if (!isNaN(object.MaxPrice)) {
       toReturn.MaxPrice = Number(object.MaxPrice);
+    } else {
+      hasError = true;
+    }
+  }
+  if (object.Keyword && object.ProName) {
+    console.log('Entre en la validacion');
+    hasError = true;
+  }
+  if (object.KeyWords) {
+    const keyWordArray = object.KeyWords.split(',' || ' ').filter((x: string) => x.length > 3);
+    if (!keyWordArray.includes(invalidWords)) {
+      toReturn.KeyWords = keyWordArray;
     } else {
       hasError = true;
     }
@@ -196,7 +208,7 @@ export const filterValidator = (req: Request, res: Response, next: NextFunction)
       toReturn.ProIsOffer = false;
     } else {
       if (object.ProIsOffer === 'true' || object.ProIsOffer === '1') {
-        toReturn.ProIsOffer = false;
+        toReturn.ProIsOffer = true;
       } else {
         hasError = true;
       }
@@ -220,7 +232,6 @@ export const fieldValidator = (req: Request, res: Response, next: NextFunction) 
   const { fields } = req.query;
   const avaibleFields = ['PRBML', 'PRCAT', 'PRTYP', 'PRPRO'];
   const invalidFields = [];
-  const errors = [];
   if (!fields) {
     return next();
   }

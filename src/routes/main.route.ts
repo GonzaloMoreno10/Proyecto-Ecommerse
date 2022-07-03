@@ -15,6 +15,7 @@ import brandsRoute from './brand.route';
 import ppsuiRoute from './ppsui.route';
 import ppvalRoute from './ppval.route';
 import pppreRoute from './pppre.route';
+import { orpRouter } from './orderProduct.route';
 
 const router = Router();
 
@@ -45,6 +46,8 @@ router.use('/server', serverConfigRoute);
 router.use('/propertySubitems', ppsuiRoute);
 
 router.use('/propertyValues', ppvalRoute);
+
+router.use('/orderProduct', orpRouter);
 
 //router.use('/messages', mensajeRouter);
 

@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { categoryRepository } from '../repositories/category.repository';
 import { ICategory, INewCategory } from '../interface/category.interface';
 import { constructResponse } from '../utils/constructResponse';
+import { productTypeRepository } from '../repositories/productType.repository';
+import { getTokenSourceMapRange } from 'typescript';
 class CategoriaController {
   async get(req: Request, res: Response) {
     const { id } = req.params;
@@ -18,6 +20,30 @@ class CategoriaController {
       return constructResponse(121, res, result);
     } catch (err) {
       return res.status(400).json(err);
+    }
+  }
+
+  async del(req: Request, res: Response) {
+    const { CatId } = req.params;
+    try {
+      const existsCat = await categoryRepository.getById(parseInt(CatId));
+      if (!existsCat) return constructResponse(123, res);
+      const userId = res.locals.userData.userId;
+      await categoryRepository.del(parseInt(CatId), userId);
+      const pTypes = await productTypeRepository.getByCategory(parseInt(CatId));
+      if (pTypes.length > 0) {
+        const promises = [];
+        for (const i in pTypes) {
+          const promise = productTypeRepository.del(pTypes[i].TypId, userId);
+          promises.push(promise);
+        }
+        const result = await Promise.allSettled(promises);
+        console.log(result);
+      }
+      return constructResponse(121, res);
+    } catch (err) {
+      console.log(err);
+      return constructResponse(500, res);
     }
   }
 

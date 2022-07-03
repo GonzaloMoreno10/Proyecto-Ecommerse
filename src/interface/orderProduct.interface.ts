@@ -18,6 +18,16 @@ export interface IOrderProduct {
   deletedUser: number;
 }
 
+export interface IOrderProductFilter {
+  OrpState: number;
+  OrpOrdId: number;
+  OrpProId: number;
+  maxPrice: number;
+  minPrice: number;
+  minQuantity: number;
+  maxQuantity: number;
+}
+
 export interface INewOrderProduct {
   OrpId?: number;
   OrpState: number;
@@ -32,6 +42,11 @@ export interface INewOrderProduct {
   enabled: boolean;
   deletedAt?: Date;
   deletedUser?: number;
+}
+
+export interface IPostOrderProduct extends INewOrderProduct {
+  OrpOrdId: number;
+  OrpProds: [{ OrpProId: number; OrpQuantity: number }];
 }
 
 export interface IOrderProductRelation extends IOrderProduct {

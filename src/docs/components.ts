@@ -412,6 +412,16 @@ export default {
           },
         },
       },
+      Brands: {
+        type: 'object',
+        description: 'A product in the cart.',
+        properties: {
+          BraName: {
+            type: 'number',
+            description: 'Brand name',
+          },
+        },
+      },
       ProductOrder: {
         type: 'object',
         description: 'A product in an order.',

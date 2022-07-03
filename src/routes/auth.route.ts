@@ -8,7 +8,7 @@ const router = Router();
 
 router.use(cors());
 
-router.post('/login', emptyBodyValidator, authContrroller.login);
+router.post('/login', emptyBodyValidator, tokenOrApiKeyIsValid, authContrroller.login);
 
 router.get('/logout', tokenOrApiKeyIsValid, (req, res) => {
   req.session.destroy(() => {});

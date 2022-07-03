@@ -1,6 +1,6 @@
-import { BrandModel, CategoryModel, ProductTypeModel } from '../datasource/sequelize';
+import { BrandModel, CategoryModel, ProductTypeModel, sequelize } from '../datasource/sequelize';
 import { IBrand, IBrandFilter, INewBrand } from '../interface/brand.model';
-
+const { Op } = require('sequelize');
 class BrandsRepository {
   async get(filter?: Partial<IBrandFilter>): Promise<IBrand[]> {
     let result: IBrand[];
@@ -10,17 +10,28 @@ class BrandsRepository {
         whereClause.BraTypId = filter.BraTypId;
       }
       if (filter.BraName) {
-        whereClause.BraName = filter.BraName;
+        whereClause.BraName = { [Op.like]: `%${filter.BraName}%` };
       }
-      result = await BrandModel.findAll({ where: whereClause });
+      result = await BrandModel.findAll({
+        where: whereClause,
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(select
+            curdate() from dual )`),
+              'prueba',
+            ],
+          ],
+        },
+      });
     } else {
       result = await BrandModel.findAll({ where: { enabled: true } });
     }
     return result;
   }
 
-  async getById(BraId: number): Promise<IBrand> {
-    return await BrandModel.findOne({ where: { BraId, enabled: true } });
+  async getById(BraId: number): Promise<IBrand[]> {
+    return await BrandModel.findAll({ where: { BraId, enabled: true } });
   }
 
   async upd(brand: IBrand, BraId: number) {
@@ -30,7 +41,6 @@ class BrandsRepository {
   async del(BraId: number, userId: number) {
     const brand = await BrandModel.findOne({ where: { BraId, enabled: true }, raw: true });
     if (brand) {
-      console.log(userId);
       brand.deletedAt = new Date();
       brand.enabled = false;
       brand.deletedUser = userId;

@@ -15,5 +15,11 @@ export default {
     {
       name: 'Orders',
     },
+    {
+      name: 'Brands',
+    },
+    {
+      name: 'Models',
+    },
   ],
 };

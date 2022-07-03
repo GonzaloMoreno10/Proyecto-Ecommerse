@@ -11,6 +11,12 @@ export interface ILine {
   deletedUser: number;
 }
 
+export interface ILineFilter {
+  LinName: object;
+  LinModId: number;
+  enabled: boolean;
+}
+
 export interface INewLine {
   LinId?: number;
   LinName: string;

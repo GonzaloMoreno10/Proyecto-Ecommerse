@@ -19,8 +19,8 @@ class ModelRepository {
     return await ModelModel.findAll({ where: { enabled: true } });
   }
 
-  async getById(ModId: number): Promise<IModel> {
-    return await ModelModel.findOne({ where: { ModId, enabled: true } });
+  async getById(ModId: number): Promise<IModel[]> {
+    return await ModelModel.findAll({ where: { ModId, enabled: true } });
   }
 
   async upd(model: IModel, ModId: number) {

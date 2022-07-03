@@ -1,6 +1,5 @@
 import { ProductTypeModel } from '../datasource/sequelize';
 import { INewProductType, IProductType, IProductTypeFilter } from '../interface/productType.interface';
-import { productTypeModel } from '../models/productType.model';
 class ProductTypeRepository {
   async get(filters: Partial<IProductTypeFilter>): Promise<IProductType[]> {
     let result: IProductType[];

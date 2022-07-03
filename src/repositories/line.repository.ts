@@ -1,17 +1,21 @@
+const { Op } = require('sequelize');
 import { LineModel } from '../datasource/sequelize';
-import { ILine, INewLine } from '../interface/line.interface';
+import { ILine, ILineFilter, INewLine } from '../interface/line.interface';
 
 class LineRepository {
-  async get(enabled = true): Promise<ILine[]> {
-    return await LineModel.findAll({ where: { enabled } });
+  async get(filters: Partial<ILineFilter>): Promise<ILine[]> {
+    const whereClause: Partial<ILineFilter> = { enabled: true };
+    if (filters.LinModId) whereClause.LinModId = filters.LinModId;
+    if (filters.LinName) whereClause.LinName = { [Op.like]: `%${filters.LinName}%` };
+    return await LineModel.findAll({ where: whereClause });
   }
 
-  async getById(LinId: number, enabled = true): Promise<ILine> {
+  async getById(LinId: number, enabled = true): Promise<ILine[]> {
     const whereClause = {
       LinId: LinId,
       enabled: !enabled ? '' : true,
     };
-    return await LineModel.findOne({ where: whereClause });
+    return await LineModel.findAll({ where: whereClause });
   }
 
   async getByModel(LinModId: number): Promise<ILine[]> {

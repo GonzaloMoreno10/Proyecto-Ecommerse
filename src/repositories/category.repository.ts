@@ -21,7 +21,8 @@ class CategoryRepository {
   }
 
   async del(CatId: number, userId: number) {
-    const category = await CategoryModel.findOne({ where: { CatId, enabled: true } });
+    const category = await CategoryModel.findOne({ where: { CatId, enabled: true }, raw: true });
+    console.log(category);
     if (category) {
       category.enabled = false;
       category.deletedAt = new Date();

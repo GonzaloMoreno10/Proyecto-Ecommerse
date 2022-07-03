@@ -6,7 +6,7 @@ import { INewOrderProduct, IOrderProduct } from '../interface/orderProduct.inter
 class FAORP extends Model<IOrderProduct, INewOrderProduct> {
   declare OrpId: CreationOptional<number>;
   declare OrpState: number;
-  declare OrpOrdid: number;
+  declare OrpOrdId: number;
   declare OrpProId: number;
   declare OrpQuantity: number;
   declare OrpPrice: number;

@@ -9,6 +9,8 @@ import account from './account';
 import info from './info';
 import categorias from './categories';
 import subCategories from './subCategories';
+import brands from './brands';
+import models from './_model';
 
 export default {
   ...basicInfo,
@@ -22,6 +24,8 @@ export default {
     ...orders,
     ...info,
     ...categorias,
+    ...brands,
+    ...models,
     ...subCategories,
   },
 };

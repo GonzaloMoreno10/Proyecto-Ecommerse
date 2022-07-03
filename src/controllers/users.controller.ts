@@ -39,7 +39,7 @@ class UsersController {
         GmailService.sendEmail(
           usuario.UsrEmail,
           'Creacion de cuenta',
-          verifyAccount(usuario.UsrId, usuario.UsrValidCod)
+          verifyAccount(usuario.UsrEmail, usuario.UsrValidCod)
         );
         return constructResponse(122, res);
       } else {

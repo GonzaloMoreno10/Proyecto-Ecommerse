@@ -30,6 +30,13 @@ export default {
         description: 'Category id',
       },
       {
+        name: 'fields',
+        in: 'query',
+        schema: {
+          type: 'string',
+        },
+      },
+      {
         name: 'ProTypId',
         in: 'query',
         schema: {

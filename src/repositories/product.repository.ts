@@ -12,8 +12,6 @@ import {
   sequelize,
   ProductPresentationPropertyModel,
 } from '../datasource/sequelize';
-import { sortProduct } from '../utils/sortProducts';
-import { ModuleResolutionKind } from 'typescript';
 const { Op } = require('sequelize');
 class ProductRepository {
   async getByBrand(id: number) {
@@ -36,46 +34,69 @@ class ProductRepository {
     }
   }
 
+  constructWhereKeyword = (array: string[], key: string) => {
+    const orClause = [];
+
+    for (let i in array) {
+      let or: any = {};
+      or[key] = { [Op.like]: `%${array[i]}%` };
+      orClause.push(or);
+      or = {};
+      or[key] = { [Op.like]: `%${array[i].substring(0, array[i].length / 2)}%` };
+      orClause.push(or);
+    }
+    return orClause;
+  };
+
+  constructLiteral = (array: string[], field: string) => {
+    let when = '';
+    for (let i in array) {
+      if (parseInt(i) !== array.length - 1) {
+        when += `when ${field} like '${array[i]}' then 4
+        when ${field} like '%${array[i]}%' then 3
+        when ${field} like '%${array[i].substring(0, array[i].length / 2)}%' then 2
+        when ${field} like '%${array[i].split(' ')[0]}%' then 1 `;
+      } else {
+        when += `when ${field} like '${array[i]}' then 4
+        when ${field} like '%${array[i]}%' then 3
+        when ${field} like '%${array[i].substring(0, array[i].length / 2)}%' then 2
+        when ${field} like '%${array[i].split(' ')[0]}%' then 1
+        else 0 `;
+      }
+    }
+    return `(select case ${when} end as 'OrderPriority' from PRPRO pr where pr.ProId = PRPRO.ProId)`;
+  };
+
   async getByKeyWord(search: string): Promise<IProduct[]> {
     const array = search.split(' ').filter(word => word !== '' && word.length > 2);
 
     const res = await ProductModel.findAll({
       where: {
-        [Op.or]: [
-          array[0] ? { nombre: { [Op.like]: `%${array[0]}%` } } : '',
-          array[1] ? { nombre: { [Op.like]: `%${array[1]}%` } } : '',
-          array[2] ? { nombre: { [Op.like]: `%${array[2]}%` } } : '',
-          array[3] ? { nombre: { [Op.like]: `%${array[3]}%` } } : '',
-        ],
+        [Op.or]: this.constructWhereKeyword(array, 'ProName'),
       },
+      attributes: { include: [[sequelize.literal(this.constructLiteral(array, 'PRPRO.ProName')), 'OrderPriority']] },
       include: [
         {
           required: false,
           model: ProductTypeModel,
-          where: {
-            [Op.or]: [
-              array[0] ? { nombre: { [Op.like]: `%${array[0]}%` } } : '',
-              array[1] ? { nombre: { [Op.like]: `%${array[1]}%` } } : '',
-              array[2] ? { nombre: { [Op.like]: `%${array[2]}%` } } : '',
-              array[3] ? { nombre: { [Op.like]: `%${array[3]}%` } } : '',
-            ],
-          },
+          attributes: { include: [[sequelize.literal(this.constructLiteral(array, 'PRTYP.TypId')), 'OrderPriority']] },
+          where: { [Op.or]: this.constructWhereKeyword(array, 'TypName') },
           include: [
             {
               required: false,
               model: CategoryModel,
+              attributes: {
+                include: [[sequelize.literal(this.constructLiteral(array, '`PRTYP->PRCAT`.CatId')), 'OrderPriority']],
+              },
               where: {
-                [Op.or]: [
-                  array[0] ? { nombre: { [Op.like]: `%${array[0]}%` } } : '',
-                  array[1] ? { nombre: { [Op.like]: `%${array[1]}%` } } : '',
-                  array[2] ? { nombre: { [Op.like]: `%${array[2]}%` } } : '',
-                  array[3] ? { nombre: { [Op.like]: `%${array[3]}%` } } : '',
-                ],
+                [Op.or]: this.constructWhereKeyword(array, 'CatName'),
               },
             },
           ],
         },
       ],
+      order: [sequelize.literal('OrderPriority DESC')],
+      limit: 4,
     });
 
     return <IProduct[]>(<unknown>res);
@@ -85,9 +106,27 @@ class ProductRepository {
     return await ProductModel.count();
   }
 
-  async get(limit: number, offset: number, filter?: Partial<IProductFilters>, fields?: any): Promise<IProduct[]> {
-    const whereClause: any = { enabled: filter?.enabled ?? true, ProIsOffer: filter?.ProIsOffer ?? '' };
+  async get(
+    limit: number,
+    offset: number,
+    filter?: Partial<IProductFilters>,
+    fields?: IProductQueryFields
+  ): Promise<IProduct[]> {
+    console.log(filter);
+    const whereClause: any = {
+      enabled: filter?.enabled ?? true,
+    };
     if (filter) {
+      if (filter.KeyWords) {
+        const keywordsLikes = filter.KeyWords.map((Keyword: string) => {
+          return { [Op.like]: `%${Keyword}%` };
+        });
+        console.log(keywordsLikes);
+        whereClause.ProName = {
+          [Op.or]: keywordsLikes,
+        };
+      }
+      if (filter.ProIsOffer) whereClause.ProIsOffer = filter.ProIsOffer;
       if (filter.ProCod) whereClause.ProCod = filter.ProCod;
       if (filter.ProUsrId) whereClause.ProUsrId = filter.ProUsrId;
       if (filter.ProTypId) whereClause.ProTypId = filter.ProTypId;
@@ -125,14 +164,14 @@ class ProductRepository {
           }
         }
       }
-      if (filter.ProName)
-        whereClause.ProName = {
-          [Op.or]: [
-            { [Op.like]: `%${filter.ProName}%` },
-            { [Op.like]: `%${filter.ProName.substring(0, filter.ProName.length / 2)}%` },
-            { [Op.like]: `%${filter.ProName.split(' ')[0]}%` },
-          ],
-        };
+      // if (filter.ProName)
+      //   whereClause.ProName = {
+      //     [Op.or]: [
+      //       { [Op.like]: `%${filter.ProName}%` },
+      //       { [Op.like]: `%${filter.ProName.substring(0, filter.ProName.length / 2)}%` },
+      //       { [Op.like]: `%${filter.ProName.split(' ')[0]}%` },
+      //     ],
+      //   };
     }
     const result = await ProductModel.findAll({
       where: whereClause,
@@ -283,52 +322,46 @@ class ProductRepository {
   }
   async getByLastOrderUser(userId: number) {
     const res = await OrderModel.findAll({
-      attributes: ['id', 'createdAt'],
+      attributes: ['OrdId', 'createdAt'],
       where: { OrdUsrId: userId },
       include: [
         {
           model: OrderProductsModel,
-          attributes: ['orderId', 'productId'],
+          attributes: ['OrpId', 'OrpProId'],
           required: true,
-          include: [{ model: ProductModel, attributes: ['categoria', 'id'], required: true }],
+          include: [{ model: ProductModel, attributes: ['ProCatId', 'ProId'], required: true }],
         },
       ],
-      group: ['categoria', 'productId'],
+      group: ['ProCatId', 'ProId'],
       order: [['createdAt', 'desc']],
     });
+    console.log(res);
 
-    const categoryArray = res.map(res => {
-      const cat = Object.assign(res).OrderProducts.map(op => {
-        return op.Product.categoria;
+    if (res.length > 0) {
+      const categoryArray = res.map(res => {
+        const cat = Object.assign(res).FAORPs.map(op => {
+          return op.PRPRO.ProCatId;
+        });
+        return cat;
       });
-      return cat;
-    });
-    const productArray = res.map(res => {
-      const prod = Object.assign(res).OrderProducts.map(op => {
-        return op.productId;
+      const productArray = res.map(res => {
+        const prod = Object.assign(res).FAORPs.map(op => {
+          return op.PRPRO.ProId;
+        });
+        return prod;
       });
-      return prod;
-    });
 
-    const resToReturn = ProductModel.findAll({
-      where: {
-        ProId: { [Op.notIn]: productArray },
-        [Op.or]: {
-          categoria: categoryArray,
+      const resToReturn = ProductModel.findAll({
+        where: {
+          ProId: { [Op.notIn]: productArray },
+          [Op.in]: {
+            categoria: categoryArray,
+          },
         },
-      },
-      limit: 10,
-    });
-
-    // const sql = `select * from products p1
-    // where categoria in (
-    // select categoria from products  p
-    // where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId} ))
-    // and p1.id not in (select id from products  p
-    // where id in (select op.productId from orderProducts op join orders o on o.id = op.orderId where op.productId = p.id and o.userId = ${userId}))
-    // and p1.activo = 1 LIMIT 20`;
-    // const result = await this.connection.query(sql);
-    return <IProduct[]>(<unknown>resToReturn);
+        limit: 10,
+      });
+      return <IProduct[]>(<unknown>resToReturn);
+    }
   }
 
   async getInOffer() {

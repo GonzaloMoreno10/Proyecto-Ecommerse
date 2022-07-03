@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { userRepository } from '../repositories/users.repository';
 import { constructResponse } from '../utils/constructResponse';
 import { INewUser } from '../interface';
+import bcrypt from 'bcrypt';
 
 class AuthController {
   async login(req: Request, res: Response) {
@@ -20,11 +21,11 @@ class AuthController {
   }
 
   async accountVerification(req: Request, res: Response) {
-    const { userId } = req.params;
+    const { UsrEmail } = req.params;
     const { hash } = req.query;
-    const userFound = await userRepository.getById(parseInt(userId));
+    const userFound = await userRepository.getByEmail(UsrEmail);
     if (userFound && !userFound.UsrVerfied) {
-      if (userFound.UsrValidCod === hash) {
+      if (bcrypt.compare(hash.toString(), userFound.UsrValidCod)) {
         userFound.UsrVerfied = true;
         await userRepository.upd(Object.assign(userFound).dataValues, userFound.UsrId);
         return constructResponse(124, res);

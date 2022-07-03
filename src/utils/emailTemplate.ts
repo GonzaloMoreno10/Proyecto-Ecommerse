@@ -1,6 +1,6 @@
 import { API_URL } from '../constants/venv';
 
-export const verifyAccount = (userId: number, codValidacion: string) => {
+export const verifyAccount = (UsrEmail: string, codValidacion: string) => {
   return `<!DOCTYPE html>
     <html>
     <head>
@@ -127,7 +127,7 @@ export const verifyAccount = (userId: number, codValidacion: string) => {
             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
               <tr>
                 <td align="center" valign="top" style="padding: 36px 24px;">
-                  <a href="${API_URL}/account/mailValidation/${userId}?hash=${codValidacion}" target="_blank" style="display: inline-block;">
+                  <a href="${API_URL}/account/mailValidation/${UsrEmail}?hash=${codValidacion}" target="_blank" style="display: inline-block;">
                     <img src="https://suspicious-allen-156444.netlify.app/icono.png" alt="Logo" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
                   </a>
                 </td>
@@ -193,7 +193,7 @@ export const verifyAccount = (userId: number, codValidacion: string) => {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                              <a href="${API_URL}/account/mailValidation/${userId}?hash=${codValidacion}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Valida tu email</a>
+                              <a href="${API_URL}/account/mailValidation/${UsrEmail}?hash=${codValidacion}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Valida tu email</a>
                             </td>
                           </tr>
                         </table>
@@ -208,7 +208,7 @@ export const verifyAccount = (userId: number, codValidacion: string) => {
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                   <p style="margin: 0;">If that doesn't work, copy and paste the following link in your browser:</p>
-                  <p style="margin: 0;"><a href="${API_URL}/account/mailValidation/${userId}?hash=${codValidacion}" target="_blank">http://localhost:3000/api/users/mailValidation/${userId}?hash=${codValidacion}</a></p>
+                  <p style="margin: 0;"><a href="${API_URL}/account/mailValidation/${UsrEmail}?hash=${codValidacion}" target="_blank">http://localhost:3000/api/users/mailValidation/${UsrEmail}?hash=${codValidacion}</a></p>
                 </td>
               </tr>
               <!-- end copy -->
