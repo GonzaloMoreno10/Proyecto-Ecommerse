@@ -14,15 +14,6 @@ class BrandsRepository {
       }
       result = await BrandModel.findAll({
         where: whereClause,
-        attributes: {
-          include: [
-            [
-              sequelize.literal(`(select
-            curdate() from dual )`),
-              'prueba',
-            ],
-          ],
-        },
       });
     } else {
       result = await BrandModel.findAll({ where: { enabled: true } });

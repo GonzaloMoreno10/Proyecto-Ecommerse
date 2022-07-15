@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { API_URL } from '../constants/venv';
 import { INewProduct, IProduct } from '../interface/product.interface';
 import { pppreRepository } from '../repositories/pppre.repository';
 import { productRepository } from '../repositories/product.repository';
 import { constructResponse } from '../utils/constructResponse';
-
+import boom from '@hapi/boom';
 export class ProductoController {
   async getRelated(req: Request, res: Response) {
     try {
@@ -26,23 +26,22 @@ export class ProductoController {
       return constructResponse(500, res);
     }
   }
-  async getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    const query: string = <string>req.query.fields;
+    let fields = [];
+    if (query) {
+      fields = query.split(',');
+    }
     try {
-      const { id } = req.params;
-      const query: string = <string>req.query.fields;
-      let fields = [];
-      if (query) {
-        fields = query.split(',');
-      }
-
       let product = await productRepository.getById(parseInt(id), fields.length > 0 ? fields : undefined);
       if (product) {
         return constructResponse(121, res, product);
       } else {
-        return constructResponse(123, res);
+        return constructResponse(123, res, product);
       }
     } catch (err) {
-      return constructResponse(500, res);
+      next(err);
     }
   }
   async get(req: Request, res: Response) {

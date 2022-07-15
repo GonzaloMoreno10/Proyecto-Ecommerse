@@ -21,12 +21,12 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
     if (exists) errors.push(127);
   }
   if (post.UsrDoc) {
-    if (!documentIsValid(post.UsrDoc)) errors.push(125);
+    if (!documentIsValid(post.UsrDoc)) errors.push(704);
   }
   if (post.UsrPass) {
     if (!passwordIsValid(post.UsrPass)) errors.push(132);
   }
-  if (!errors.length) {
+  if (!errors.length || errors.length <= 0) {
     const newAccount = {
       UsrEmail: post.UsrEmail,
       UsrPass: post.UsrPass,
@@ -45,7 +45,6 @@ export const validAccountData = async (req: Request, res: Response, next: NextFu
     res.locals.accountData = newAccount;
     return next();
   } else {
-    console.log(errors);
     return constructResponse(errors, res, undefined, undefined, missing);
   }
 };

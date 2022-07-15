@@ -10,6 +10,7 @@ export const constructResponse = async (
   fieldName?: string[] | string
 ) => {
   const response: IResponses[] = await responseRepository.getByResIds(resId);
+
   response.map(res => {
     if (res.resId == 534 || res.resId == 614 || res.resId == 634) {
       res.resDesc = res.resDesc + ': [' + fieldName + ']';
@@ -26,15 +27,15 @@ export const constructResponse = async (
     });
 
     toReturn = {
-      code: response.length > 1 ? 400 : response[0].resCod,
+      HttpStatusCode: response.length > 1 ? 400 : response[0].resCod,
       errors: errors,
     };
   } else {
     toReturn = {
-      code: response[0].resCod,
-      message: response[0].resDesc ?? 'Ocurrio un error',
+      HttpStatusCode: response[0].resCod,
+      message: response[0].resDesc ?? 'Internal server error',
       data: data ? (Object.assign(data).token ? data : Array.isArray(data) ? data : [data]) : [],
     };
   }
-  res.status(toReturn.code).json(toReturn);
+  res.status(toReturn.HttpStatusCode).json(toReturn);
 };

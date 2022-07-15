@@ -1,5 +1,5 @@
 export interface IResponse {
-  code: number;
+  HttpStatusCode: number;
   data?: Object[] | Object;
   message?: string;
   errors?: IError[];

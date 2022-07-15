@@ -11,6 +11,7 @@ import { errorHandler } from '../controllers/errors.controller';
 import swaggerUI from 'swagger-ui-express';
 import docs from '../docs';
 import morgan from 'morgan';
+import { boomErrorHandler, errorLog } from '../middlewares/errors.middleware';
 
 const app = express();
 
@@ -43,6 +44,12 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', mainRouter);
+
+app.use(errorLog);
+
+app.use(boomErrorHandler);
+
+app.use(errorHandler);
 
 //SocketIO
 
