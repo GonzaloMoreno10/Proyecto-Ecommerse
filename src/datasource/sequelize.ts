@@ -16,6 +16,7 @@ import { productPropertySubItemModel } from '../models/subProperties.model';
 import { userModel } from '../models/user.model';
 import { responseModel } from '../models/response.model';
 import { MYSQL_PORT } from '../constants/venv';
+import { prProPreModel } from '../models/prpropre.model';
 export const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
   host: dbConfig.host,
   port: parseInt(MYSQL_PORT),
@@ -42,6 +43,7 @@ export const ProductPropertySubItemModel = productPropertySubItemModel(sequelize
 export const ProductPropertyModel = productPropertyModel(sequelize);
 export const BrandModelLineModel = brandModelLineModel(sequelize);
 export const UserModel = userModel(sequelize);
+export const PrProPreModel = prProPreModel(sequelize);
 export const ProductModel = productModel(sequelize);
 export const OrderProductsModel = orderProductsModel(sequelize);
 export const OrderModel = orderModel(sequelize);

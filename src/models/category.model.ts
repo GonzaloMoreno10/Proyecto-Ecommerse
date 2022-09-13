@@ -1,6 +1,7 @@
 import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { ICategory, INewCategory } from '../interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRCAT extends Model<ICategory, INewCategory> {
   declare CatId: CreationOptional<number>;
@@ -37,12 +38,12 @@ export const categoryModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

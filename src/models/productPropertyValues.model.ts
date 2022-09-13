@@ -1,6 +1,7 @@
 import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { INewProductPropertyValue, IProductPropertyValue } from '../interface/productPropertyValue.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PPVAL extends Model<IProductPropertyValue, INewProductPropertyValue> {
   declare ValId: CreationOptional<number>;
@@ -47,11 +48,12 @@ export const productPropertyValues = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

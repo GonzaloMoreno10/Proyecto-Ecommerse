@@ -1,9 +1,10 @@
 import { productPropertyRepository } from '../repositories/productProperties.repository';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { constructResponse } from '../utils/constructResponse';
 import { IProductProperty } from '../interface/productProperty.interface';
+import { pppreRepository } from '../repositories/pppre.repository';
 class ProductPropertyController {
-  async get(req: Request, res: Response) {
+  async get(req: Request, res: Response, next: NextFunction) {
     const { TypId } = req.params;
     let result: IProductProperty[] | IProductProperty = [];
     try {
@@ -14,7 +15,7 @@ class ProductPropertyController {
       }
       return constructResponse(121, res, result);
     } catch (err) {
-      return constructResponse(500, res, err);
+      next(err);
     }
   }
   async set(req: Request, res: Response) {
@@ -35,6 +36,10 @@ class ProductPropertyController {
     } catch (err) {
       console.log(err);
     }
+  }
+  async getPrProPre(req: Request, res: Response) {
+    const result = await pppreRepository.getPrProPreByProdId(1);
+    return constructResponse(121, res, result);
   }
 }
 

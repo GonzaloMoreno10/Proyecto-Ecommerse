@@ -10,6 +10,8 @@ router.get('/:productTypeId', tokenOrApiKeyIsValid, productPropertyController.ge
 
 router.get('/', tokenOrApiKeyIsValid, productPropertyController.get);
 
+router.get('/prpropre/in', tokenOrApiKeyIsValid, productPropertyController.getPrProPre);
+
 router.post('/', tokenIsValid, emptyBodyValidator, productPropertyValidator, productPropertyController.set);
 
 export default router;

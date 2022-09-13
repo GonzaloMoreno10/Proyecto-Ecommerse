@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes, InitOptions } from 'sequelize';
 import { Model } from 'sequelize';
 import { BrandModel } from '../datasource/sequelize';
 import { IModel, INewModel } from '../interface/model.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRMOD extends Model<IModel, INewModel> {
   declare ModId: CreationOptional<number>;
@@ -43,11 +44,12 @@ export const modelModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod()
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

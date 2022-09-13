@@ -4,6 +4,7 @@ import { Model } from 'sequelize';
 import { OrderProductsModel } from '../datasource/sequelize';
 import { INewOrder, IOrder } from '../interface';
 import { IOrderProduct } from '../interface/orderProduct.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class FAORD extends Model<IOrder, INewOrder> {
   declare OrdId: CreationOptional<number>;
@@ -44,11 +45,12 @@ export const orderModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

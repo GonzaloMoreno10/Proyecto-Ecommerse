@@ -35,7 +35,7 @@ export interface INewOrderProduct {
   OrpProId: number;
   OrpQuantity: number;
   OrpPrice: number;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   createdUser: number;
   updatedUser?: number;

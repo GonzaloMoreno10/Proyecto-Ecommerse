@@ -24,7 +24,6 @@ class LineaController {
       }
       return constructResponse(123, res);
     } catch (err) {
-      console.log(err);
       constructResponse(500, res);
     }
   }

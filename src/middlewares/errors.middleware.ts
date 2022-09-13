@@ -6,7 +6,7 @@ const consoleLogger = log4js.getLogger('consoleLogger');
 const errorLogger = log4js.getLogger('errorLogger');
 export const errorLog: ErrorRequestHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
   if (!error.isBoom) {
-    consoleLogger.error(error);
+    consoleLogger.error({ message: error.message, stack: error.stack });
     errorLogger.error(error);
   }
   next(error);
@@ -18,7 +18,7 @@ export const errorHandler: ErrorRequestHandler = (error: any, req: Request, res:
     errors: [
       {
         code: 500,
-        message: 'Internal server error',
+        message: 'Ocurrio un error',
       },
     ],
   });

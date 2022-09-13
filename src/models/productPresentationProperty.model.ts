@@ -5,6 +5,7 @@ import {
   INewProductPresentationProperty,
   IProductPresentationProperty,
 } from '../interface/productPresentationProperty.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PPPRE extends Model<IProductPresentationProperty, INewProductPresentationProperty> {
   declare PreId: CreationOptional<number>;
@@ -46,11 +47,12 @@ export const productPresentationPropertyModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue: FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

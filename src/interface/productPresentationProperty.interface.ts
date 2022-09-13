@@ -12,7 +12,7 @@ export interface IProductPresentationProperty {
 }
 
 export interface IProductPresentationPropertyFilter {
-  PreProdId: number;
+  PreProId: number;
   PreValId: number;
   enabled: boolean;
 }

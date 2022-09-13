@@ -1,5 +1,6 @@
-import { ProductTypeModel } from '../datasource/sequelize';
+import { BrandModel, CategoryModel, ProductTypeModel } from '../datasource/sequelize';
 import { INewProductType, IProductType, IProductTypeFilter } from '../interface/productType.interface';
+const { Op } = require('sequelize');
 class ProductTypeRepository {
   async get(filters: Partial<IProductTypeFilter>): Promise<IProductType[]> {
     let result: IProductType[];
@@ -37,6 +38,28 @@ class ProductTypeRepository {
       pt.deletedUser = userId;
       return await ProductTypeModel.update(pt, { where: { TypId } });
     }
+  }
+
+  async getTypCat(names: string[]) {
+    const likesClause = ['TypName', 'BraName'].map(field => {
+      return names.map((x: string) => {
+        return { [field]: { [Op.like]: `%${x}%` } };
+      });
+    });
+    const whereClause = {
+      [Op.or]: likesClause[0],
+      enabled: 1,
+    };
+    const res = await ProductTypeModel.findAll({
+      attributes: ['TypId', 'TypName'],
+      where: whereClause,
+      include: [
+        { model: CategoryModel, required: false },
+        { model: BrandModel, required: false, where: { [Op.or]: likesClause[1] } },
+      ],
+      group: 'BraName',
+    });
+    return res;
   }
 
   async getById(TypId: number): Promise<IProductType> {

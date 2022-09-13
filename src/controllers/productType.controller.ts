@@ -55,6 +55,27 @@ class ProductTypeController {
     }
   }
 
+  async getCatTyp(req: Request, res: Response) {
+    try {
+      const { TypName } = req.params;
+      if (!TypName) {
+        return constructResponse(500, res);
+      }
+      const typName = TypName.toString()
+        .replace(',', ' ')
+        .split(' ')
+        .map((x: string) => {
+          return x.trim();
+        });
+
+      const result = await productTypeRepository.getTypCat(typName);
+      return constructResponse(121, res, result);
+    } catch (err) {
+      console.log(err);
+      return constructResponse(500, res, err);
+    }
+  }
+
   async get(req: Request, res: Response) {
     try {
       const filter: Partial<IProductTypeFilter> = req.query;

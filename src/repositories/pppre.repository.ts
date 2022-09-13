@@ -1,4 +1,4 @@
-import { ProductPresentationPropertyModel } from '../datasource/sequelize';
+import { ProductPresentationPropertyModel, PrProPreModel } from '../datasource/sequelize';
 import {
   INewProductPresentationProperty,
   IProductPresentationProperty,
@@ -10,8 +10,8 @@ class PppreRepository {
     let result: IProductPresentationProperty[];
     if (filters) {
       const whereClause: Partial<IProductPresentationPropertyFilter> = { enabled: true };
-      if (filters.PreProdId) {
-        whereClause.PreProdId = filters.PreProdId;
+      if (filters.PreProId) {
+        whereClause.PreProId = filters.PreProId;
       }
       if (filters.PreValId) {
         whereClause.PreValId = filters.PreValId;
@@ -21,6 +21,10 @@ class PppreRepository {
       result = await ProductPresentationPropertyModel.findAll({ where: { enabled: true } });
     }
     return result;
+  }
+
+  async getPrProPreByProdId(ProductId: number) {
+    return PrProPreModel.findAll({ where: { ProductId } });
   }
 
   async getById(PreId: number): Promise<IProductPresentationProperty> {

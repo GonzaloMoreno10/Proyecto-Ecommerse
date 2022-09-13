@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { ProductPropertyValueModel } from '../datasource/sequelize';
 import { INewProductPropertySubItem, IProductPropertySubItem } from '../interface/productPropertySubItem.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PPSUI extends Model<IProductPropertySubItem, INewProductPropertySubItem> {
   declare SuiId: CreationOptional<number>;
@@ -43,11 +44,12 @@ export const productPropertySubItemModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

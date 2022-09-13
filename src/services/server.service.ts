@@ -7,11 +7,10 @@ import log4js from 'log4js';
 import { log4jsConfig } from '../config/log4js.config';
 //import { initIo } from './socketIo.service';
 import cors from 'cors';
-import { errorHandler } from '../controllers/errors.controller';
 import swaggerUI from 'swagger-ui-express';
 import docs from '../docs';
 import morgan from 'morgan';
-import { boomErrorHandler, errorLog } from '../middlewares/errors.middleware';
+import { boomErrorHandler, errorLog, errorHandler } from '../middlewares/errors.middleware';
 
 const app = express();
 

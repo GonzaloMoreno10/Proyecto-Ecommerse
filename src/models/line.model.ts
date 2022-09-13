@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { ModelModel } from '../datasource/sequelize';
 import { ILine, INewLine } from '../interface/line.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRLIN extends Model<ILine, INewLine> {
   declare LinId: CreationOptional<number>;
@@ -43,11 +44,12 @@ export const lineModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

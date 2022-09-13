@@ -9,6 +9,8 @@ router.get('/', tokenOrApiKeyIsValid, productTypeController.get);
 
 router.get('/:TypId', tokenOrApiKeyIsValid, productTypeController.getById);
 
+router.get('/category/:TypName', productTypeController.getCatTyp);
+
 router.delete('/:TypId', tokenIsValid, productTypeController.del);
 
 router.post('/', tokenIsValid, emptyBodyValidator, productTypeValidator, productTypeController.set);

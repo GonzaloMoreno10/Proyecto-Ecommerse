@@ -11,7 +11,7 @@ export const orderValidator = async (req: Request, res: Response, next: NextFunc
     createdUser: res.locals.userData.userId,
     enabled: true,
   };
-  res.locals.newOrder = newOrder;
+  res.locals.newOrder = { order: newOrder, products: req.body.products };
   return next();
 };
 

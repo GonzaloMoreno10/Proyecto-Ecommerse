@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { LineModel, BrandModel, ModelModel } from '../datasource/sequelize';
 import { IBrandModelLine, INewBrandModelLine } from '../interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRBML extends Model<IBrandModelLine, INewBrandModelLine> {
   declare BmlId: CreationOptional<number>;
@@ -39,7 +40,7 @@ export const brandModelLineModel = (sequelize: any) => {
       },
       updatedUser: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       createdUser: {
         type: DataTypes.INTEGER,
@@ -48,11 +49,12 @@ export const brandModelLineModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue: FecMod(),
       },
       deletedAt: {
         type: DataTypes.DATE(),

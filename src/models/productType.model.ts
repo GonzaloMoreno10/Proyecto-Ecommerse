@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { CategoryModel } from '../datasource/sequelize';
 import { INewProductType, IProductType } from '../interface/productType.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRTYP extends Model<IProductType, INewProductType> {
   declare TypId: CreationOptional<number>;
@@ -43,11 +44,12 @@ export const productTypeModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

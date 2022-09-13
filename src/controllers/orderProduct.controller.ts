@@ -38,7 +38,6 @@ class OrderProductController {
             OrpPrice: newOrderProduct.OrpProds[i].OrpPrice,
             OrpQuantity: newOrderProduct.OrpProds[i].OrpQuantity,
             OrpProId: newOrderProduct.OrpProds[i].OrpProId,
-            createdAt: new Date(),
             createdUser: res.locals.userData.userId,
             enabled: true,
             stock: newOrderProduct.OrpProds[i].stock,

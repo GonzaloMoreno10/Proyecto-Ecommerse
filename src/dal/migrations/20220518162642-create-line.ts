@@ -1,3 +1,5 @@
+import { FecAlt } from "../../utils/date";
+
 module.exports = async function up(queryInterface: any, Sequelize: any) {
   await queryInterface.createTable('lines', {
     id: {
@@ -24,6 +26,7 @@ module.exports = async function up(queryInterface: any, Sequelize: any) {
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE(),
+      default:FecAlt(),
     },
     updatedAt: {
       allowNull: false,

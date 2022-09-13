@@ -7,6 +7,7 @@ import {
   ProductTypeModel,
 } from '../datasource/sequelize';
 import { INewProductProperty, IProductProperty } from '../interface/productProperty.interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PPPRO extends Model<IProductProperty, INewProductProperty> {
   declare ProId: CreationOptional<number>;
@@ -53,11 +54,12 @@ export const productPropertyModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

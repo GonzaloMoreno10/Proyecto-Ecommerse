@@ -4,16 +4,15 @@ import { INewProduct, IProduct } from '../interface/product.interface';
 import { pppreRepository } from '../repositories/pppre.repository';
 import { productRepository } from '../repositories/product.repository';
 import { constructResponse } from '../utils/constructResponse';
-import boom from '@hapi/boom';
+import { FecAlt, FecMod, HorMod } from '../utils/date';
 export class ProductoController {
-  async getRelated(req: Request, res: Response) {
+  async getRelated(req: Request, res: Response, next: NextFunction) {
     try {
       const { ProId } = req.query;
       const result = await productRepository.getByRelated(Number(ProId));
       return constructResponse(121, res, result);
     } catch (err) {
-      console.log(err);
-      return constructResponse(500, res, undefined, err);
+      next(err);
     }
   }
   async getByOrder(req: Request, res: Response) {
@@ -29,18 +28,39 @@ export class ProductoController {
   async getById(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     const query: string = <string>req.query.fields;
-    let fields = [];
+    let fields: string[] = [];
     if (query) {
       fields = query.split(',');
     }
     try {
-      let product = await productRepository.getById(parseInt(id), fields.length > 0 ? fields : undefined);
+      let product: any = await productRepository.getById(parseInt(id), fields.length > 0 ? fields : undefined);
+      console.log(JSON.stringify(product.dataValues));
       if (product) {
+        if (fields.includes('PRPRO')) {
+          const properties = await pppreRepository.getPrProPreByProdId(product.ProId);
+
+          const map = {};
+          for (let prop of properties) {
+            const proName = prop.PropertyName;
+            if (!map[proName]) map[proName] = [];
+            map[proName].push(prop);
+          }
+
+          const result = Object.entries(map).map(x => {
+            return {
+              propName: x[0],
+              values: x[1],
+            };
+          });
+          product.dataValues.properties = result;
+        }
+
         return constructResponse(121, res, product);
       } else {
         return constructResponse(123, res, product);
       }
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }
@@ -49,6 +69,9 @@ export class ProductoController {
       const { pageSize, page } = req.query;
       const filter = res.locals.productFilter;
       const fields = res.locals.productFields;
+      FecAlt();
+      FecMod();
+      HorMod();
       const quantity = await productRepository.count();
       if (pageSize && page) {
         let nextPage: string = '';

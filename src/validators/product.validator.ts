@@ -5,10 +5,11 @@ import { categoryRepository } from '../repositories/category.repository';
 import { productTypeRepository } from '../repositories/productType.repository';
 import { constructResponse } from '../utils/constructResponse';
 import { validateBindings } from '../utils/validateBindings';
+import {FecAlt} from '../utils/date'
 
 export const productValidator = async (req: Request, res: Response, next: NextFunction) => {
   const product: INewProduct = req.body;
-  const errors = [];
+  const errors:number[] = [];
   const obligatorios = ['ProName', 'ProPrice', 'ProStock', 'ProTypId', 'ProCatId', 'ProBmlId'];
   const missing = validateBindings(obligatorios, product);
   if (missing.length > 0) {
@@ -49,7 +50,6 @@ export const productValidator = async (req: Request, res: Response, next: NextFu
     ProStock: product.ProStock,
     ProTypId: product.ProTypId,
     ProUsrId: res.locals.userData.userId,
-    createdAt: new Date(),
     createdUser: res.locals.userData.userId,
   };
   res.locals.newProduct = prod;
@@ -59,7 +59,7 @@ export const productValidator = async (req: Request, res: Response, next: NextFu
 export const filterValidator = (req: Request, res: Response, next: NextFunction) => {
   const filters = Object.entries(req.query);
   let hasError = false;
-  const invalidFilters = [];
+  const invalidFilters:string[] = [];
   const invalidWords = 'select' || 'insert' || 'delete' || 'drop' || 'table' || 'database';
   const avaibleFilters = [
     'ProName',
@@ -231,7 +231,7 @@ export const filterValidator = (req: Request, res: Response, next: NextFunction)
 export const fieldValidator = (req: Request, res: Response, next: NextFunction) => {
   const { fields } = req.query;
   const avaibleFields = ['PRBML', 'PRCAT', 'PRTYP', 'PRPRO'];
-  const invalidFields = [];
+  const invalidFields:string[] = [];
   if (!fields) {
     return next();
   }

@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { ProductTypeModel } from '../datasource/sequelize';
 import { IBrand, INewBrand } from '../interface/brand.model';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRBRA extends Model<IBrand, INewBrand> {
   declare BraId: CreationOptional<number>;
@@ -47,11 +48,12 @@ export const brandModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue: FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),
@@ -79,5 +81,6 @@ export const brandModel = (sequelize: any) => {
     }
   );
   marcaToReturn.belongsTo(ProductTypeModel, { foreignKey: 'BraTypId' });
+  ProductTypeModel.hasOne(marcaToReturn, { foreignKey: 'BraTypId' });
   return marcaToReturn;
 };

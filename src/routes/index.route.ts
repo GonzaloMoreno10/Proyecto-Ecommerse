@@ -11,3 +11,4 @@ export * from './serverConfig.route';
 export * from './stats.route';
 export * from './users.route';
 export * from './orderProduct.route';
+export * from './bml.route';

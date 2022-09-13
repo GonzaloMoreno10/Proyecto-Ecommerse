@@ -1,6 +1,7 @@
 import { CreationOptional, DataTypes } from 'sequelize';
 import { Model } from 'sequelize';
 import { INewUser, IUser } from '../interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class User extends Model<IUser, INewUser> {
   declare UsrId: CreationOptional<number>;
@@ -92,11 +93,12 @@ export const userModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue:FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),

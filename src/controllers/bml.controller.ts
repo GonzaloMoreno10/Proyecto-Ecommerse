@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { IBrandModelLine, IBrandModelLineFilter } from '../interface';
 import { brandModelLineRepository } from '../repositories/brandModelLine.repository';
 import { constructResponse } from '../utils/constructResponse';
 
 class BmlController {
-  async get(req: Request, res: Response) {
+  async get(req: Request, res: Response, next: NextFunction) {
     const filter: Partial<IBrandModelLineFilter> = req.query;
     let result: IBrandModelLine[] | IBrandModelLine;
     const { BmlId } = req.params;
@@ -16,17 +16,18 @@ class BmlController {
       }
       return constructResponse(121, res, result);
     } catch (err) {
-      return constructResponse(500, res, undefined, err);
+      next(err);
     }
   }
 
-  async set(_, res: Response) {
-    const { bml } = res.locals;
+  async set(_, res: Response, next: NextFunction) {
+    const { createBml } = res.locals;
     try {
-      const result = await brandModelLineRepository.set(bml);
+      const result = await brandModelLineRepository.set(createBml);
       return constructResponse(121, res, result);
     } catch (err) {
-      return constructResponse(500, res, undefined, err);
+      console.log(err);
+      next(err);
     }
   }
 }

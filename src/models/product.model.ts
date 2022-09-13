@@ -6,8 +6,10 @@ import {
   BrandModelLineModel,
   ProductPresentationPropertyModel,
   ProductTypeModel,
+  PrProPreModel,
 } from '../datasource/sequelize';
 import { IProduct, INewProduct } from '../interface';
+import { FecAlt, FecMod } from '../utils/date';
 
 class PRPRO extends Model<IProduct, INewProduct> {
   declare ProId: CreationOptional<number>;
@@ -99,11 +101,12 @@ export const productModel = (sequelize: any) => {
       createdAt: {
         type: DataTypes.DATE(),
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: FecAlt(),
       },
       updatedAt: {
         type: DataTypes.DATE(),
         allowNull: true,
+        defaultValue: FecMod(),
       },
       enabled: {
         type: DataTypes.BOOLEAN(),
@@ -134,9 +137,7 @@ export const productModel = (sequelize: any) => {
     foreignKey: 'ProTypId',
   });
 
-  prodToReturn.hasMany(ProductPresentationPropertyModel, {
-    foreignKey: 'ProId',
-  });
+  prodToReturn.hasOne(PrProPreModel, { foreignKey: 'ProductId' });
 
   prodToReturn.belongsTo(CategoryModel, {
     foreignKey: 'ProCatId',

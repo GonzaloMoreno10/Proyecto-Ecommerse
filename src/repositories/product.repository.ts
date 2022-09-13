@@ -11,7 +11,10 @@ import {
   ProductTypeModel,
   sequelize,
   ProductPresentationPropertyModel,
+  ProductPropertyValueModel,
+  PrProPreModel,
 } from '../datasource/sequelize';
+import { productPropertyValues } from '../models/productPropertyValues.model';
 const { Op } = require('sequelize');
 class ProductRepository {
   async getByBrand(id: number) {
@@ -164,14 +167,6 @@ class ProductRepository {
           }
         }
       }
-      // if (filter.ProName)
-      //   whereClause.ProName = {
-      //     [Op.or]: [
-      //       { [Op.like]: `%${filter.ProName}%` },
-      //       { [Op.like]: `%${filter.ProName.substring(0, filter.ProName.length / 2)}%` },
-      //       { [Op.like]: `%${filter.ProName.split(' ')[0]}%` },
-      //     ],
-      //   };
     }
     const result = await ProductModel.findAll({
       where: whereClause,
@@ -243,43 +238,46 @@ class ProductRepository {
       if (fields.includes('PRBML')) {
         toReturn.push({
           model: BrandModelLineModel,
-
           attributes: ['BmlId'],
+          required: false,
           include: [
-            { model: BrandModel, attributes: ['BraId', 'BraName'] },
-            { model: ModelModel, attributes: ['ModId', 'ModName'] },
-            { model: LineModel, attributes: ['LinId', 'linName'] },
+            { model: BrandModel, required: false, attributes: ['BraId', 'BraName'] },
+            { model: ModelModel, required: false, attributes: ['ModId', 'ModName'] },
+            { model: LineModel, required: false, attributes: ['LinId', 'linName'] },
           ],
         });
       }
       if (fields.includes('PRTYP')) {
         toReturn.push({
           model: ProductTypeModel,
-        });
-      }
-
-      if (fields.includes('PRPRO')) {
-        toReturn.push({
-          model: ProductPresentationPropertyModel,
+          required: false,
         });
       }
       if (fields.includes('PRCAT')) {
         toReturn.push({
           model: CategoryModel,
+          required: false,
         });
       }
+      // if (fields.includes('PRPRO')) {
+      //   toReturn.push({
+      //     model: PrProPreModel,
+      //     required: false,
+      //   });
+      // }
+
       return toReturn;
     }
   }
 
-  async getById(id: number, fields: string[] = []): Promise<IProduct> {
+  async getById(ProId: number, fields: string[] = []): Promise<IProduct> {
     try {
       const includes = this.constructProductInclude(fields);
       const result = await ProductModel.findOne({
         attributes: { exclude: ['ProCatId', 'ProTypId', 'ProBmlId'] },
         where: {
           enabled: true,
-          ProId: id,
+          ProId,
         },
         include: includes,
       });
@@ -381,6 +379,7 @@ class ProductRepository {
       return await ProductModel.findAll({ where: { [Op.or]: [{ ProId: ids }] } });
     } catch (err) {
       console.log(err);
+      return err;
     }
   }
 

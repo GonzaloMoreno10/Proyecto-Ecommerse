@@ -13,7 +13,8 @@
     "rollback:db": "npx knex migrate:rollback --env development",
     "migrate:db": "npx knex migrate:latest --env development",
     "seed:db": "npx knex seed:run --env development",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "test": "npx cypress open"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +46,7 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cypress": "^10.3.1",
     "dotenv": "^10.0.0",
     "email-validator": "^2.0.4",
     "eslint": "^8.16.0",

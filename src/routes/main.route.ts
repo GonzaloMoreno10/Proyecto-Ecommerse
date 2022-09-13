@@ -4,7 +4,6 @@ import productoRoute from './product.route';
 import categoriaRoute from './category.route';
 import userRoute from './users.route';
 import serverConfigRoute from './serverConfig.route';
-//import mensajeRouter from './mensajes.route';
 import authRouter from './auth.route';
 import productTypeRoute from './productType.route';
 import propertiesRoute from './productProperty.route';
@@ -16,6 +15,7 @@ import ppsuiRoute from './ppsui.route';
 import ppvalRoute from './ppval.route';
 import pppreRoute from './pppre.route';
 import { orpRouter } from './orderProduct.route';
+import { bmlRouter } from './bml.route';
 
 const router = Router();
 
@@ -49,6 +49,7 @@ router.use('/propertyValues', ppvalRoute);
 
 router.use('/orderProduct', orpRouter);
 
+router.use('/bml', bmlRouter);
 //router.use('/messages', mensajeRouter);
 
 router.use('/auth', authRouter);
